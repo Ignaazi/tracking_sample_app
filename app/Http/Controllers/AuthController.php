@@ -1,53 +1,58 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers; // DISESUAIKAN: Mengikuti letak folder lu (bukan sub-folder Auth)
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AuthController extends Controller
+class AuthController extends Controller // DISESUAIKAN: Nama class wajib sama dengan nama file AuthController.php
 {
-    // 1. Menampilkan Halaman Form Login
-    public function showLogin()
+    /**
+     * Menampilkan halaman login form.
+     */
+    public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // 2. Proses Validasi & Autentikasi Login pakai NIK
+    /**
+     * Memproses otentikasi akun via NIK.
+     */
     public function login(Request $request)
     {
-        // Validasi inputan form dlu
+        // 1. Validasi input form
         $credentials = $request->validate([
-            'nik' => 'required|string',
-            'password' => 'required|string',
+            'nik'      => ['required', 'string'],
+            'password' => ['required', 'string'],
         ]);
 
-        // Coba login menggunakan NIK dan Password
-        if (Auth::attempt($credentials)) {
+        // 2. Coba login menggunakan Auth bawaan Laravel berbasis kolom NIK
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
+            // Regenerasi session jika sukses login agar aman
             $request->session()->regenerate();
 
-            // Sesuai request, sementara proteksi hanya untuk administrator dlu
-            if (Auth::user()->role === 'administrator') {
-                return redirect()->route('admin.dashboard')->with('success', 'Selamat Datang Admin!');
-            }
-
-            // Jika ada user lain tapi bukan admin, kita kick dulu sementara
-            Auth::logout();
-            return back()->withErrors(['nik' => 'Akses saat ini hanya untuk Administrator!']);
+            // Alihkan user ke halaman Dashboard Admin Management User
+            return redirect()->intended(route('admin.users.index'))
+                ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
         }
 
-        // Jika NIK atau Password salah
+        // 3. Jika gagal login, kembalikan dengan error pesan
         return back()->withErrors([
-            'nik' => 'NIK atau Password yang kamu masukkan salah, bor!',
-        ]);
+            'nik' => 'NIK atau password yang Anda masukkan salah.',
+        ])->withInput($request->only('nik'));
     }
 
-    // 3. Proses Logout
+    /**
+     * Memproses logout akun dari sistem.
+     */
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
+
+        return redirect()->route('login')->with('success', 'Anda berhasil keluar dari sistem.');
     }
 }

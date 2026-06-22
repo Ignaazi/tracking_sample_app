@@ -86,7 +86,7 @@
         </div>
 
         @if($errors->any())
-            <div class="alert alert-danger border-0 p-2.5 small mb-3 text-center d-flex align-items-center justify-content-center gap-2" style="background-color: #fde1e1; color: #842029; border-radius: 6px;">
+            <div class="alert alert-danger border-0 p-2 small mb-3 text-center d-flex align-items-center justify-content-center gap-2" style="background-color: #fde1e1; color: #842029; border-radius: 6px;">
                 <i class="fa-solid fa-circle-exclamation"></i>
                 <span>{{ $errors->first() }}</span>
             </div>

@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\Route;
 
 // Jalur untuk User yang BELUM Login (Guest)
 Route::middleware('guest')->group(function () {
-    Route::get('/', [AuthController::class, 'showLogin']);
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    // FIXED: Mengubah showLogin menjadi showLoginForm agar sinkron dengan AuthController
+    Route::get('/', [AuthController::class, 'showLoginForm']);
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 });
 

@@ -1,0 +1,253 @@
+/* resources/css/user_management.css */
+
+.directory-container {
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+}
+.main-header-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+}
+.directory-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+/* Tab Filters */
+.nav-segment {
+    background: #f8fafc;
+    padding: 4px;
+    border-radius: 8px;
+    display: inline-flex;
+    gap: 2px;
+}
+.nav-segment .btn-tab {
+    border: none;
+    background: transparent;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+.nav-segment .btn-tab.active {
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    font-weight: 600;
+}
+.tab-count {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-left: 4px;
+}
+/* Search inputs */
+.search-input-group {
+    position: relative;
+    max-width: 240px;
+    width: 100%;
+}
+.search-input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 14px;
+}
+.search-input-group .form-control {
+    padding-left: 36px;
+    font-size: 13px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    height: 36px;
+}
+.btn-filter-role {
+    height: 36px;
+    font-size: 13px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #334155;
+    font-weight: 500;
+    padding: 0 12px;
+}
+/* Memastikan Dropdown Arrow pada Filter Role rapi */
+.btn-filter-role.dropdown-toggle::after {
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* Custom Table & Container Slider (Mengunci horizontal scrollbar tanpa merusak widget samping) */
+.table-responsive {
+    width: 100% !important;
+    overflow-x: auto !important;
+    display: block;
+    -webkit-overflow-scrolling: touch;
+}
+.dir-table {
+    min-width: 850px !important; /* Memaksa batas aman minimal lebar tabel agar memicu slider */
+    width: 100%;
+    border-collapse: collapse;
+}
+.dir-table th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+.dir-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+}
+.dir-table tr:last-child td {
+    border-bottom: none;
+}
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e2e8f0;
+}
+/* Custom Badges */
+.badge-role {
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+}
+.badge-role.admin { background: #fee2e2; color: #ef4444; }
+.badge-role.manager { background: #fef3c7; color: #d97706; }
+.badge-role.user-type { background: #dbeafe; color: #2563eb; }
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.status-dot.active { background: #10b981; }
+
+/* Action Grid Kotak Full Warna Hover Effects */
+.text-end .d-inline-flex .btn {
+    transition: background-color 0.15s ease-in-out, transform 0.1s ease;
+}
+.text-end .d-inline-flex .btn:hover {
+    filter: brightness(0.9); /* Otomatis menggelapkan warna dasar kotak full saat kursor nempel */
+}
+.text-end .d-inline-flex .btn:active {
+    transform: scale(0.95); /* Efek membal ditekan */
+}
+
+/* Sidebar Widgets */
+.widget-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+.widget-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 16px;
+}
+.stat-grid-card {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 14px;
+    height: 100%;
+}
+.stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.5px;
+}
+.stat-val {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 4px;
+}
+.stat-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+/* Custom Progress bar line */
+.prog-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+.progress-thin {
+    height: 6px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    overflow: hidden;
+}
+.progress-thin .progress-bar {
+    height: 100%;
+    transition: width 0.4s ease;
+}
+
+/* Real Pagination Override (Menyelaraskan Laravel default markup dengan layout lu) */
+.dir-pagination .pagination {
+    margin-bottom: 0;
+    display: flex;
+    gap: 2px;
+}
+.dir-pagination .page-link {
+    border-radius: 6px !important;
+    margin: 0 2px;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    font-size: 13px;
+    padding: 6px 12px;
+    background: #ffffff;
+    text-decoration: none;
+    transition: all 0.15s ease-in-out;
+}
+.dir-pagination .page-item.active .page-link {
+    background: #2563eb !important;
+    border-color: #2563eb !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+.dir-pagination .page-item:not(.active):not(.disabled) .page-link:hover {
+    background: #f8fafc;
+    color: #0f172a;
+    border-color: #cbd5e1;
+}
+.dir-pagination .page-item.disabled .page-link {
+    background: #f8fafc;
+    color: #cbd5e1;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+}
+
+/* Memastikan grid layout col-xl-8 aman dan stabil saat memicu scroll horizontal */
+.col-xl-8.col-lg-7 {
+    min-width: 0 !important;
+}

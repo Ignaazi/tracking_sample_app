@@ -1,12 +1,18 @@
-import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
-import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: [
+                'resources/css/app.css', 
+                'resources/js/app.js',
+                // Masukkan asset User Management di sini agar dibaca oleh Vite
+                'resources/css/user_management.css',
+                'resources/js/user_management.js',
+            ],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {

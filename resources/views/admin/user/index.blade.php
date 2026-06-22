@@ -3,7 +3,7 @@
 @section('title', 'Management User')
 
 @section('content')
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 @vite(['resources/css/user_management.css'])
 
@@ -95,7 +95,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="user-avatar d-flex align-items-center justify-content-center bg-light text-primary fw-bold font-monospace" style="font-size: 13px; border: 1px solid #e2e8f0; width: 36px; height: 36px; flex-shrink: 0;">
+                                        <div class="user-avatar d-flex align-items-center justify-content-center bg-light text-primary fw-bold" style="font-size: 13px; border: 1px solid #e2e8f0; width: 36px; height: 36px; flex-shrink: 0;">
                                             {{ strtoupper(substr($user->name, 0, 2)) }}
                                         </div>
                                         <div>
@@ -104,7 +104,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="text-secondary font-monospace fw-medium" style="font-size: 12.5px;">{{ $user->nik }}</span>
+                                    <span class="text-secondary fw-medium" style="font-size: 12.5px;">{{ $user->nik }}</span>
                                 </td>
                                 <td>
                                     <span class="badge-role admin" style="white-space: nowrap;">
@@ -150,7 +150,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold text-secondary">NIK (Nomor Induk Karyawan)</label>
-                                                    <input type="text" name="nik" class="form-control rounded font-monospace" value="{{ $user->nik }}" required style="font-size: 13px; height: 38px;">
+                                                    <input type="text" name="nik" class="form-control rounded" value="{{ $user->nik }}" required style="font-size: 13px; height: 38px;">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold text-secondary">System Role</label>
@@ -246,7 +246,7 @@
                 <div class="d-flex flex-column gap-3">
                     @foreach($users->take(3) as $latestUser)
                     <div class="d-flex align-items-center gap-3">
-                        <div class="user-avatar d-flex align-items-center justify-content-center bg-light text-secondary fw-semibold font-monospace" style="width: 34px; height: 34px; font-size: 11px;">
+                        <div class="user-avatar d-flex align-items-center justify-content-center bg-light text-secondary fw-semibold" style="width: 34px; height: 34px; font-size: 11px;">
                             {{ strtoupper(substr($latestUser->name, 0, 2)) }}
                         </div>
                         <div>
@@ -278,7 +278,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-secondary">NIK (Nomor Induk Karyawan)</label>
-                        <input type="text" name="nik" class="form-control rounded font-monospace" placeholder="e.g. 12345678" required style="font-size: 13px; height: 38px;">
+                        <input type="text" name="nik" class="form-control rounded" placeholder="e.g. 12345678" required style="font-size: 13px; height: 38px;">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-secondary">System Role</label>

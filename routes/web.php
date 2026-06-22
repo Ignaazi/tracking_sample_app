@@ -4,7 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TimelineController;
-use App\Http\Controllers\TaskController; // 🌟 Controller baru untuk modul Task dimasukkan di sini
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Route;
 
 // Jalur untuk User yang BELUM Login (Guest)
@@ -26,40 +27,35 @@ Route::middleware('auth')->group(function () {
         // ==========================================
         // MODULE: MANAGEMENT USER
         // ==========================================
-        // Menampilkan daftar user
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        // Memproses tambah user baru
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        // Memproses update data user (Modal Edit)
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-        // Memproses hapus user
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-
 
         // ==========================================
         // MODULE: TRACKING SYSTEM - TIMELINE
         // ==========================================
-        // Menampilkan halaman timeline & chart gantt horizontal
         Route::get('/timelines', [TimelineController::class, 'index'])->name('timelines.index');
-        // Memproses penambahan task schedule baru
         Route::post('/timelines', [TimelineController::class, 'store'])->name('timelines.store');
-        // Memproses pembaruan task schedule (Modal Edit)
         Route::put('/timelines/{id}', [TimelineController::class, 'update'])->name('timelines.update');
-        // Memproses penghapusan task schedule
         Route::delete('/timelines/{id}', [TimelineController::class, 'destroy'])->name('timelines.destroy');
-
 
         // ==========================================
         // MODULE: TRACKING SYSTEM - TASK MANAGEMENT
         // ==========================================
-        // Menampilkan halaman daftar task / list task pengerjaan
         Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
-        // Memproses penambahan tugas baru
         Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
-        // Memproses update data task (Modal Edit)
         Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
-        // Memproses penghapusan task
         Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+        // ==========================================
+        // MODULE: PRODUCTIVITY APPS - EMAIL SYSTEM
+        // ==========================================
+        Route::get('/emails', [EmailController::class, 'index'])->name('emails.index');
+        Route::post('/emails', [EmailController::class, 'store'])->name('emails.store');
+        Route::post('/emails/bulk-action', [EmailController::class, 'bulkAction'])->name('emails.bulkAction');
+        Route::post('/emails/{id}/toggle-star', [EmailController::class, 'toggleStar'])->name('emails.star');
+        Route::delete('/emails/{id}', [EmailController::class, 'destroy'])->name('emails.destroy');
 
     });
 

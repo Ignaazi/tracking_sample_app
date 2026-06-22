@@ -31,17 +31,13 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('admin.emails.*') ? 'active' : 'collapsed' }}" href="{{ route('admin.emails.index') }}">
+                <i class="fa-solid fa-envelope"></i>
+                <span>Email Inbox</span>
+            </a>
+        </li>
+
     </ul>
 
-    <div class="sidebar-footer border rounded p-2 bg-light shadow-sm d-flex align-items-center">
-        <div class="d-flex align-items-center gap-2 w-100">
-            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 34px; height: 34px; min-width: 34px;">
-                <i class="fa-solid fa-user" style="font-size: 13px;"></i>
-            </div>
-            <div class="overflow-hidden">
-                <span class="d-block fw-bold text-dark lh-1 text-truncate" style="font-size: 13px;">{{ Auth::user()->name }}</span>
-                <small class="text-muted text-truncate d-block" style="font-size: 10px; text-transform: uppercase; margin-top: 2px;">{{ Auth::user()->role }}</small>
-            </div>
-        </div>
-    </div>
 </aside>

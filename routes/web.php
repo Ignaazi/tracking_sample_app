@@ -42,12 +42,12 @@ Route::middleware('auth')->group(function () {
         Route::delete('/timelines/{id}', [TimelineController::class, 'destroy'])->name('timelines.destroy');
 
         // ==========================================
-        // MODULE: TRACKING SYSTEM - TASK MANAGEMENT
+        // MODULE: TRACKING SYSTEM - TASK MANAGEMENT (UPDATED TO SINGLE 'task')
         // ==========================================
-        Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
-        Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
-        Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
-        Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+        Route::get('/task', [TaskController::class, 'index'])->name('task.index');
+        Route::post('/task', [TaskController::class, 'store'])->name('task.store');
+        Route::put('/task/{id}', [TaskController::class, 'update'])->name('task.update');
+        Route::delete('/task/{id}', [TaskController::class, 'destroy'])->name('task.destroy');
 
         // ==========================================
         // MODULE: PRODUCTIVITY APPS - EMAIL SYSTEM

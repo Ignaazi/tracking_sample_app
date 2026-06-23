@@ -8,20 +8,44 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        // UPDATED: Mengubah nama tabel dari 'tasks' menjadi 'task'
+        Schema::create('task', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
+            
+            // Core Project Identity
+            $table->string('project_name');
+            $table->string('customer');
+            $table->string('item_code');
+            $table->string('sap_number');
+            $table->string('brand_family');
+            $table->string('market');
+            
+            // Technical Specification Fields (Dibuat nullable agar fleksibel)
+            $table->string('ascis_pd')->nullable();
+            $table->string('cs_brand')->nullable();
+            $table->string('cs_hw')->nullable();
+            $table->string('ghw_set')->nullable();
+            
+            // Core Kanban Board & System Status
             $table->enum('status', ['To Do', 'In Progress', 'Ready for QA', 'Completed'])->default('To Do');
-            $table->enum('priority', ['Low', 'Medium', 'High'])->default('Low');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->enum('development_status', ['Active', 'Testing'])->default('Active');
+            
+            // Internal Sub-Process Tracking Grid Statuses
+            $table->enum('layout_status', ['Pending', 'In Progress', 'Completed'])->default('Pending');
+            $table->enum('baan_status', ['Pending', 'In Progress', 'Completed'])->default('Pending');
+            $table->enum('promp_status', ['Pending', 'In Progress', 'Completed'])->default('Pending');
+            $table->enum('job_bag_status', ['Pending', 'In Progress', 'Completed'])->default('Pending');
+            
+            // Additional Notes
+            $table->text('remark')->nullable();
+            
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        // UPDATED: Menyesuaikan drop tabel ke bentuk tunggal 'task'
+        Schema::dropIfExists('task');
     }
 };

@@ -3,20 +3,32 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model; // Ini harus ada agar VS Code tidak error!
+use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
     use HasFactory;
 
-    protected $table = 'tasks';
+    // WAJIB Ditambahkan: Mengunci nama tabel ke bentuk tunggal 'task'
+    protected $table = 'task';
 
     protected $fillable = [
-        'title',
-        'description',
+        'project_name',
+        'customer',
+        'item_code',
+        'sap_number',
+        'brand_family',
+        'market',
+        'ascis_pd',
+        'cs_brand',
+        'cs_hw',
+        'ghw_set',
         'status',
-        'priority',
-        'start_date',
-        'end_date'
+        'development_status',
+        'layout_status',
+        'baan_status',
+        'promp_status',
+        'job_bag_status',
+        'remark'
     ];
 }

@@ -37,8 +37,8 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link rounded-3 d-flex align-items-center collapsed"
-           href="#"
+        <a class="nav-link rounded-3 d-flex align-items-center {{ request()->routeIs('admin.task.table') ? 'active' : 'collapsed' }}"
+           href="{{ route('admin.task.table') }}"
            style="padding: 6px 12px; height: 35px; font-size: 13.5px; font-weight: 600;">
           <i class="fa-solid fa-bars-progress me-2" style="font-size: 15px;"></i>
           <span>Data Project Status</span>

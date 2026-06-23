@@ -41,13 +41,14 @@ Route::middleware('auth')->group(function () {
         Route::put('/timelines/{id}', [TimelineController::class, 'update'])->name('timelines.update');
         Route::delete('/timelines/{id}', [TimelineController::class, 'destroy'])->name('timelines.destroy');
 
-        // ==========================================
-        // MODULE: TRACKING SYSTEM - TASK MANAGEMENT (UPDATED TO SINGLE 'task')
-        // ==========================================
-        Route::get('/task', [TaskController::class, 'index'])->name('task.index');
-        Route::post('/task', [TaskController::class, 'store'])->name('task.store');
-        Route::put('/task/{id}', [TaskController::class, 'update'])->name('task.update');
-        Route::delete('/task/{id}', [TaskController::class, 'destroy'])->name('task.destroy');
+           // ==========================================
+          // MODULE: TRACKING SYSTEM - TASK MANAGEMENT
+         // ==========================================
+         Route::get('/task', [TaskController::class, 'index'])->name('task.index');
+         Route::get('/task/table', [TaskController::class, 'tableIndex'])->name('task.table');
+         Route::post('/task', [TaskController::class, 'store'])->name('task.store');
+         Route::put('/task/{id}', [TaskController::class, 'update'])->name('task.update');
+         Route::delete('/task/{id}', [TaskController::class, 'destroy'])->name('task.destroy');
 
         // ==========================================
         // MODULE: PRODUCTIVITY APPS - EMAIL SYSTEM

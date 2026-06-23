@@ -89,4 +89,13 @@ class TaskController extends Controller
 
         return redirect()->back()->with('success', 'Project node successfully deleted.');
     }
+
+    public function tableIndex()
+    {
+    // Mengambil semua data task diurutkan dari yang terbaru dimasukkan
+    $tasks = Task::orderBy('created_at', 'desc')->get();
+
+    // Diarahkan ke file view table yang terpisah
+    return view('admin.task.table', compact('tasks'));
+   }
 }

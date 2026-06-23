@@ -39,7 +39,7 @@
                     <option value="50">50</option>
                     <option value="100">100</option>
                 </select>
-                <span class="text-secondary">entries per page sebelum ke slide selanjutnya</span>
+                <span class="text-secondary">entries </span>
             </div>
             
             <div style="width: 260px;">
@@ -48,8 +48,8 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table align-middle mb-0" style="font-size: 14px; min-width: 1350px; --bs-table-hover-bg: #f8fafc; font-family: 'Nunito', sans-serif;">
-                <thead style="background-color: #f3f6f9; color: #212529; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+            <table class="table align-middle mb-0" style="font-size: 15px; min-width: 1350px; --bs-table-hover-bg: #f8fafc; font-family: 'Nunito', sans-serif;">
+                <thead style="background-color: #f3f6f9; color: #212529; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
                     <tr>
                         <th class="py-3 ps-3" style="border-bottom: 2px solid #cbd5e1; width: 60px;">No</th>
                         <th class="py-3" style="border-bottom: 2px solid #cbd5e1;">Project Name</th>
@@ -73,9 +73,9 @@
                             {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                         </td>
                         
-                        <td class="py-3 fw-bold" style="color: #212529;">{{ $task->project_name }}</td>
+                        <td class="py-3 fw-semibold" style="color: #212529;">{{ $task->project_name }}</td>
                         
-                        <td class="py-3 fw-bold" style="color: #212529;">{{ $task->customer }}</td>
+                        <td class="py-3 fw-semibold" style="color: #212529;">{{ $task->customer }}</td>
 
                         <td class="py-3 fw-semibold" style="color: #212529;">{{ $task->brand_family ?? '-' }}</td>
 
@@ -83,7 +83,7 @@
                             {{ $task->market ?? '-' }}
                         </td>
 
-                        <td class="py-3 fw-bold" style="font-size: 13.5px; color: #212529;">
+                        <td class="py-3 fw-semibold" style="font-size: 13.5px; color: #212529;">
                             {{ $task->item_code }}
                         </td>
 
@@ -129,7 +129,7 @@
                                 ];
                                 $style = $statusStyle[$task->status] ?? ['bg' => '#f8fafc', 'text' => '#64748b'];
                             @endphp
-                            <span class="badge rounded px-2.5 py-1.5 fw-bold d-block text-center" style="background-color: {{ $style['bg'] }}; color: {{ $style['text'] }}; font-size: 12px; letter-spacing: 0.3px; font-family: 'Nunito', sans-serif;">
+                            <span class="badge rounded-pill px-2.5 py-1" style="background-color: {{ $style['bg'] }}; color: {{ $style['text'] }}; font-size: 12px; letter-spacing: 0.3px; font-family: 'Nunito', sans-serif;">
                                 {{ $task->status }}
                             </span>
                         </td>

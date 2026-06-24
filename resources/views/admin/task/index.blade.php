@@ -3,176 +3,390 @@
 @section('title', 'Project Task Workspace')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/kanban-style.css') }}">
+    <!-- Hubungkan Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
     <style>
+        /* ==========================================================================
+           CSS KANBAN BOARD MURNI (SESUAI KODE YANG LU KASIH)
+           ========================================================================== */
+        .kanban-board {
+            display: flex;
+            gap: 1.25rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            align-items: flex-start;
+            min-height: calc(100vh - 100px);
+        }
+
         .kanban-column {
-            background-color: #f6f9ff;
-            min-height: 82vh;
-            border-radius: 12px;
+            flex: 0 0 300px;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
         }
+
+        .kanban-column-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .kanban-column-title {
+            display: flex;
+            align-items: center;
+            color: #212529;
+        }
+
+        .kanban-column-count {
+            font-size: 0.85rem;
+            background-color: #e9ecef;
+            color: #6c757d;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+
+        .kanban-column-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+        }
+
+        .kanban-column-btn:hover {
+            background-color: #e9ecef;
+            color: #212529;
+        }
+
+        .kanban-column-body {
+            padding: 0 1rem 1rem 1rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            min-height: 150px;
+            transition: background-color 0.2s ease;
+        }
+
+        .kanban-column-body.drag-over {
+            background-color: #e9ecef;
+            border-radius: 0 0 0.5rem 0.5rem;
+        }
+
+        /* Desain Kartu (Card) */
         .kanban-card {
-            border: 1px solid #e2e8f0 !important;
-            border-radius: 10px !important;
-            transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
             background-color: #ffffff;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid #dee2e6;
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            position: relative;
         }
+
+        .kanban-card:active {
+            cursor: grabbing;
+        }
+
+        .kanban-card.dragging {
+            opacity: 0.5;
+        }
+
         .kanban-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(1, 41, 112, 0.08) !important;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        /* Style 4 Kotak Point Utama di Kartu Kanban - DIKUNCI BIAR TIDAK ACAK-ACAKAN */
-        .sub-process-grid-item {
-            font-size: 10px;
-            font-weight: 800;
-            padding: 5px 0;
-            text-align: center;
-            border-radius: 4px;
+
+        .kanban-card-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #212529;
+            margin: 0.5rem 0;
+        }
+
+        .kanban-card-description {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .kanban-card-labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Badge Sub-Proses Lu */
+        .process-pill {
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            padding: 0.15rem 0.5rem !important;
+            border-radius: 0.25rem !important;
             cursor: pointer;
-            width: 23%; /* Mengunci lebar proporsional 4 kotak */
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-block;
+            text-transform: capitalize;
         }
-        /* Badge Tanggal Soft Orange Premium ala Template NiceAdmin */
-        .date-badge-custom {
-            background-color: #fff7ed;
-            color: #c2410c;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 6px;
+
+        /* Warna Status Custom */
+        .sp-completed { background-color: #dcfce7; color: #15803d; }
+        .sp-progress { background-color: #fee2e2; color: #b91c1c; }
+        .sp-default { background-color: #f3f4f6; color: #374151; }
+
+        .kanban-due-date {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            margin-bottom: 0.75rem;
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .kanban-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+            border-top: 1px solid #f4f6f9;
+            padding-top: 0.5rem;
+        }
+
+        .kanban-card-meta {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .kanban-card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .kanban-card-assignees {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .kanban-add-card {
+            width: 100%;
+            background: none;
+            border: 1px dashed #ced4da;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            color: #6c757d;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .kanban-add-card:hover {
+            background-color: #e9ecef;
+            color: #212529;
+            border-color: #adb5bd;
         }
     </style>
 @endpush
 
 @section('content')
+<div class="container-fluid py-3">
 
-    <div class="d-flex justify-content-between align-items-center mb-4" style="font-family: 'Nunito', sans-serif;">
+    <!-- HEADER UTAMA -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="fw-bold mb-1" style="font-size: 24px; color: #012970;">Tasks Development Workspace</h1>
-            <p class="text-muted m-0" style="font-size: 13.5px;">Track manufacturing specifications and pipeline stages</p>
+            <h2 class="fw-bold text-dark mb-1">Kanban Project Board</h2>
+            <p class="text-muted small mb-0">Manage tasks, custom layout specifications, and workflow tracker.</p>
         </div>
-        <button type="button" class="btn btn-primary btn-sm rounded-3 fw-bold px-3 py-2 shadow-sm border-0 d-flex align-items-center gap-1" style="background-color: #4154f1; font-size: 13px;" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-            <i class="fa-solid fa-plus"></i> Create Task
+        <button type="button" class="btn btn-primary btn-sm rounded-2 px-3 py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+            <i class="bi bi-plus-lg"></i> Create Task
         </button>
     </div>
-
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show border-0 mb-4 shadow-sm rounded-3" role="alert" style="background-color: #ecfdf5; color: #065f46; font-size: 13px; font-family: 'Nunito', sans-serif;">
-            <i class="fa-solid fa-circle-check me-2 text-success"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    <div class="row g-3" style="font-family: 'Nunito', sans-serif;">
+    
+    <!-- KANBAN BOARD WRAPPER -->
+    <div class="kanban-board" id="kanbanBoard">
         
         @php
+            // Mapping Data Kolom Dinamis Laravel Lu
             $columns = [
-                ['title' => 'To Do', 'bg' => '#3b82f6', 'light_bg' => '#eff6ff', 'badge' => '#2563eb', 'data' => $todo],
-                ['title' => 'In Progress', 'bg' => '#a855f7', 'light_bg' => '#f3e8ff', 'badge' => '#7c3aed', 'data' => $inProgress],
-                ['title' => 'Ready for QA', 'bg' => '#f97316', 'light_bg' => '#fff7ed', 'badge' => '#ea580c', 'data' => $readyQa],
-                ['title' => 'Completed', 'bg' => '#10b981', 'light_bg' => '#ecfdf5', 'badge' => '#059669', 'data' => $completed]
+                ['title' => 'To Do', 'status' => 'todo', 'data' => $todo],
+                ['title' => 'In Progress', 'status' => 'in-progress', 'data' => $inProgress],
+                ['title' => 'Ready for QA', 'status' => 'review', 'data' => $readyQa],
+                ['title' => 'Completed', 'status' => 'done', 'data' => $completed]
             ];
         @endphp
 
         @foreach($columns as $col)
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="kanban-column p-3 border-0 shadow-sm">
+        <!-- Kanban Column -->
+        <div class="kanban-column" data-status="{{ $col['status'] }}">
+            <div class="kanban-column-header">
+                <div class="kanban-column-title">
+                    {{ $col['title'] }}
+                    <span class="kanban-column-count">{{ $col['data']->count() }}</span>
+                </div>
+                <div class="kanban-column-actions">
+                    <button class="kanban-column-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal"><i class="bi bi-plus"></i></button>
+                    <button class="kanban-column-btn"><i class="bi bi-three-dots"></i></button>
+                </div>
+            </div>
+
+            <div class="kanban-column-body" data-status="{{ $col['status'] }}">
                 
-                <div class="d-flex align-items-center gap-2 px-1 mb-3">
-                    <span class="d-inline-block rounded-circle" style="width: 10px; height: 10px; background-color: {{ $col['bg'] }};"></span>
-                    <h6 class="m-0 fw-bold" style="font-size: 14px; color: #1e293b;">{{ $col['title'] }}</h6>
-                    <span class="badge ms-auto rounded-circle d-flex align-items-center justify-content-center" style="width: 22px; height: 22px; font-size: 11px; background-color: #e2e8f0; color: #475569; font-weight: 700; padding: 0;">
-                        {{ $col['data']->count() }}
-                    </span>
-                </div>
-
-                <div class="d-flex flex-column gap-3">
-                    @forelse($col['data'] as $task)
+                @forelse($col['data'] as $task)
+                    <!-- Kanban Card (Bisa Di-Drag) -->
+                    <div class="kanban-card" draggable="true" data-id="{{ $task->id }}">
                         
-                        <div class="card kanban-card shadow-xs p-3 position-relative" style="border-left: 4px solid {{ $col['bg'] }} !important;">
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                
-                                <div class="d-flex gap-1 flex-grow-1">
-                                    <span class="sub-process-grid-item {{ $task->layout_status == 'Completed' ? 'bg-success text-white' : ($task->layout_status == 'In Progress' ? 'bg-warning text-dark' : 'bg-light text-muted border') }}" 
-                                          data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $task->id }}_layout">LYO</span>
-                                    
-                                    <span class="sub-process-grid-item {{ $task->baan_status == 'Completed' ? 'bg-success text-white' : ($task->baan_status == 'In Progress' ? 'bg-warning text-dark' : 'bg-light text-muted border') }}"
-                                          data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $task->id }}_baan">BAAN</span>
-                                    
-                                    <span class="sub-process-grid-item {{ $task->promp_status == 'Completed' ? 'bg-success text-white' : ($task->promp_status == 'In Progress' ? 'bg-warning text-dark' : 'bg-light text-muted border') }}"
-                                          data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $task->id }}_promp">PRMP</span>
-                                    
-                                    <span class="sub-process-grid-item {{ $task->job_bag_status == 'Completed' ? 'bg-success text-white' : ($task->job_bag_status == 'In Progress' ? 'bg-warning text-dark' : 'bg-light text-muted border') }}"
-                                          data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $task->id }}_jobbag">BAG</span>
-                                </div>
-
-                                <div class="dropdown ms-2">
-                                    <button class="btn p-0 border-0 text-muted shadow-none" type="button" data-bs-toggle="dropdown">
-                                        <i class="fa-solid fa-ellipsis" style="font-size: 14px;"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-1" style="font-size: 12px;">
-                                        <li><a class="dropdown-item py-1.5" href="#" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $task->id }}"><i class="fa-regular fa-pen-to-square me-2 text-primary"></i>Full Edit Specs</a></li>
-                                        <li><hr class="dropdown-divider my-1"></li>
-                                        <li><a class="dropdown-item text-danger py-1.5" href="#" onclick="event.preventDefault(); if(confirm('Delete this project node?')) document.getElementById('delete-task-{{ $task->id }}').submit();"><i class="fa-regular fa-trash-can me-2"></i>Delete Project</a></li>
-                                    </ul>
-                                    <form id="delete-task-{{ $task->id }}" action="{{ route('admin.task.destroy', $task->id) }}" method="POST" class="d-none">
-                                        @csrf @method('DELETE')
-                                    </form>
-                                </div>
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <!-- Label Sub Proses Interaktif -->
+                            <div class="kanban-card-labels">
+                                <span class="badge process-pill {{ $task->layout_status == 'Completed' ? 'sp-completed' : ($task->layout_status == 'In Progress' ? 'sp-progress' : 'sp-default') }}" data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $task->id }}_layout">Layout</span>
+                                <span class="badge process-pill {{ $task->baan_status == 'Completed' ? 'sp-completed' : ($task->baan_status == 'In Progress' ? 'sp-progress' : 'sp-default') }}" data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $task->id }}_baan">Baan</span>
+                                <span class="badge process-pill {{ $task->promp_status == 'Completed' ? 'sp-completed' : ($task->promp_status == 'In Progress' ? 'sp-progress' : 'sp-default') }}" data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $task->id }}_promp">Prompt</span>
+                                <span class="badge process-pill {{ $task->job_bag_status == 'Completed' ? 'sp-completed' : ($task->job_bag_status == 'In Progress' ? 'sp-progress' : 'sp-default') }}" data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $task->id }}_jobbag">Job Bag</span>
                             </div>
 
-                            <h6 class="fw-bold mb-1" style="font-size: 14px; color: #1e293b;">{{ $task->project_name }}</h6>
-                            
-                            <div class="text-muted mb-2" style="font-size: 11.5px;">
-                                <span class="fw-bold text-dark">{{ $task->item_code }}</span> <span class="text-secondary">• {{ $task->sap_number ?? '000-000' }}</span>
+                            <!-- Dropdown Menu Kebab Aksi -->
+                            <div class="dropdown">
+                                <button class="btn p-0 border-0 text-muted shadow-none" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots" style="font-size: 14px;"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-1 py-1" style="font-size: 12px;">
+                                    <li><a class="dropdown-item py-1.5" href="#" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $task->id }}"><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Specification</a></li>
+                                    <li><hr class="dropdown-divider my-1"></li>
+                                    <li><a class="dropdown-item text-danger py-1.5" href="#" onclick="event.preventDefault(); if(confirm('Delete this task?')) document.getElementById('delete-task-{{ $task->id }}').submit();"><i class="bi bi-trash me-2"></i>Delete Project</a></li>
+                                </ul>
+                                <form id="delete-task-{{ $task->id }}" action="{{ route('admin.task.destroy', $task->id) }}" method="POST" class="d-none">
+                                    @csrf @method('DELETE')
+                                </form>
                             </div>
-
-                            <div class="text-secondary mb-3" style="font-size: 12px; line-height: 1.45;">
-                                Client <span class="fw-bold text-dark">{{ $task->customer }}</span> untuk brand <span class="fw-bold text-dark">{{ $task->brand_family ?? '-' }}</span>, distribusi pasar <span class="fw-bold text-dark text-uppercase">[{{ $task->market ?? 'INDO' }}]</span>.
-                            </div>
-
-                            <div class="pt-2.5 border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                <div class="date-badge-custom">
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                    <span>
-                                        {{ $task->start_date ? \Carbon\Carbon::parse($task->start_date)->format('M d') : 'Jan 01' }} - 
-                                        {{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('d, Y') : '2026' }}
-                                    </span>
-                                </div>
-
-                                <span class="badge rounded-1 px-2 py-1 text-uppercase" style="font-size: 9.5px; font-weight: 800; background-color: {{ $task->development_status == 'Active' ? '#e0f2fe' : '#fee2e2' }}; color: {{ $task->development_status == 'Active' ? '#0369a1' : '#b91c1c' }};">
-                                    {{ $task->development_status }}
-                                </span>
-                            </div>
-
                         </div>
 
-                        @include('admin.task.partials.modal-sub-process')
-                        @include('admin.task.partials.modal-edit-specs')
-
-                    @empty
-                        <div class="text-center py-4 text-muted border border-dashed rounded-3 bg-white" style="font-style: italic; font-size: 11.5px; border-color: #cbd5e1 !important;">
-                            Empty stack items.
+                        <!-- Data Konten Project -->
+                        <div class="kanban-card-title">{{ $task->project_name }}</div>
+                        
+                        <div class="mb-2" style="font-size: 11.5px;">
+                            <span class="fw-bold text-dark">{{ $task->item_code }}</span> 
+                            <span class="text-muted">• {{ $task->sap_number ?? '000-000' }}</span>
                         </div>
-                    @endforelse
-                </div>
 
+                        <div class="kanban-card-description">
+                            Client: <strong>{{ $task->customer }}</strong>, Brand: <strong>{{ $task->brand_family ?? '-' }}</strong>, Market: <span class="text-uppercase fw-bold text-primary">[{{ $task->market ?? 'INDO' }}]</span>.
+                        </div>
+
+                        <div class="kanban-due-date">
+                            <i class="bi bi-calendar"></i> {{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('M d') : 'Jan 18' }}
+                        </div>
+
+                        <!-- Footer Meta Info -->
+                        <div class="kanban-card-footer">
+                            <div class="kanban-card-meta">
+                                <span class="kanban-card-meta-item"><i class="bi bi-chat-dots"></i> 3</span>
+                                <span class="kanban-card-meta-item"><i class="bi bi-paperclip"></i> 1</span>
+                            </div>
+                            <div class="kanban-card-assignees">
+                                <i class="bi bi-pencil-square text-muted cursor-pointer me-1" style="font-size: 13px;" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $task->id }}" title="Quick Edit"></i>
+                                <i class="bi bi-person-circle text-secondary" style="font-size: 14px;"></i>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Panggil File Modals Parsial bawaan Laravel Lu -->
+                    @include('admin.task.partials.modal-sub-process')
+                    @include('admin.task.partials.modal-edit-specs')
+
+                @empty
+                    <div class="text-center py-4 px-2 text-muted border border-dashed rounded bg-white small mb-3" style="font-style: italic;">
+                        No active tasks.
+                    </div>
+                @endforelse
+
+                <button class="kanban-add-card" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                    <i class="bi bi-plus"></i> Add Card
+                </button>
             </div>
         </div>
         @endforeach
 
     </div>
+</div>
 
-    @include('admin.task.partials.modal-create-task')
-
+@include('admin.task.partials.modal-create-task')
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('assets/js/kanban-script.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.kanban-card');
+        const columns = document.querySelectorAll('.kanban-column-body');
+
+        cards.forEach(card => {
+            card.addEventListener('dragstart', () => {
+                card.classList.add('dragging');
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+            });
+        });
+
+        columns.forEach(column => {
+            column.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Wajib agar drop aktif
+                column.classList.add('drag-over');
+                
+                const draggingCard = document.querySelector('.dragging');
+                const afterElement = getDragAfterElement(column, e.clientY);
+                
+                if (afterElement == null) {
+                    const addCardBtn = column.querySelector('.kanban-add-card');
+                    column.insertBefore(draggingCard, addCardBtn);
+                } else {
+                    column.insertBefore(draggingCard, afterElement);
+                }
+            });
+
+            column.addEventListener('dragleave', () => {
+                column.classList.remove('drag-over');
+            });
+
+            column.addEventListener('drop', () => {
+                column.classList.remove('drag-over');
+                const draggingCard = document.querySelector('.dragging');
+                
+                // Log untuk ngecek pergerakan di console log browser lu
+                console.log(`Card ID: ${draggingCard.dataset.id} dipindah ke status: ${column.dataset.status}`);
+                
+                // TODO: Di sini lu tinggal pasang Fetch/Axios API jika ingin simpan perubahan status drop-nya secara permanen ke DB Laravel.
+            });
+        });
+
+        function getDragAfterElement(column, y) {
+            const draggableElements = [...column.querySelectorAll('.kanban-card:not(.dragging)')];
+
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+    });
+</script>
 @endpush

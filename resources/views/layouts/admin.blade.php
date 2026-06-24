@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard')</title>
-    <!-- Bootstrap 5 & FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Nunito Full -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -48,7 +46,7 @@
             top: 60px;
             left: 0;
             bottom: 0;
-            width: 260px; /* Diperkecil biar lebih pas */
+            width: 260px; 
             z-index: 996;
             transition: all 0.3s ease-in-out;
             padding: 15px;
@@ -64,7 +62,6 @@
             list-style: none;
         }
         
-        /* Style Compact Nav Link */
         .sidebar-nav .nav-link {
             display: flex;
             align-items: center;
@@ -86,7 +83,6 @@
             transition: all 0.2s ease;
         }
 
-        /* Efek Hover & Active Sesuai Gambar */
         .sidebar-nav .nav-link:hover, 
         .sidebar-nav .nav-link.active {
             color: var(--nice-blue) !important;
@@ -104,7 +100,7 @@
            CONTENT WRAPPER & TOGGLE MECHANISM
            ========================================================================== */
         .main-wrapper {
-            margin-left: 260px; /* Menyesuaikan lebar sidebar baru */
+            margin-left: 260px; 
             padding-top: 60px;
             transition: all 0.3s ease-in-out;
             display: flex;
@@ -116,7 +112,6 @@
             flex: 1;
         }
         
-        /* Toggle Sidebar Class */
         body.toggle-sidebar .sidebar {
             left: -260px;
         }
@@ -137,6 +132,8 @@
             color: #012970;
         }
     </style>
+
+    @stack('styles')
 </head>
 <body>
 
@@ -156,5 +153,7 @@
             document.body.classList.toggle('toggle-sidebar');
         });
     </script>
+
+    @stack('scripts')
 </body>
 </html>

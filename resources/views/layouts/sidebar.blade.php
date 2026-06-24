@@ -28,7 +28,7 @@
       </li>
   
       <li class="nav-item">
-        <a class="nav-link rounded-3 d-flex align-items-center {{ request()->routeIs('admin.task.*') ? 'active' : 'collapsed' }}"
+        <a class="nav-link rounded-3 d-flex align-items-center {{ request()->routeIs(['admin.task.index', 'admin.task.create', 'admin.task.store', 'admin.task.edit', 'admin.task.update', 'admin.task.show']) ? 'active' : 'collapsed' }}"
            href="{{ route('admin.task.index') }}"
            style="padding: 6px 12px; height: 35px; font-size: 13.5px; font-weight: 600;">
           <i class="fa-solid fa-folder-plus me-2" style="font-size: 15px;"></i>

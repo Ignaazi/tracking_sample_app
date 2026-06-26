@@ -19,30 +19,15 @@
     <div class="row g-3 mb-4">
         
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card h-100 p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #eafaf1 0%, #ffffff 100%);">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: #d1f7e3; color: #198754;">
-                        <i class="fa-solid fa-dollar-sign fs-5"></i>
-                    </div>
-                    <div>
-                        <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Net Revenue</small>
-                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">$94.2K</span>
-                        <small class="text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-arrow-trend-up me-1"></i>9.4%</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-sm-6 col-xl-3">
             <div class="card h-100 p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);">
                 <div class="d-flex align-items-center gap-3">
                     <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: #e0e7ff; color: #4154f1;">
-                        <i class="fa-solid fa-users fs-5"></i>
+                        <i class="fa-solid fa-cubes fs-5"></i>
                     </div>
                     <div>
-                        <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Qualified Leads</small>
-                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">1,284</span>
-                        <small class="text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-arrow-trend-up me-1"></i>6.1%</small>
+                        <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Total Development</small>
+                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">148</span>
+                        <small class="text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-arrow-trend-up me-1"></i>12 New</small>
                     </div>
                 </div>
             </div>
@@ -52,27 +37,42 @@
             <div class="card h-100 p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #fff9db 0%, #ffffff 100%);">
                 <div class="d-flex align-items-center gap-3">
                     <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: #fff3bf; color: #f59f00;">
-                        <i class="fa-regular fa-clock fs-5"></i>
+                        <i class="fa-solid fa-spinner fs-5 fa-spin-pulse"></i>
                     </div>
                     <div>
-                        <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Avg. Cycle Time</small>
-                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">4.2d</span>
-                        <small class="text-warning fw-bold" style="font-size: 11px;"><i class="fa-solid fa-arrow-trend-down me-1"></i>3.5%</small>
+                        <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Pending Tasks</small>
+                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">24</span>
+                        <small class="text-warning fw-bold" style="font-size: 11px;"><i class="fa-solid fa-clock me-1"></i>Awaiting Review</small>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card h-100 p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #f3f0ff 0%, #ffffff 100%);">
+            <div class="card h-100 p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: #e5dbff; color: #7048e8;">
-                        <i class="fa-solid fa-shield-check fs-5"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: #bae6fd; color: #0284c7;">
+                        <i class="fa-solid fa-code-branch fs-5"></i>
                     </div>
                     <div>
-                        <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Retention</small>
-                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">92.7%</span>
-                        <small class="text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-arrow-trend-up me-1"></i>1.8%</small>
+                        <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Active Projects</small>
+                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">36</span>
+                        <small class="text-info fw-bold" style="font-size: 11px;"><i class="fa-solid fa-gears me-1"></i>Under Development</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #eafaf1 0%, #ffffff 100%);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background-color: #d1f7e3; color: #198754;">
+                        <i class="fa-solid fa-circle-check fs-5"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Completed Projects</small>
+                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">88</span>
+                        <small class="text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-check-double me-1"></i>100% Deployed</small>
                     </div>
                 </div>
             </div>

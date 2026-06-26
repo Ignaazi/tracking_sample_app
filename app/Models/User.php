@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'nik', 'password', 'role'])] // 1. Ganti email jadi nik, dan daftarkan role
+#[Fillable(['name', 'nik', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    // 👈 2. MASUKKAN HasApiTokens DI SINI AGAR METHOD createToken() AKTIF!
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * Beritahu Laravel kalau login-nya menggunakan NIK, bukan Email.
@@ -34,7 +35,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'password' => 'hashed', // Meng-hash password otomatis saat disimpan
+            'password' => 'hashed',
         ];
     }
 }

@@ -1,19 +1,26 @@
+@if(isset($task) && isset($task->id))
 <div class="modal fade" id="editTaskModal{{ $task->id }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content border-0 shadow-lg rounded-3 text-start">
             <div class="modal-header border-0 bg-light py-3">
                 <h5 class="modal-title fw-bold" style="font-size: 15px; color: #012970 !important;"><i class="fa-solid fa-sliders text-primary me-2"></i>Full Project Specifications</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('admin.task.update', $task->id) }}" method="POST">
-                @csrf @method('PUT')
+            
+            {{-- Pengaman Rute dengan Array Parameter Eksplisit --}}
+            <form action="{{ route('admin.task.update', ['id' => $task->id]) }}" method="POST" enctype="multipart/form-data">
+                @csrf 
+                @method('PUT')
+                
                 <div class="modal-body p-4" style="font-size: 13px;">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        
+                        <!-- BARIS 1: Core Identifiers -->
+                        <div class="col-md-4">
                             <label class="form-label fw-bold text-secondary">Project Name</label>
                             <input type="text" name="project_name" class="form-control rounded border shadow-none" value="{{ $task->project_name }}" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label fw-bold text-secondary">Customer</label>
                             <input type="text" name="customer" class="form-control rounded border shadow-none" value="{{ $task->customer }}" required>
                         </div>
@@ -21,61 +28,203 @@
                             <label class="form-label fw-bold text-secondary">Item Code</label>
                             <input type="text" name="item_code" class="form-control rounded border shadow-none" value="{{ $task->item_code }}" required>
                         </div>
+
+                        <!-- BARIS 2: Brand, Market & Workflow Status -->
                         <div class="col-md-4">
-                            <label class="form-label fw-bold text-secondary">SAP Number</label>
-                            <input type="text" name="sap_number" class="form-control rounded border shadow-none" value="{{ $task->sap_number }}" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold text-secondary">Brand Family</label>
-                            <input type="text" name="brand_family" class="form-control rounded border shadow-none" value="{{ $task->brand_family }}" required>
+                            <label class="form-label fw-bold text-secondary">Brand / Family</label>
+                            <input type="text" name="brand_family" class="form-control rounded border shadow-none" value="{{ $task->brand_family }}">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold text-secondary">Market</label>
-                            <input type="text" name="market" class="form-control rounded border shadow-none" value="{{ $task->market }}" required>
+                            <select name="market" class="form-select rounded border shadow-none">
+                                <option value="INDO" {{ ($task->market ?? 'INDO') == 'INDO' ? 'selected' : '' }}>INDO</option>
+                                <option value="EXPORT" {{ ($task->market ?? '') == 'EXPORT' ? 'selected' : '' }}>EXPORT</option>
+                            </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold text-secondary">Ascis PD</label>
-                            <input type="text" name="ascis_pd" class="form-control rounded border shadow-none" value="{{ $task->ascis_pd }}">
+                            <label class="form-label fw-bold text-secondary">Workflow Status</label>
+                            <select name="status" class="form-select rounded border shadow-none" required>
+                                <option value="todo" {{ $task->status == 'todo' ? 'selected' : '' }}>To Do</option>
+                                <option value="in-progress" {{ $task->status == 'in-progress' ? 'selected' : '' }}>In Progress</option>
+                                <option value="completed" {{ $task->status == 'completed' ? 'selected' : '' }}>Completed</option>
+                            </select>
                         </div>
-                        <div class="col-md-4">
+
+                        <!-- BARIS 3: CS Brand, CS HW, CPI HW, PD ASCIS -->
+                        <div class="col-md-3">
                             <label class="form-label fw-bold text-secondary">CS Brand</label>
                             <input type="text" name="cs_brand" class="form-control rounded border shadow-none" value="{{ $task->cs_brand }}">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label fw-bold text-secondary">CS HW</label>
                             <input type="text" name="cs_hw" class="form-control rounded border shadow-none" value="{{ $task->cs_hw }}">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">CPI HW</label>
+                            <input type="text" name="cpi_hw" class="form-control rounded border shadow-none" value="{{ $task->cpi_hw }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">PD ASCIS</label>
+                            <input type="text" name="ascis_pd" class="form-control rounded border shadow-none" value="{{ $task->ascis_pd }}">
+                        </div>
+
+                        <!-- BARIS 4: S5 Approval, GHW Set, COI, Green Light -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">S5 Internal Approval</label>
+                            <input type="text" name="s5_internal_approval" class="form-control rounded border shadow-none" value="{{ $task->s5_internal_approval }}">
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label fw-bold text-secondary">GHW Set</label>
                             <input type="text" name="ghw_set" class="form-control rounded border shadow-none" value="{{ $task->ghw_set }}">
                         </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">COI Number</label>
+                            <input type="text" name="coi_number" class="form-control rounded border shadow-none" value="{{ $task->coi_number }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Green Light</label>
+                            <input type="text" name="green_light" class="form-control rounded border shadow-none" value="{{ $task->green_light }}">
+                        </div>
+
+                        <!-- BARIS 5: Dates (Information Received, PLM Released, Target Date) -->
                         <div class="col-md-4">
-                            <label class="form-label fw-bold text-secondary">Dev Status</label>
-                            <select name="development_status" class="form-select rounded border shadow-none" required>
-                                <option value="Active" {{ $task->development_status == 'Active' ? 'selected' : '' }}>Active</option>
-                                <option value="Testing" {{ $task->development_status == 'Testing' ? 'selected' : '' }}>Testing</option>
-                            </select>
+                            <label class="form-label fw-bold text-secondary">Information Received Date</label>
+                            <input type="date" name="information_received" class="form-control rounded border shadow-none" value="{{ $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('Y-m-d') : '' }}">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold text-secondary">Status Board Utama</label>
-                            <select name="status" class="form-select rounded border shadow-none" required>
-                                <option value="To Do" {{ $task->status == 'To Do' ? 'selected' : '' }}>To Do</option>
-                                <option value="In Progress" {{ $task->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="Ready for QA" {{ $task->status == 'Ready for QA' ? 'selected' : '' }}>Ready for QA</option>
-                                <option value="Completed" {{ $task->status == 'Completed' ? 'selected' : '' }}>Completed</option>
-                            </select>
+                            <label class="form-label fw-bold text-secondary">PLM Released Date</label>
+                            <input type="date" name="plm_released" class="form-control rounded border shadow-none" value="{{ $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('Y-m-d') : '' }}">
                         </div>
-                        <div class="col-12">
-                            <label class="form-label fw-bold text-secondary">Remark</label>
-                            <textarea name="remark" class="form-control rounded border shadow-none" rows="2">{{ $task->remark }}</textarea>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-secondary">Target Date</label>
+                            <input type="date" name="end_date" class="form-control rounded border shadow-none" value="{{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('Y-m-d') : '' }}">
                         </div>
+
+                        <!-- BARIS 6: TD, Machine, Board Specs -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">TD (Technical Doc)</label>
+                            <input type="text" name="td" class="form-control rounded border shadow-none" value="{{ $task->td }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Machine</label>
+                            <input type="text" name="machine" class="form-control rounded border shadow-none" value="{{ $task->machine }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Board Type</label>
+                            <input type="text" name="board" class="form-control rounded border shadow-none" value="{{ $task->board }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Board U Code</label>
+                            <input type="text" name="board_u_code" class="form-control rounded border shadow-none" value="{{ $task->board_u_code }}">
+                        </div>
+
+                        <!-- BARIS 7: Board A, Type CM, Die Cut, S10, S11, S12 -->
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">Board A Code</label>
+                            <input type="text" name="board_a_code" class="form-control rounded border shadow-none" value="{{ $task->board_a_code }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">Type CM</label>
+                            <input type="text" name="type_cm" class="form-control rounded border shadow-none" value="{{ $task->type_cm }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">Die Cut Number</label>
+                            <input type="text" name="die_cut_number" class="form-control rounded border shadow-none" value="{{ $task->die_cut_number }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">S10 Number</label>
+                            <input type="text" name="s10_number" class="form-control rounded border shadow-none" value="{{ $task->s10_number }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">S11 Number</label>
+                            <input type="text" name="s11_number" class="form-control rounded border shadow-none" value="{{ $task->s11_number }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">S12 Number</label>
+                            <input type="text" name="s12_number" class="form-control rounded border shadow-none" value="{{ $task->s12_number }}">
+                        </div>
+
+                        <!-- BARIS 8: Cylinder & Colour Parameters -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Cylinder Supplier</label>
+                            <input type="text" name="cylinder_supplier" class="form-control rounded border shadow-none" value="{{ $task->cylinder_supplier }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Repro By</label>
+                            <input type="text" name="repro_by" class="form-control rounded border shadow-none" value="{{ $task->repro_by }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Sequence (Seq)</label>
+                            <input type="text" name="sequence_seq" class="form-control rounded border shadow-none" value="{{ $task->sequence_seq }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Colour</label>
+                            <input type="text" name="colour" class="form-control rounded border shadow-none" value="{{ $task->colour }}">
+                        </div>
+
+                        <!-- BARIS 9: Ink & BAAN Codes -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">BAAN Cylinder Code</label>
+                            <input type="text" name="baan_cylinder" class="form-control rounded border shadow-none" value="{{ $task->baan_cylinder }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Film Number</label>
+                            <input type="text" name="film_number" class="form-control rounded border shadow-none" value="{{ $task->film_number }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Ink System</label>
+                            <input type="text" name="ink_system" class="form-control rounded border shadow-none" value="{{ $task->ink_system }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Ink Code</label>
+                            <input type="text" name="ink_code" class="form-control rounded border shadow-none" value="{{ $task->ink_code }}">
+                        </div>
+
+                        <!-- BARIS 10: Ink Supplier & Technical Measurements -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">Supplier Ink</label>
+                            <input type="text" name="supplier_ink" class="form-control rounded border shadow-none" value="{{ $task->supplier_ink }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold text-secondary">BAAN Ink Code</label>
+                            <input type="text" name="baan_ink_code" class="form-control rounded border shadow-none" value="{{ $task->baan_ink_code }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">Coverage (%)</label>
+                            <input type="number" name="coverage_percent" step="0.01" class="form-control rounded border shadow-none" value="{{ $task->coverage_percent }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">Usage (Kg/TH)</label>
+                            <input type="number" name="usage_kg_th" step="0.01" class="form-control rounded border shadow-none" value="{{ $task->usage_kg_th }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold text-secondary">Angle / Anilox</label>
+                            <input type="text" name="angle_anilox" class="form-control rounded border shadow-none" value="{{ $task->angle_anilox }}">
+                        </div>
+
+                        <!-- BARIS 11: SAP, Remarks, and Attachments -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-secondary">SAP Number</label>
+                            <input type="text" name="sap_number" class="form-control rounded border shadow-none" value="{{ $task->sap_number }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-secondary">Main Design / Attachment Link</label>
+                            <input type="text" name="main_design_attachment" class="form-control rounded border shadow-none" value="{{ $task->main_design_attachment }}" placeholder="e.g. drive-link-file.pdf">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-secondary">Remarks</label>
+                            <input type="text" name="remark" class="form-control rounded border shadow-none" value="{{ $task->remark }}">
+                        </div>
+
                     </div>
                 </div>
-                <div class="modal-footer border-0 bg-light py-2">
-                    <button type="button" class="btn btn-sm btn-secondary rounded-2" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-sm btn-primary rounded-2 px-3" style="background-color: #4154f1; border:none;">Update Specs</button>
+                
+                <div class="modal-footer bg-light border-0 py-3">
+                    <button type="button" class="btn btn-sm btn-secondary rounded-2 px-3" data-bs-dismiss="modal" style="background-color: #e2e8f0; color: #475569; border: none;">Discard</button>
+                    <button type="submit" class="btn btn-sm btn-primary rounded-2 px-4" style="background-color: #4154f1; border: none;"><i class="fa-regular fa-floppy-disk me-1"></i> Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+@endif

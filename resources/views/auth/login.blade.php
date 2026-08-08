@@ -32,7 +32,6 @@
             background-color: #eef2f5;
         }
 
-        /* Background menggunakan gambar dari public/bg-login.png */
         body::before {
             content: "";
             position: absolute;
@@ -45,7 +44,6 @@
             z-index: -1;
         }
 
-        /* Container Pembungkus */
         .login-wrapper {
             position: relative;
             width: 100%;
@@ -53,19 +51,24 @@
             z-index: 2;
         }
 
-        /* Card Utama */
         .login-card {
             width: 100%;
             background-color: #ffffff;
             border-radius: 40px;
-            box-shadow: 0px 25px 70px rgba(1, 41, 112, 0.12);
+            border-top: 2.5px solid var(--amcor-green);
+            border-bottom: 2.5px solid var(--amcor-light-green);
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0px 25px 70px rgba(1, 41, 112, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.05);
             overflow: hidden;
             display: flex;
             min-height: 550px;
             position: relative;
         }
 
-        /* Sisi Kiri: Form Login (Putih Bersih) */
         .login-left-side {
             flex: 1.1;
             padding: 60px 70px;
@@ -76,27 +79,23 @@
             z-index: 3;
         }
 
-        /* SISI KANAN: DOMINAN PUTIH DENGAN CSS MESH GRADIENT (AURORA GLOW) */
         .login-right-side {
             flex: 0.9;
             background-color: #ffffff;
-            /* Trik Mesh Gradient: Pendaran warna di sudut-sudut agar menyatu halus (anti-pelangi kaku) */
             background-image: 
-                radial-gradient(at 85% 15%, rgba(126, 211, 72, 0.18) 0px, transparent 55%),   /* Glow Hijau Muda di atas kanan */
-                radial-gradient(at 95% 85%, rgba(1, 55, 125, 0.16) 0px, transparent 60%),    /* Glow Biru Tua di bawah kanan */
-                radial-gradient(at 35% 95%, rgba(0, 157, 209, 0.14) 0px, transparent 50%),   /* Glow Biru Muda di bawah kiri */
-                radial-gradient(at 90% 50%, rgba(38, 177, 112, 0.1) 0px, transparent 45%);    /* Glow Hijau di tengah kanan */
+                radial-gradient(at 85% 15%, rgba(126, 211, 72, 0.18) 0px, transparent 55%),
+                radial-gradient(at 95% 85%, rgba(1, 55, 125, 0.16) 0px, transparent 60%),
+                radial-gradient(at 35% 95%, rgba(0, 157, 209, 0.14) 0px, transparent 50%),
+                radial-gradient(at 90% 50%, rgba(38, 177, 112, 0.1) 0px, transparent 45%);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 40px;
             z-index: 1;
-            /* Batas lurus abu-abu sangat tipis dan elegan */
             border-left: 1px solid #f3f4f6; 
         }
 
-        /* Desain Tulisan Welcome */
         .welcome-text {
             font-size: 32px;
             color: #2d3748;
@@ -112,7 +111,6 @@
             font-weight: 700;
         }
 
-        /* Desain Label Form */
         .form-label-custom {
             font-size: 11px;
             font-weight: 800;
@@ -123,10 +121,9 @@
             display: block;
         }
 
-        /* Wrapper Input Field */
         .input-wrapper {
             position: relative;
-            margin-bottom: 22px;
+            margin-bottom: 6px;
         }
         .input-icon {
             position: absolute;
@@ -156,7 +153,12 @@
             box-shadow: 0 0 0 3px rgba(1, 55, 125, 0.1);
         }
 
-        /* Eye Icon Toggle Password */
+        /* Tampilan input saat error */
+        .input-field.is-invalid {
+            border-color: #dc3545 !important;
+            background-color: #fff8f8;
+        }
+
         .password-toggle {
             position: absolute;
             right: 16px;
@@ -167,7 +169,6 @@
             font-size: 14px;
         }
 
-        /* Tombol Login Bergradasi Hijau */
         .btn-login-gradient {
             background: linear-gradient(90deg, var(--amcor-light-green) 0%, var(--amcor-green) 100%);
             border: none;
@@ -181,7 +182,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0px 8px 20px rgba(38, 177, 112, 0.15);
-            margin-top: 10px;
+            margin-top: 15px;
         }
         .btn-login-gradient:hover {
             transform: translateY(-1.5px);
@@ -189,17 +190,22 @@
             opacity: 0.95;
         }
 
-        /* Logo Amcor di sebelah Kanan */
+        /* Tampilan tombol saat disabled */
+        .btn-login-gradient:disabled {
+            background: #cbd5e0;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .visual-logo {
             max-width: 65%;
             max-height: 65%;
             object-fit: contain;
-            /* Shadow super halus untuk efek kedalaman di atas background putih */
             filter: drop-shadow(0px 10px 20px rgba(0, 0, 0, 0.06));
             z-index: 3;
         }
 
-        /* Footer Keterangan Sistem */
         .login-footer {
             margin-top: 40px;
             font-size: 11px;
@@ -207,82 +213,42 @@
             text-align: center;
         }
 
-        /* ==========================================
-           RESPONSIVE DESIGN (SEMUA DEVICE)
-           ========================================== */
-
-        /* Tablet (max-width: 991px) */
         @media (max-width: 991px) {
-            .login-wrapper {
-                max-width: 750px;
-            }
-            .login-left-side {
-                padding: 50px 45px;
-            }
-            .welcome-text {
-                font-size: 28px;
-            }
+            .login-wrapper { max-width: 750px; }
+            .login-left-side { padding: 50px 45px; }
+            .welcome-text { font-size: 28px; }
         }
 
-        /* Mobile & Small Screens (max-width: 768px) */
         @media (max-width: 768px) {
-            body {
-                overflow-y: auto; 
-                align-items: flex-start;
-                padding: 30px 15px;
-            }
-            .login-wrapper {
-                max-width: 100%;
-            }
-            .login-card {
-                flex-direction: column;
-                border-radius: 30px;
-                min-height: auto;
-            }
+            body { overflow-y: auto; align-items: flex-start; padding: 30px 15px; }
+            .login-wrapper { max-width: 100%; }
+            .login-card { flex-direction: column; border-radius: 30px; min-height: auto; }
             .login-right-side {
                 order: -1; 
                 padding: 45px 35px;
                 min-height: 180px;
-                background-image: 
-                    radial-gradient(at 50% 50%, rgba(126, 211, 72, 0.12) 0px, transparent 60%),
-                    radial-gradient(at 90% 90%, rgba(1, 55, 125, 0.1) 0px, transparent 70%);
                 border-left: none;
                 border-bottom: 1px solid #f3f4f6;
             }
-            .visual-logo {
-                max-width: 140px;
-            }
-            .login-left-side {
-                padding: 40px 30px;
-                border-radius: 0 0 30px 30px;
-            }
-            .welcome-text {
-                font-size: 26px;
-                text-align: center;
-                margin-bottom: 25px;
-            }
-            .login-footer {
-                margin-top: 30px;
-            }
+            .visual-logo { max-width: 140px; }
+            .login-left-side { padding: 40px 30px; border-radius: 0 0 30px 30px; }
+            .welcome-text { font-size: 26px; text-align: center; margin-bottom: 25px; }
+            .login-footer { margin-top: 30px; }
         }
     </style>
 </head>
 <body>
 
     <div class="login-wrapper">
-        <!-- Box Utama -->
         <div class="login-card">
             
-            <!-- SISI KIRI: FORMULIR -->
             <div class="login-left-side">
-                
-                <!-- Judul -->
                 <h2 class="welcome-text">
                     Hello there,<br>
                     <span>welcome</span> <span class="highlight">back!</span>
                 </h2>
 
-                <!-- Laravel Alert Error -->
+                <!-- Alert Error Laravel -->
                 @if($errors->any())
                     <div class="alert alert-danger border-0 p-2 small mb-3 d-flex align-items-center gap-2" style="background-color: #fde1e1; color: #842029; border-radius: 8px;">
                         <i class="fa-solid fa-circle-exclamation"></i>
@@ -290,21 +256,24 @@
                     </div>
                 @endif
 
-                <!-- Form Login -->
                 <form action="{{ route('login') }}" method="POST">
                     @csrf
                     
                     <!-- Input NIK -->
-                    <div class="mb-2">
+                    <div class="mb-3">
                         <label class="form-label-custom">NIK</label>
                         <div class="input-wrapper">
                             <i class="fa-regular fa-id-card input-icon"></i>
-                            <input type="text" name="nik" class="input-field" required placeholder="Enter your NIK" value="{{ old('nik') }}" autofocus>
+                            <input type="text" name="identity" id="nikInput" class="input-field" required placeholder="Enter your NIK" value="{{ old('identity') }}" autofocus autocomplete="off">
                         </div>
+                        <!-- Pesan Peringatan NIK Harus Angka -->
+                        <small id="nikWarning" class="text-danger font-weight-bold d-none" style="font-size: 11.5px;">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>NIK must be numbers only
+                        </small>
                     </div>
                     
-                    <!-- Input Password -->
-                    <div class="mb-2">
+                    <!-- Input Password (Tanpa Spasi) -->
+                    <div class="mb-3">
                         <label class="form-label-custom">Password</label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-lock input-icon"></i>
@@ -313,39 +282,64 @@
                         </div>
                     </div>
                     
-                    <!-- Tombol Login -->
-                    <button type="submit" class="btn-login-gradient text-uppercase">
+                    <button type="submit" id="btnSubmit" class="btn-login-gradient text-uppercase">
                         LOGIN
                     </button>
                 </form>
 
-                <!-- Footer Informasi -->
                 <div class="login-footer">
                     Tracking Sample System &bull; &copy; {{ date('Y') }} Amcor Flexibles
                 </div>
 
             </div>
 
-            <!-- SISI KANAN: DOMINAN PUTIH BERSIH + LEMBUTNYA GLOW WARNA KHAS AMCOR -->
             <div class="login-right-side">
-                <!-- Logo Amcor -->
                 <img src="{{ asset('logo1.png') }}" alt="Amcor Brand Icon" class="visual-logo">
             </div>
 
         </div>
     </div>
 
-    <!-- Toggle Password Visibility Script -->
     <script>
+        // Toggle Show/Hide Password
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#passwordInput');
 
         togglePassword.addEventListener('click', function () {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
+        });
+
+        // Pengaturan Input NIK: User BISA MENGETIK HURUF, namun langsung memicu peringatan & disable button
+        const nikInput = document.getElementById('nikInput');
+        const nikWarning = document.getElementById('nikWarning');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        nikInput.addEventListener('input', function () {
+            // Regex mengecek apakah ada karakter selain 0-9
+            const containsNonNumeric = /[^0-9]/.test(this.value);
+
+            if (containsNonNumeric) {
+                nikWarning.classList.remove('d-none');
+                nikInput.classList.add('is-invalid');
+                btnSubmit.disabled = true;
+            } else {
+                nikWarning.classList.add('d-none');
+                nikInput.classList.remove('is-invalid');
+                btnSubmit.disabled = false;
+            }
+        });
+
+        // Validasi Password: Mencegah Spasi
+        passwordInput.addEventListener('keydown', function (e) {
+            if (e.key === ' ' || e.keyCode === 32) {
+                e.preventDefault();
+            }
+        });
+        passwordInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\s/g, '');
         });
     </script>
 

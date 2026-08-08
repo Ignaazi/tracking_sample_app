@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <style>
-        /* Paksa semua elemen di dalam workspace menggunakan font Nunito */
         .workspace-container,
-        .workspace-container * {
+        .workspace-container *,
+        .table,
+        .table * {
             font-family: 'Nunito', sans-serif !important;
         }
 
@@ -17,133 +18,207 @@
             background-color: #f6f9ff;
             min-height: 100vh;
         }
+
+        /* Garis Grid Tabel Tegas & Jelas + Teks Rata Tengah Presisi */
+        .table-grid-bordered {
+            border-collapse: collapse !important;
+        }
+
+        .table-grid-bordered th, 
+        .table-grid-bordered td {
+            border: 1px solid #cbd5e1 !important;
+            padding: 8px 10px !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
         
-        .text-wrap-custom {
+        .table-text-unified {
+            font-family: 'Nunito', sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #111827 !important;
             white-space: normal !important;
             word-break: break-word !important;
             overflow-wrap: break-word !important;
             line-height: 1.4;
-            color: #212529 !important; /* Paksa semua teks berwarna hitam */
+            text-align: center !important;
         }
 
-        /* Penulisan kode tetap menggunakan font Nunito namun dikombinasikan dengan ukuran proporsional */
-        .font-code {
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #212529 !important; /* Set warna hitam untuk teks kode */
+        /* FILTER GRID ATAS DENGAN PATTERN BATIK GEOMETRIS HIJAU TUA YANG JELAS & ELEGANT */
+        .filter-card-wrapper {
+            background-color: #ffffff;
+            /* Pattern Batik Kawung / Geometri Hijau Tua SVG SVG Inline Clear */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0 C15 15, 15 45, 30 60 C45 45, 45 15, 30 0 Z M0 30 C15 15, 45 15, 60 30 C45 45, 15 45, 0 30 Z' fill='none' stroke='%2315803d' stroke-width='1.2' stroke-opacity='0.18'/%3E%3Ccircle cx='30' cy='30' r='3' fill='%2315803d' fill-opacity='0.25'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 40px 40px;
+            border: 1.5px solid rgba(21, 128, 61, 0.35) !important;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(21, 128, 61, 0.08);
+            overflow: visible !important;
         }
 
-        .process-pill {
-            font-size: 0.75rem !important;
-            font-weight: 600 !important;
-            padding: 0.25rem 0.6rem !important;
-            border-radius: 6px !important;
-            cursor: pointer;
-            text-transform: capitalize;
-            display: inline-block;
-            margin: 2px;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
-        }
-        
-        .process-pill:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        /* Tema warna status yang seragam, clean, & profesional */
-        .sp-completed { 
-            background-color: #e8f5e9 !important; 
-            color: #2e7d32 !important; 
-            border-color: #c8e6c9 !important;
-        }
-        .sp-progress { 
-            background-color: #fff3e0 !important; 
-            color: #ef6c00 !important; 
-            border-color: #ffe0b2 !important;
-        }
-        .sp-default { 
-            background-color: #f1f5f9 !important; 
-            color: #475569 !important; 
-            border-color: #e2e8f0 !important;
-        }
-
-        /* Custom Baris Filter Style */
         .filter-nav-link {
-            color: #4f5e71;
+            position: relative;
+            background: linear-gradient(135deg, #7ED348 0%, #26B170 100%);
+            color: #ffffff !important;
             font-weight: 700;
-            font-size: 14px;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            display: flex;
+            font-size: 13.5px;
+            padding: 0.55rem 1.3rem;
+            border-radius: 6px;
+            transition: all 0.25s ease-in-out;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
             border: 1px solid transparent;
+            box-shadow: 0 2px 4px rgba(38, 177, 112, 0.15);
+            margin-top: 4px;
+            margin-bottom: 4px;
         }
         
+        .filter-nav-link i {
+            color: #ffffff !important;
+            font-size: 15px;
+            transition: color 0.25s ease-in-out;
+        }
+
         .filter-nav-link:hover {
-            background-color: #f1f5f9;
-            color: #4154f1;
+            background: linear-gradient(135deg, #7ED348 0%, #26B170 100%) !important;
+            filter: brightness(1.08);
+            box-shadow: 0 4px 12px rgba(38, 177, 112, 0.3);
+            transform: translateY(-1px);
+            color: #ffffff !important;
         }
 
+        /* KEADAAN KLIK / AKTIF: ICON & TEKS BERUBAH HIJAU TUA KELIATAN JELAS */
         .filter-nav-link.active {
-            background-color: #e0e4ff !important;
-            color: #4154f1 !important;
-            border-color: rgba(65, 84, 241, 0.15) !important;
+            background: #ffffff !important;
+            color: #15803d !important;
+            border: 1.5px solid #26B170 !important;
+            box-shadow: 0 2px 6px rgba(38, 177, 112, 0.25);
+            filter: none;
+            transform: translateY(0);
         }
 
-        /* Transisi halus saat card disembunyikan */
-        .status-card-wrapper {
-            transition: all 0.3s ease;
+        .filter-nav-link.active i {
+            color: #15803d !important;
         }
 
-        /* Desain Action Buttons Group */
-        .action-btn {
-            width: 34px;
-            height: 34px;
+        /* TOMBOL CREATE TASK HIJAU TUA DI DALAM GRID */
+        .btn-create-task-green {
+            background-color: #15803d !important;
+            border-color: #15803d !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 13.5px;
+            padding: 0.55rem 1.3rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(21, 128, 61, 0.25);
+        }
+
+        .btn-create-task-green:hover {
+            background-color: #166534 !important;
+            border-color: #166534 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(21, 128, 61, 0.35);
+        }
+
+        .count-badge-floating {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 4px;
+            color: #ffffff !important;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            border: none;
+            min-width: 20px;
+            height: 20px;
+            line-height: 1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.18);
+            border: none !important;
+            z-index: 2;
         }
 
-        /* Tombol Edit Kuning/Amber */
-        .action-btn-edit {
-            color: #856404;
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
+        .count-badge-floating.bg-all { background-color: #ef4444; }
+        .count-badge-floating.bg-todo { background-color: #64748b; }
+        .count-badge-floating.bg-progress { background-color: #f97316; }
+        .count-badge-floating.bg-complete { background-color: #3b82f6; }
+
+        /* BADGE HEADER STATUS KOMPAK */
+        .status-header-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 0.3px;
+            color: #ffffff !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            text-transform: uppercase;
         }
 
-        .action-btn-edit:hover {
-            color: #fff;
-            background-color: #ffc107;
-            border-color: #ffc107;
+        .status-pill-todo { background-color: #64748b; }
+        .status-pill-progress { background-color: #f97316; }
+        .status-pill-completed { background-color: #3b82f6; }
+
+        /* LINGKARAN PUTIH MINI DENGAN TEKS SESUAI TEMA */
+        .status-circle-badge {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #ffffff !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9.5px;
+            font-weight: 900;
+            line-height: 1;
         }
 
-        /* Tombol Delete Merah */
-        .action-btn-delete {
-            color: #721c24;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
+        .text-todo { color: #64748b !important; }
+        .text-progress { color: #ea580c !important; }
+        .text-completed { color: #2563eb !important; }
+
+        .status-card-wrapper {
+            transition: all 0.3s ease;
+            border: 1.5px solid rgba(99, 102, 241, 0.25) !important;
+            border-radius: 8px !important;
         }
 
-        .action-btn-delete:hover {
-            color: #fff;
-            background-color: #dc3545;
-            border-color: #dc3545;
-        }
-
-        /* Trik khusus menjaga lekukan border-radius di dalam tabel responsive yang bisa di-scroll */
         .custom-table-wrapper {
             border-radius: 8px;
-            overflow: hidden; /* Mengunci sudut luar */
-            border: 1px solid #dee2e6;
+            overflow: hidden;
+            border: 1.5px solid rgba(99, 102, 241, 0.25) !important;
         }
+
+        .table-header-todo th { background-color: #64748b !important; color: #ffffff !important; font-weight: 700 !important; font-size: 12px !important; text-transform: uppercase; }
+        .table-header-in-progress th { background-color: #f97316 !important; color: #ffffff !important; font-weight: 700 !important; font-size: 12px !important; text-transform: uppercase; }
+        .table-header-completed th { background-color: #3b82f6 !important; color: #ffffff !important; font-weight: 700 !important; font-size: 12px !important; text-transform: uppercase; }
+
+        .action-btn-grad {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff !important;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+        }
+        .action-btn-grad:hover { transform: translateY(-2px); color: #ffffff !important; }
+        .btn-preview-grad { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); }
+        .btn-edit-grad { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); }
+        .btn-delete-grad { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); }
     </style>
 @endpush
 
@@ -151,243 +226,243 @@
 <div class="container-fluid py-3 workspace-container">
 
     <!-- HEADER UTAMA -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <div>
-            <h2 class="fw-bold text-dark mb-1">Project Specification Tracker</h2>
-            <p class="text-muted small mb-0">Comprehensive multi-point project specifications workflow management.</p>
-        </div>
-        <div>
-            <button type="button" class="btn btn-primary btn-sm rounded-3 px-3 py-2 fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal" style="background-color: #4154f1; border-color: #4154f1;">
-                <i class="bi bi-plus-lg"></i> Create Task
-            </button>
-        </div>
+    <div class="mb-3">
+        <h2 class="fw-bold text-dark mb-1">Project Specification Tracker</h2>
+        <p class="text-muted small mb-0">Comprehensive multi-point project specifications workflow management.</p>
     </div>
 
-    <!-- GARIS FILTER DENGAN IKON -->
-    <div class="card border-0 shadow-sm rounded-3 p-2 bg-white mb-4">
-        <div class="d-flex flex-wrap gap-2">
-            <button class="btn filter-nav-link active" data-filter="all">
-                <i class="bi bi-grid-fill"></i> All Projects
-            </button>
-            <button class="btn filter-nav-link" data-filter="todo">
-                <i class="bi bi-list-task text-secondary"></i> To Do
-            </button>
-            <button class="btn filter-nav-link" data-filter="in-progress">
-                <i class="bi bi-play-circle-fill text-warning"></i> In Progress
-            </button>
-            <button class="btn filter-nav-link" data-filter="completed">
-                <i class="bi bi-check-circle-fill text-success"></i> Completed
-            </button>
-        </div>
-    </div>
-    
     @php
+        $countTodo = $todo->count();
+        $countProgress = $inProgress->count();
+        $countCompleted = $completed->count();
+        $countAll = $countTodo + $countProgress + $countCompleted;
+
         $columns = [
-            ['title' => 'To Do', 'status' => 'todo', 'data' => $todo, 'badge_bg' => '#f1f5f9', 'badge_text' => '#475569'],
-            ['title' => 'In Progress', 'status' => 'in-progress', 'data' => $inProgress, 'badge_bg' => '#fff7ed', 'badge_text' => '#ea580c'],
-            ['title' => 'Completed', 'status' => 'completed', 'data' => $completed, 'badge_bg' => '#e8f5e9', 'badge_text' => '#2e7d32']
+            [
+                'title' => 'To Do', 
+                'status' => 'todo', 
+                'data' => $todo, 
+                'pill_class' => 'status-pill-todo',
+                'text_class' => 'text-todo',
+                'header_class' => 'table-header-todo'
+            ],
+            [
+                'title' => 'In Progress', 
+                'status' => 'in-progress', 
+                'data' => $inProgress, 
+                'pill_class' => 'status-pill-progress',
+                'text_class' => 'text-progress',
+                'header_class' => 'table-header-in-progress'
+            ],
+            [
+                'title' => 'Completed', 
+                'status' => 'completed', 
+                'data' => $completed, 
+                'pill_class' => 'status-pill-completed',
+                'text_class' => 'text-completed',
+                'header_class' => 'table-header-completed'
+            ]
         ];
     @endphp
 
-    <!-- CONTAINER MAP KELOMPOK TABEL -->
+    <!-- BARIS FILTER UTAMA + GRID BATIK HIJAU TUA TEGAS + BUTTON CREATE TASK -->
+    <div class="card shadow-sm p-3 mb-4 filter-card-wrapper">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            
+            <!-- GROUP BUTTON FILTER NAVIGASI -->
+            <div class="d-flex flex-wrap gap-3 align-items-center">
+                <button class="btn filter-nav-link active" data-filter="all">
+                    <i class="bi bi-grid-fill"></i> All Projects
+                    <span class="count-badge-floating bg-all">{{ $countAll }}</span>
+                </button>
+                <button class="btn filter-nav-link" data-filter="todo">
+                    <i class="bi bi-list-task"></i> To Do
+                    <span class="count-badge-floating bg-todo">{{ $countTodo }}</span>
+                </button>
+                <button class="btn filter-nav-link" data-filter="in-progress">
+                    <i class="bi bi-arrow-repeat"></i> In Progress
+                    <span class="count-badge-floating bg-progress">{{ $countProgress }}</span>
+                </button>
+                <button class="btn filter-nav-link" data-filter="completed">
+                    <i class="bi bi-check-circle-fill"></i> Completed
+                    <span class="count-badge-floating bg-complete">{{ $countCompleted }}</span>
+                </button>
+            </div>
+
+            <!-- BUTTON CREATE TASK HIJAU TUA MASUK DI DALAM GRID FILTER -->
+            <div>
+                <button type="button" class="btn btn-create-task-green shadow-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                    <i class="bi bi-plus-lg me-1"></i> Create Task
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TABEL DATA PROJECT -->
     <div id="projectSectionsContainer">
         @foreach($columns as $col)
-        <!-- KELOMPOK WORKFLOW STATUS -->
         <div class="card border-0 shadow-sm rounded-3 p-4 bg-white mb-4 status-card-wrapper" data-status="{{ $col['status'] }}">
             
-            <!-- Header Status Kelompok -->
+            <!-- HEADER STATUS SIMPEL -->
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="badge rounded-pill px-3 py-1.5 fw-bold" style="background-color: {{ $col['badge_bg'] }}; color: {{ $col['badge_text'] }}; font-size: 13px;">
-                        {{ $col['title'] }}
-                    </span>
-                    <span class="text-muted fw-semibold font-code" style="color: #212529 !important;">({{ $col['data']->count() }} Projects)</span>
+                <div class="status-header-pill {{ $col['pill_class'] }}">
+                    <span>{{ $col['title'] }}</span>
+                    <span class="status-circle-badge {{ $col['text_class'] }}">{{ $col['data']->count() }}</span>
                 </div>
             </div>
 
-            <!-- Wrapper Khusus Penjaga Lekukan Sudut -->
+            <!-- TABLE WRAPPER -->
             <div class="custom-table-wrapper shadow-sm">
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0" style="font-size: 13px; table-layout: fixed; width: 100%; min-width: 4500px; --bs-table-hover-bg: #f8fafc;">
-                        <thead style="background-color: #f3f6f9; color: #212529; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <table class="table table-grid-bordered align-middle mb-0" style="font-size: 13px; table-layout: fixed; width: 100%; min-width: 4200px; --bs-table-hover-bg: #f8fafc;">
+                        <thead class="{{ $col['header_class'] }}">
                             <tr>
-                                <!-- Headers -->
-                                <th class="py-3 ps-3" style="border-bottom: 2px solid #cbd5e1; width: 60px;">No</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">Item Code</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 150px;">Brand / Family</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 110px;">Market</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 220px;">Project Name</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">PD ASCIS</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 150px;">Customer</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">CS Brand</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 120px;">CS HW</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 120px;">CPI HW</th>
-
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 160px;">S5 Internal Approval</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 120px;">GHW Set</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 150px;">Information Received</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">PLM Released</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">COI Number</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Green Light</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 100px;">TD</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 120px;">Machine</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Board</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">Board U Code</th>
-
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">Board A Code</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 110px;">Type CM</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">Die Cut Number</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">S10 Number</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">S11 Number</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">S12 Number</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 160px;">Cylinder Supplier</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Repro By</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Sequence (Seq)</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Colour</th>
-
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">BAAN Cylinder</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Film Number</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Ink System</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Ink Code</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">Supplier Ink</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">BAAN Ink Code</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 110px;">Coverage (%)</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 120px;">Usage (Kg/TH)</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 140px;">Angle / Anilox</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 250px;">Remarks</th>
-
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 240px;">Main Design / Attachment</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Target Date</th>
-                                
-                                <th class="py-3 text-center" style="border-bottom: 2px solid #cbd5e1; width: 320px;">Internal Status Sub-Proses</th>
-                                <th class="py-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">SAP Number</th>
-                                <th class="py-3 text-end pe-3" style="border-bottom: 2px solid #cbd5e1; width: 130px;">Actions</th>
+                                <th class="py-2.5 text-center" style="width: 60px;">No</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">Item Code</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">SAP Number</th>
+                                <th class="py-2.5 text-center" style="width: 150px;">Brand / Family</th>
+                                <th class="py-2.5 text-center" style="width: 110px;">Market</th>
+                                <th class="py-2.5 text-center" style="width: 220px;">Project Name</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">PD ASCIS</th>
+                                <th class="py-2.5 text-center" style="width: 150px;">Customer</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">CS Brand</th>
+                                <th class="py-2.5 text-center" style="width: 120px;">CS HW</th>
+                                <th class="py-2.5 text-center" style="width: 120px;">CPI HW</th>
+                                <th class="py-2.5 text-center" style="width: 160px;">S5 Internal Approval</th>
+                                <th class="py-2.5 text-center" style="width: 120px;">GHW Set</th>
+                                <th class="py-2.5 text-center" style="width: 150px;">Information Received</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">PLM Released</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">COI Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Green Light</th>
+                                <th class="py-2.5 text-center" style="width: 100px;">TD</th>
+                                <th class="py-2.5 text-center" style="width: 120px;">Machine</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Board</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">Board U Code</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">Board A Code</th>
+                                <th class="py-2.5 text-center" style="width: 110px;">Type CM</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">Die Cut Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">S10 Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">S11 Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">S12 Number</th>
+                                <th class="py-2.5 text-center" style="width: 160px;">Cylinder Supplier</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Repro By</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Sequence (Seq)</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Colour</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">BAAN Cylinder</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Film Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Ink System</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Ink Code</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">Supplier Ink</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">BAAN Ink Code</th>
+                                <th class="py-2.5 text-center" style="width: 110px;">Coverage (%)</th>
+                                <th class="py-2.5 text-center" style="width: 120px;">Usage (Kg/TH)</th>
+                                <th class="py-2.5 text-center" style="width: 140px;">Angle / Anilox</th>
+                                <th class="py-2.5 text-center" style="width: 250px;">Remarks</th>
+                                <th class="py-2.5 text-center" style="width: 240px;">Main Design / Attachment</th>
+                                <th class="py-2.5 text-center" style="width: 130px;">Target Date</th>
+                                <th class="py-2.5 text-center" style="width: 150px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($col['data'] as $index => $task)
                             @php
-                                // Mengunci variabel realId dari baris teratas loop agar konsisten di render ke modal dan route form
-                                $realId = $task->id ?? $task['id'] ?? $task->task_id ?? $task['task_id'] ?? $task->id_task ?? $task['id_task'] ?? null;
+                                $realId = $task->id ?? $task['id'] ?? $task->task_id ?? null;
                             @endphp
-                            <tr style="border-bottom: 1px solid #e9ecef; color: #212529;">
-                                <td class="py-3 ps-3 fw-semibold text-wrap-custom">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</td>
-                                <td class="py-3 fw-bold font-code text-wrap-custom">{{ $task->item_code }}</td>
-                                <td class="py-3 fw-semibold text-wrap-custom">{{ $task->brand_family ?? '-' }}</td>
-                                <td class="py-3 fw-semibold text-wrap-custom text-uppercase">[ {{ $task->market ?? 'INDO' }} ]</td>
-                                <td class="py-3 fw-semibold text-wrap-custom">{{ $task->project_name }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->ascis_pd ?? '-' }}</td>
-                                <td class="py-3 fw-semibold text-wrap-custom">{{ $task->customer }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->cs_brand ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->cs_hw ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->cpi_hw ?? '-' }}</td>
+                            <tr>
+                                <td class="text-center table-text-unified">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</td>
+                                <td class="table-text-unified fw-bold">{{ $task->item_code }}</td>
+                                <td class="table-text-unified">{{ $task->sap_number ?? '000-000' }}</td>
 
-                                <td class="py-3 text-wrap-custom">{{ $task->s5_internal_approval ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->ghw_set ?? '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('d-m-Y') : '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('d-m-Y') : '-' }}</td>
-                                <td class="py-3 text-wrap-custom font-code">{{ $task->coi_number ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->green_light ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->td ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->machine ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->board ?? '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->board_u_code ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->brand_family ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->market ?? 'INDO' }}</td>
+                                <td class="table-text-unified">{{ $task->project_name }}</td>
+                                <td class="table-text-unified">{{ $task->ascis_pd ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->customer }}</td>
+                                <td class="table-text-unified">{{ $task->cs_brand ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->cs_hw ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->cpi_hw ?? '-' }}</td>
 
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->board_a_code ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->type_cm ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom font-code">{{ $task->die_cut_number ?? '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->s10_number ?? '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->s11_number ?? '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->s12_number ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->cylinder_supplier ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->repro_by ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->sequence_seq ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->colour ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->s5_internal_approval ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->ghw_set ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('d-m-Y') : '-' }}</td>
+                                <td class="table-text-unified">{{ $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('d-m-Y') : '-' }}</td>
+                                <td class="table-text-unified">{{ $task->coi_number ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->green_light ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->td ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->machine ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->board ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->board_u_code ?? '-' }}</td>
 
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->baan_cylinder ?? '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->film_number ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom text-break">{{ $task->ink_system ?? '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->ink_code ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom text-break">{{ $task->supplier_ink ?? '-' }}</td>
-                                <td class="py-3 font-code text-wrap-custom">{{ $task->baan_ink_code ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->coverage_percent ? $task->coverage_percent . '%' : '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->usage_kg_th ? $task->usage_kg_th . ' Kg/TH' : '-' }}</td>
-                                <td class="py-3 text-wrap-custom">{{ $task->angle_anilox ?? '-' }}</td>
-                                <td class="py-3 text-wrap-custom" style="font-size: 12.5px;">{{ $task->remark ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->board_a_code ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->type_cm ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->die_cut_number ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->s10_number ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->s11_number ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->s12_number ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->cylinder_supplier ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->repro_by ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->sequence_seq ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->colour ?? '-' }}</td>
 
-                                <td class="py-3 text-wrap-custom">
+                                <td class="table-text-unified">{{ $task->baan_cylinder ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->film_number ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->ink_system ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->ink_code ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->supplier_ink ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->baan_ink_code ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->coverage_percent ? $task->coverage_percent . '%' : '-' }}</td>
+                                <td class="table-text-unified">{{ $task->usage_kg_th ? $task->usage_kg_th . ' Kg/TH' : '-' }}</td>
+                                <td class="table-text-unified">{{ $task->angle_anilox ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->remark ?? '-' }}</td>
+
+                                <td class="table-text-unified text-center">
                                     @if($task->main_design_attachment)
-                                        <a href="#" class="text-decoration-none fw-semibold" style="color: #212529 !important;">
+                                        <a href="#" class="text-decoration-none table-text-unified">
                                             <i class="bi bi-file-earmark-arrow-down-fill me-1"></i>{{ $task->main_design_attachment }}
                                         </a>
                                     @else
                                         <span>-</span>
                                     @endif
                                 </td>
-                                <td class="py-3 text-wrap-custom font-code">
+                                <td class="table-text-unified text-center">
                                     <i class="bi bi-calendar-event me-1"></i>{{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('d M Y') : '18 Jan 2026' }}
                                 </td>
 
-                                <td class="text-center py-3">
-                                    <div class="d-flex flex-wrap justify-content-center gap-1">
+                                <!-- ACTIONS -->
+                                <td class="text-center py-2">
+                                    <div class="d-flex align-items-center justify-content-center gap-1.5">
                                         @if($realId)
-                                            <span class="badge process-pill {{ $task->layout_status == 'Completed' ? 'sp-completed' : ($task->layout_status == 'In Progress' ? 'sp-progress' : 'sp-default') }}" data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $realId }}_layout">Layout</span>
-                                            <span class="badge process-pill {{ $task->baan_status == 'Completed' ? 'sp-completed' : ($task->baan_status == 'In Progress' ? 'sp-progress' : 'sp-default') }}" data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $realId }}_baan">Baan</span>
-                                            <span class="badge process-pill {{ $task->promp_status == 'Completed' ? 'sp-completed' : ($task->promp_status == 'In Progress' ? 'sp-progress' : 'sp-default') }}" data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $realId }}_promp">Prompt</span>
-                                            <span class="badge process-pill {{ $task->job_bag_status == 'Completed' ? 'sp-completed' : ($task->job_bag_status == 'In Progress' ? 'sp-progress' : 'sp-default') }}" data-bs-toggle="modal" data-bs-target="#subProcessModal{{ $realId }}_jobbag">Job Bag</span>
-                                        @else
-                                            <span class="badge process-pill sp-default opacity-50">Layout</span>
-                                            <span class="badge process-pill sp-default opacity-50">Baan</span>
-                                            <span class="badge process-pill sp-default opacity-50">Prompt</span>
-                                            <span class="badge process-pill sp-default opacity-50">Job Bag</span>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="py-3 font-code text-wrap-custom fw-semibold">{{ $task->sap_number ?? '000-000' }}</td>
-
-                                <!-- KOLOM ACTIONS -->
-                                <td class="text-end py-3 pe-3">
-                                    <div class="d-flex align-items-center justify-content-end gap-2">
-                                        @if($realId)
-                                            <!-- Tombol Edit Warna Kuning -->
-                                            <button class="action-btn action-btn-edit" 
-                                                    type="button" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#editTaskModal{{ $realId }}" 
-                                                    title="Edit Specification">
-                                                <i class="bi bi-pencil-square" style="font-size: 15px;"></i>
+                                            <a href="#" class="action-btn-grad btn-preview-grad" data-bs-toggle="modal" data-bs-target="#previewTaskModal{{ $realId }}" title="Preview Details">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+                                            <button class="action-btn-grad btn-edit-grad" type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $realId }}" title="Edit Specification">
+                                                <i class="bi bi-pencil-square"></i>
                                             </button>
-
-                                            <!-- Tombol Delete Warna Merah -->
-                                            <button class="action-btn action-btn-delete" 
-                                                    type="button" 
-                                                    onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data ini?')) document.getElementById('delete-task-{{ $realId }}').submit();" 
-                                                    title="Delete Project">
-                                                <i class="bi bi-trash" style="font-size: 15px;"></i>
+                                            <button class="action-btn-grad btn-delete-grad" type="button" onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data ini?')) document.getElementById('delete-task-{{ $realId }}').submit();" title="Delete Project">
+                                                <i class="bi bi-trash-fill"></i>
                                             </button>
-
-                                            <!-- Form Hidden Delete (Menggunakan route: admin.task.destroy) -->
                                             <form id="delete-task-{{ $realId }}" action="{{ route('admin.task.destroy', ['id' => $realId]) }}" method="POST" class="d-none">
                                                 @csrf 
                                                 @method('DELETE')
                                             </form>
                                         @else
-                                            <button class="action-btn action-btn-edit opacity-50" type="button" disabled><i class="bi bi-pencil-square" style="font-size: 15px;"></i></button>
-                                            <button class="action-btn action-btn-delete opacity-50" type="button" disabled><i class="bi bi-trash" style="font-size: 15px;"></i></button>
+                                            <button class="action-btn-grad btn-preview-grad opacity-50" type="button" disabled><i class="bi bi-eye-fill"></i></button>
+                                            <button class="action-btn-grad btn-edit-grad opacity-50" type="button" disabled><i class="bi bi-pencil-square"></i></button>
+                                            <button class="action-btn-grad btn-delete-grad opacity-50" type="button" disabled><i class="bi bi-trash-fill"></i></button>
                                         @endif
                                     </div>
                                 </td>
                             </tr>
                             
                             @if($realId)
-                                @include('admin.task.partials.modal-sub-process')
                                 @include('admin.task.partials.modal-edit-specs')
                             @endif
 
                             @empty
                             <tr>
-                                <td colspan="45" class="text-center py-5 text-muted border border-dashed bg-white fw-semibold" style="font-style: italic; font-size: 14px;">
-                                    <i class="bi bi-info-circle me-2"></i>No active projects under this status.
+                                <td colspan="44" class="text-center py-4 text-muted border border-dashed bg-white fw-semibold" style="font-style: italic; font-size: 13px;">
+                                    <i class="bi bi-info-circle me-1.5"></i>No active projects under this status.
                                 </td>
                             </tr>
                             @endforelse
@@ -413,17 +488,13 @@
 
         filterButtons.forEach(button => {
             button.addEventListener('click', () => {
-                // 1. Ganti status active class tombol filter
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
 
-                // 2. Ambil nilai status filter yang di-klik
                 const targetFilter = button.getAttribute('data-filter');
 
-                // 3. Logika sembunyikan/tampilkan tabel status kelompok
                 statusCards.forEach(card => {
                     const cardStatus = card.getAttribute('data-status');
-                    
                     if (targetFilter === 'all' || cardStatus === targetFilter) {
                         card.style.display = 'block';
                         setTimeout(() => { card.style.opacity = '1'; }, 50);

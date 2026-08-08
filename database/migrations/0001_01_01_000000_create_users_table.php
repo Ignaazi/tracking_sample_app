@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('nik')->unique(); // Login pakai NIK
+            $table->string('nik')->unique(); // Login menggunakan NIK
             $table->string('password');
-            $table->string('role')->default('administrator'); // Default langsung administrator
+            
+            // Menggunakan Enum untuk membatasi nilai role hanya 4 pilihan ini
+            $table->enum('role', ['Administrator', 'PD', 'QA', 'PLANNER'])->default('Administrator');
+            
             $table->rememberToken();
             $table->timestamps();
         });

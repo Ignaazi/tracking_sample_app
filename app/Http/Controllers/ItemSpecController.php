@@ -3,96 +3,101 @@
 namespace App\Http\Controllers;
 
 use App\Models\ItemSpec;
+use App\Models\Task;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ItemSpecController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $itemSpecs = ItemSpec::orderBy('created_at', 'desc')->get();
-        return view('admin.item-specs.index', compact('itemSpecs'));
+        // 1. Ambil semua Task beserta relasi itemSpecs-nya
+        $tasks = Task::with('itemSpecs')->orderBy('created_at', 'desc')->get();
+
+        // 2. Filter Task berdasarkan status board-nya (To Do, In Progress, Completed)
+        $todoSpecs = $tasks->filter(fn($t) => in_array(strtolower($t->status), ['to do', 'todo']));
+        $inProgressSpecs = $tasks->filter(fn($t) => in_array(strtolower($t->status), ['in progress', 'in-progress', 'progress']));
+        $completedSpecs = $tasks->filter(fn($t) => in_array(strtolower($t->status), ['completed', 'done']));
+
+        return view('admin.item-specs.index', compact('tasks', 'todoSpecs', 'inProgressSpecs', 'completedSpecs'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->validate([
-            'item_name'  => 'required|string|max:255',
-            'sap_code'   => 'required|string|unique:item_specs,sap_code',
-            'brand'      => 'required|string',
-            'model_type' => 'required|string',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Maksimal 2MB
+        $validated = $request->validate([
+            'item_code'               => 'required|exists:task,item_code',
+            'sequence'                => 'required|integer|min:1|max:12',
+            'colour'                  => 'required|string|max:255',
+            'baan_cylinder'           => 'nullable|string|max:255',
+            'film_number'             => 'nullable|string|max:255',
+            'ink_system'              => 'nullable|string|max:255',
+            'ink_code'                => 'nullable|string|max:255',
+            'supplier_ink'            => 'nullable|in:SIEG,DIC,HUBER,SC',
+            'baan_ink_code'           => 'nullable|string|max:255',
+            'coverage'                => 'nullable|numeric|min:0|max:100',
+            'usage_kg_th'             => 'nullable|numeric|min:0',
+            'angle_anilox'            => 'nullable|string|max:255',
+            'remarks'                 => 'nullable|string',
+            'main_design_attachment'  => 'nullable|file|mimes:pdf,ai,psd,jpg,png,zip|max:10240',
+            'project_status'          => 'required|in:To Do,Progress,Completed',
         ]);
 
-        $data = $request->all();
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
+        if ($request->hasFile('main_design_attachment')) {
+            $file = $request->file('main_design_attachment');
             $filename = time() . '_' . $file->getClientOriginalName();
-            // Simpan langsung ke public/uploads/items agar mudah diakses tanpa symlink
-            $file->move(public_path('uploads/items'), $filename);
-            $data['image_path'] = 'uploads/items/' . $filename;
+            $file->move(public_path('uploads/item-specs'), $filename);
+            $validated['main_design_attachment'] = 'uploads/item-specs/' . $filename;
         }
 
-        ItemSpec::create($data);
+        ItemSpec::create($validated);
 
-        return redirect()->back()->with('success', 'Item Specification berhasil ditambahkan, bor!');
+        return redirect()->back()->with('success', 'Spesifikasi warna/tinta berhasil ditambahkan!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $itemSpec = ItemSpec::findOrFail($id);
 
-        $request->validate([
-            'item_name'  => 'required|string|max:255',
-            'sap_code'   => 'required|string|unique:item_specs,sap_code,' . $id,
-            'brand'      => 'required|string',
-            'model_type' => 'required|string',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        $validated = $request->validate([
+            'item_code'               => 'required|exists:task,item_code',
+            'sequence'                => 'required|integer|min:1|max:12',
+            'colour'                  => 'required|string|max:255',
+            'baan_cylinder'           => 'nullable|string|max:255',
+            'film_number'             => 'nullable|string|max:255',
+            'ink_system'              => 'nullable|string|max:255',
+            'ink_code'                => 'nullable|string|max:255',
+            'supplier_ink'            => 'nullable|in:SIEG,DIC,HUBER,SC',
+            'baan_ink_code'           => 'nullable|string|max:255',
+            'coverage'                => 'nullable|numeric|min:0|max:100',
+            'usage_kg_th'             => 'nullable|numeric|min:0',
+            'angle_anilox'            => 'nullable|string|max:255',
+            'remarks'                 => 'nullable|string',
+            'main_design_attachment'  => 'nullable|file|mimes:pdf,ai,psd,jpg,png,zip|max:10240',
+            'project_status'          => 'required|in:To Do,Progress,Completed',
         ]);
 
-        $data = $request->all();
-
-        if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada fisik filenya
-            if ($itemSpec->image_path && file_exists(public_path($itemSpec->image_path))) {
-                @unlink(public_path($itemSpec->image_path));
+        if ($request->hasFile('main_design_attachment')) {
+            if ($itemSpec->main_design_attachment && file_exists(public_path($itemSpec->main_design_attachment))) {
+                @unlink(public_path($itemSpec->main_design_attachment));
             }
-
-            $file = $request->file('image');
+            $file = $request->file('main_design_attachment');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/items'), $filename);
-            $data['image_path'] = 'uploads/items/' . $filename;
+            $file->move(public_path('uploads/item-specs'), $filename);
+            $validated['main_design_attachment'] = 'uploads/item-specs/' . $filename;
         }
 
-        $itemSpec->update($data);
+        $itemSpec->update($validated);
 
-        return redirect()->back()->with('with', 'Data Item Specification berhasil diupdate!');
+        return redirect()->back()->with('success', 'Spesifikasi warna/tinta berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $itemSpec = ItemSpec::findOrFail($id);
-
-        // Hapus file fisik gambar dari penyimpanan lokal sebelum delete row
-        if ($itemSpec->image_path && file_exists(public_path($itemSpec->image_path))) {
-            @unlink(public_path($itemSpec->image_path));
+        if ($itemSpec->main_design_attachment && file_exists(public_path($itemSpec->main_design_attachment))) {
+            @unlink(public_path($itemSpec->main_design_attachment));
         }
-
         $itemSpec->delete();
 
-        return redirect()->back()->with('success', 'Item Specification berhasil dihapus!');
+        return redirect()->back()->with('success', 'Spesifikasi berhasil dihapus!');
     }
 }

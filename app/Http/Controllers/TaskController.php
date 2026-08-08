@@ -10,15 +10,12 @@ class TaskController extends Controller
     // Menampilkan Board Task (Sistem Filter 3 Status Utama)
     public function index(Request $request)
     {
-        // Mengambil semua data task
         $tasks = Task::all();
 
-        // HYBRID CHECK: Jika request datang dari API Flutter (mengharapkan JSON)
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json($tasks, 200);
         }
 
-        // Memetakan data ke 3 Status Utama
         $todo = $tasks->filter(function($task) {
             return in_array(strtolower($task->status), ['to do', 'todo']);
         });
@@ -31,7 +28,6 @@ class TaskController extends Controller
             return in_array(strtolower($task->status), ['completed', 'done']);
         });
 
-        // Penggabungan data lama 'Ready for QA' ke in-progress agar tidak hilang
         $readyQa = $tasks->filter(function($task) {
             return strtolower($task->status) === 'ready for qa';
         });
@@ -46,7 +42,7 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // Tab 1: General Info
+            // General Info
             'project_name'            => 'required|string|max:255',
             'customer'                => 'required|string|max:255',
             'item_code'               => 'required|string|max:255',
@@ -61,7 +57,7 @@ class TaskController extends Controller
             'development_status'      => 'required|in:Active,Testing',
             'end_date'                => 'nullable|date',
 
-            // Tab 2: Technical Specs
+            // Technical Specs
             's5_internal_approval'    => 'nullable|string|max:255',
             'ghw_set'                 => 'nullable|string|max:255',
             'information_received'    => 'nullable|date',
@@ -71,7 +67,7 @@ class TaskController extends Controller
             'td'                      => 'nullable|string|max:255',
             'repro_by'                => 'nullable|string|max:255',
 
-            // Tab 3: Board & Tooling Specs
+            // Board & Tooling Specs
             'machine'                 => 'nullable|string|max:255',
             'board'                   => 'nullable|string|max:255',
             'type_cm'                 => 'nullable|string|max:255',
@@ -84,7 +80,7 @@ class TaskController extends Controller
             'cylinder_supplier'       => 'nullable|string|max:255',
             'baan_cylinder'           => 'nullable|string|max:255',
 
-            // Tab 4: Ink & Colour Specs
+            // Ink & Colour Specs
             'sequence_seq'            => 'nullable|string|max:255',
             'colour'                  => 'nullable|string|max:255',
             'film_number'             => 'nullable|string|max:255',
@@ -95,47 +91,34 @@ class TaskController extends Controller
             'coverage_percent'        => 'nullable|numeric|min:0|max:100',
             'usage_kg_th'             => 'nullable|numeric|min:0',
             'angle_anilox'            => 'nullable|string|max:255',
-            'main_design_attachment'  => 'nullable|string|max:500',
+            'main_design_attachment'  => 'nullable|string|max:255',
             'remark'                  => 'nullable|string',
+
+            // Sub-process Trackers Validation (Sesuai ENUM DB)
+            'layout_status'           => 'nullable|in:Pending,In Progress,Completed',
+            'baan_status'             => 'nullable|in:Pending,In Progress,Completed',
+            'promp_status'            => 'nullable|in:Pending,In Progress,Completed',
+            'job_bag_status'          => 'nullable|in:Pending,In Progress,Completed',
         ]);
 
         $data = $request->all();
 
-        // Nilai default sub-proses
-        $data['layout_status']  = $request->input('layout_status', 'Pending');
-        $data['baan_status']    = $request->input('baan_status', 'Pending');
-        $data['promp_status']   = $request->input('promp_status', 'Pending');
-        $data['job_bag_status'] = $request->input('job_bag_status', 'Pending');
-
-        // Normalisasi format status input ke Database (Enum)
+        // 1. Normalisasi Status Utama Board
         if (isset($data['status'])) {
-            if ($data['status'] === 'todo') {
+            if (in_array(strtolower($data['status']), ['todo', 'to do'])) {
                 $data['status'] = 'To Do';
-            } elseif ($data['status'] === 'in-progress') {
+            } elseif (in_array(strtolower($data['status']), ['in-progress', 'in progress'])) {
                 $data['status'] = 'In Progress';
-            } elseif ($data['status'] === 'completed') {
+            } elseif (in_array(strtolower($data['status']), ['completed', 'done'])) {
                 $data['status'] = 'Completed';
             }
         }
 
-        // Jalankan logika penyesuaian otomatisasi status utama berdasarkan sub-proses
-        if (
-            $data['layout_status'] === 'Completed' && 
-            $data['baan_status'] === 'Completed' && 
-            $data['promp_status'] === 'Completed' && 
-            $data['job_bag_status'] === 'Completed'
-        ) {
-            $data['status'] = 'Completed';
-        } elseif (
-            $data['layout_status'] === 'Pending' && 
-            $data['baan_status'] === 'Pending' && 
-            $data['promp_status'] === 'Pending' && 
-            $data['job_bag_status'] === 'Pending'
-        ) {
-            $data['status'] = 'To Do';
-        } else {
-            $data['status'] = 'In Progress';
-        }
+        // 2. Default Sub-status diset 'Pending' agar cocok dengan ENUM MySQL
+        $data['layout_status']  = $request->input('layout_status', 'Pending');
+        $data['baan_status']    = $request->input('baan_status', 'Pending');
+        $data['promp_status']   = $request->input('promp_status', 'Pending');
+        $data['job_bag_status'] = $request->input('job_bag_status', 'Pending');
 
         $task = Task::create($data);
 
@@ -150,10 +133,9 @@ class TaskController extends Controller
         return redirect()->back()->with('success', 'Project Node successfully created.');
     }
 
-    // Memproses pembaruan data (Update - mendukung parameter ID / item_code)
+    // Memproses pembaruan data (Update)
     public function update(Request $request, $id)
     {
-        // Cari data berdasarkan primary key ID atau item_code jika ID tidak ditemukan
         $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
 
         $request->validate([
@@ -205,9 +187,9 @@ class TaskController extends Controller
             'coverage_percent'        => 'nullable|numeric|min:0|max:100',
             'usage_kg_th'             => 'nullable|numeric|min:0',
             'angle_anilox'            => 'nullable|string|max:255',
-            'main_design_attachment'  => 'nullable|string|max:500',
+            'main_design_attachment'  => 'nullable|string|max:255',
             
-            // Sub-proses trackers
+            // Sub-proses trackers sesuaikan dengan Opsi ENUM Database
             'layout_status'           => 'sometimes|required|in:Pending,In Progress,Completed',
             'baan_status'             => 'sometimes|required|in:Pending,In Progress,Completed',
             'promp_status'            => 'sometimes|required|in:Pending,In Progress,Completed',
@@ -217,21 +199,19 @@ class TaskController extends Controller
 
         $data = $request->all();
 
-        // Normalisasi status saat update
         if (isset($data['status'])) {
-            if ($data['status'] === 'todo') {
+            if (in_array(strtolower($data['status']), ['todo', 'to do'])) {
                 $data['status'] = 'To Do';
-            } elseif ($data['status'] === 'in-progress') {
+            } elseif (in_array(strtolower($data['status']), ['in-progress', 'in progress'])) {
                 $data['status'] = 'In Progress';
-            } elseif ($data['status'] === 'completed') {
+            } elseif (in_array(strtolower($data['status']), ['completed', 'done'])) {
                 $data['status'] = 'Completed';
             }
         }
 
-        // Terapkan data input ke model
         $task->fill($data);
 
-        // OTOMATISASI WORKFLOW STATUS UTAMA
+        // Otomatisasi Status Utama berdasarkan Sub-proses
         $layout = $task->layout_status;
         $baan   = $task->baan_status;
         $promp  = $task->promp_status;
@@ -258,7 +238,89 @@ class TaskController extends Controller
         return redirect()->back()->with('success', 'Project specs successfully updated.');
     }
 
-    // Memproses hapus data task (Delete)
+    public function subProcess(Request $request, $id)
+    {
+        $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
+        $type = $request->query('type', 'layout');
+
+        $subTypes = [
+            'layout' => ['title' => 'Layout Management Process', 'short' => 'Layout', 'field' => 'layout_status', 'icon' => 'bi-layers-half'],
+            'baan'   => ['title' => 'BaaN ERP System Mapping', 'short' => 'BaaN', 'field' => 'baan_status', 'icon' => 'bi-cpu-fill'],
+            'promp'  => ['title' => 'Promp Quality Verification', 'short' => 'Prompt', 'field' => 'promp_status', 'icon' => 'bi-terminal-fill'],
+            'jobbag' => ['title' => 'Job Bag Production Release', 'short' => 'Job Bag', 'field' => 'job_bag_status', 'icon' => 'bi-briefcase-fill']
+        ];
+
+        if (!array_key_exists($type, $subTypes)) {
+            $type = 'layout';
+        }
+
+        $currentTypeInfo = $subTypes[$type];
+        $currentStatus = $task->{$currentTypeInfo['field']} ?? 'Pending';
+
+        return view('admin.task.partials.sub-process', compact('task', 'type', 'subTypes', 'currentTypeInfo', 'currentStatus'));
+    }
+
+    public function previewSubProcess(Request $request, $id)
+    {
+        $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
+        $type = $request->query('type', 'layout');
+
+        $subTypes = [
+            'layout' => ['title' => 'Layout Management Process', 'short' => 'Layout', 'field' => 'layout_status', 'icon' => 'bi-layers-half'],
+            'baan'   => ['title' => 'BaaN ERP System Mapping', 'short' => 'BaaN', 'field' => 'baan_status', 'icon' => 'bi-cpu-fill'],
+            'promp'  => ['title' => 'Promp Quality Verification', 'short' => 'Prompt', 'field' => 'promp_status', 'icon' => 'bi-terminal-fill'],
+            'jobbag' => ['title' => 'Job Bag Production Release', 'short' => 'Job Bag', 'field' => 'job_bag_status', 'icon' => 'bi-briefcase-fill']
+        ];
+
+        if (!array_key_exists($type, $subTypes)) {
+            $type = 'layout';
+        }
+
+        $currentTypeInfo = $subTypes[$type];
+
+        return view('admin.task.partials.previewSub-process', compact('task', 'type', 'subTypes', 'currentTypeInfo'));
+    }
+
+    public function updateSubProcess(Request $request, $id)
+    {
+        $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
+        $type = $request->input('type', 'layout');
+
+        $request->validate([
+            'status' => 'required|in:Pending,In Progress,Completed',
+        ]);
+
+        $fieldMap = [
+            'layout' => 'layout_status',
+            'baan'   => 'baan_status',
+            'promp'  => 'promp_status',
+            'jobbag' => 'job_bag_status',
+        ];
+
+        if (isset($fieldMap[$type])) {
+            $field = $fieldMap[$type];
+            $task->{$field} = $request->input('status');
+
+            $layout = $task->layout_status;
+            $baan   = $task->baan_status;
+            $promp  = $task->promp_status;
+            $jobBag = $task->job_bag_status;
+
+            if ($layout === 'Completed' && $baan === 'Completed' && $promp === 'Completed' && $jobBag === 'Completed') {
+                $task->status = 'Completed';
+            } elseif ($layout === 'Pending' && $baan === 'Pending' && $promp === 'Pending' && $jobBag === 'Pending') {
+                $task->status = 'To Do';
+            } else {
+                $task->status = 'In Progress';
+            }
+
+            $task->save();
+        }
+
+        return redirect()->route('admin.task.subProcess', ['id' => $task->id, 'type' => $type])
+                         ->with('success', 'Status sub-proses berhasil diperbarui!');
+    }
+
     public function destroy(Request $request, $id)
     {
         $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
@@ -274,7 +336,6 @@ class TaskController extends Controller
         return redirect()->back()->with('success', 'Project node successfully deleted.');
     }
 
-    // Menampilkan halaman table list terpisah
     public function tableIndex()
     {
         $tasks = Task::orderBy('created_at', 'desc')->get();

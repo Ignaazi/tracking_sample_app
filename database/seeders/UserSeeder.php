@@ -13,11 +13,35 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Administrator Amcor',
-            'nik' => '123456', // NIK untuk login kamu nanti, bor!
-            'password' => Hash::make('admin123'), // Password di-hash biar aman
-            'role' => 'administrator',
-        ]);
+        $users = [
+            [
+                'name' => 'Administrator Amcor',
+                'nik' => '123456',
+                'password' => Hash::make('admin123'),
+                'role' => 'Administrator',
+            ],
+            [
+                'name' => 'Project Development User',
+                'nik' => '223456',
+                'password' => Hash::make('pd123'),
+                'role' => 'PD',
+            ],
+            [
+                'name' => 'Quality Assurance User',
+                'nik' => '323456',
+                'password' => Hash::make('qa123'),
+                'role' => 'QA',
+            ],
+            [
+                'name' => 'Planner User',
+                'nik' => '423456',
+                'password' => Hash::make('planner123'),
+                'role' => 'PLANNER',
+            ],
+        ];
+
+        foreach ($users as $user) {
+            User::create($user);
+        }
     }
 }

@@ -12,12 +12,28 @@ class ItemSpec extends Model
     protected $table = 'item_specs';
 
     protected $fillable = [
-        'item_name',
-        'sap_code',
-        'brand',
-        'model_type',
-        'dimensions',
-        'requirements',
-        'image_path'
+        'item_code',
+        'sequence',
+        'colour',
+        'baan_cylinder',
+        'film_number',
+        'ink_system',
+        'ink_code',
+        'supplier_ink',
+        'baan_ink_code',
+        'coverage',
+        'usage_kg_th',
+        'angle_anilox',
+        'remarks',
+        'main_design_attachment',
+        'project_status',
     ];
+
+    /**
+     * Relasi balik ke Model Task/Project Utama menggunakan item_code
+     */
+    public function task()
+    {
+        return $this->belongsTo(Task::class, 'item_code', 'item_code');
+    }
 }

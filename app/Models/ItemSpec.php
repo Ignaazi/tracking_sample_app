@@ -29,9 +29,6 @@ class ItemSpec extends Model
         'project_status',
     ];
 
-    /**
-     * Relasi balik ke Model Task/Project Utama menggunakan item_code
-     */
     public function task()
     {
         return $this->belongsTo(Task::class, 'item_code', 'item_code');

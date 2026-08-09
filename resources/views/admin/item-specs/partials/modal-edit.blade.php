@@ -5,6 +5,9 @@
                 @csrf
                 @method('PUT')
                 
+                <!-- FIX BUG: Kirimkan item_code agar lolos validasi controller -->
+                <input type="hidden" name="item_code" value="{{ $spec->item_code }}">
+
                 <div class="modal-header text-white" style="background-color: #0f5132;">
                     <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Printing & Ink Specification</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>

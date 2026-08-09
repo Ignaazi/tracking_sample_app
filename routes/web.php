@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/task/{id}/sub-process', [TaskController::class, 'subProcess'])->name('task.subProcess');
         Route::put('/task/{id}/sub-process', [TaskController::class, 'updateSubProcess'])->name('task.updateSubProcess');
         
-        // --- ROUTE BARU: Preview & Print A4 Job Sheet Sub-Process ---
+        // --- ROUTE: Preview & Print A4 Job Sheet Sub-Process ---
         Route::get('/task/{id}/sub-process/preview', [TaskController::class, 'previewSubProcess'])->name('task.previewSubProcess');
         
         Route::put('/task/{id}', [TaskController::class, 'update'])->name('task.update');
@@ -67,8 +67,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/emails/{id}/toggle-star', [EmailController::class, 'toggleStar'])->name('emails.star');
         Route::delete('/emails/{id}', [EmailController::class, 'destroy'])->name('emails.destroy');
 
-        // MODULE: ITEM SPECIFICATION & REQUIREMENTS (TABEL BERFOTO)
+            // MODULE: ITEM SPECIFICATION & REQUIREMENTS
         Route::get('/item-specs', [ItemSpecController::class, 'index'])->name('item-specs.index');
+        Route::get('/item-specs/create', [ItemSpecController::class, 'create'])->name('item-specs.create');
+        Route::get('/item-specs/{id}', [ItemSpecController::class, 'show'])->name('item-specs.show'); // <--- TAMBAHKAN BARIS INI
         Route::post('/item-specs', [ItemSpecController::class, 'store'])->name('item-specs.store');
         Route::put('/item-specs/{id}', [ItemSpecController::class, 'update'])->name('item-specs.update');
         Route::delete('/item-specs/{id}', [ItemSpecController::class, 'destroy'])->name('item-specs.destroy');

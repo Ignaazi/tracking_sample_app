@@ -1,173 +1,395 @@
 @extends('layouts.admin')
 
-@section('title', 'Module Timeline Tracking')
+@section('title', 'Multi-series Timeline Gantt')
+
+@push('styles')
+    <!-- Frappe Gantt CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        .dev-analytics * {
+            font-family: 'Nunito', sans-serif !important;
+        }
+
+        .chart-card {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
+
+        .chart-header {
+            background: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.25rem 1.5rem;
+        }
+
+        /* STYLING BADGE STATUS LEGEND (DIBALIKIN KE WARNA SEMULA: BIRU, OREN, HIJAU) */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .status-pill .count-circle {
+            width: 15px;
+            height: 15px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        /* COLOR PALETTE ORIGINAL */
+        .pill-todo { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .pill-todo .count-circle { color: #1d4ed8; }
+
+        .pill-progress { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .pill-progress .count-circle { color: #b45309; }
+
+        .pill-completed { background: linear-gradient(135deg, #10b981, #059669); }
+        .pill-completed .count-circle { color: #047857; }
+
+        /* STYLING BUTTON FILTER SKALA WAKTU BERGARIS */
+        .btn-filter-group {
+            border: 1.5px solid #10b981;
+            border-radius: 8px;
+            padding: 2px;
+            background-color: #ffffff;
+            display: inline-flex;
+            gap: 2px;
+        }
+
+        .btn-filter-custom {
+            background-color: transparent !important;
+            color: #059669 !important;
+            border: none !important;
+            font-weight: 700 !important;
+            font-size: 11.5px !important;
+            padding: 5px 14px !important;
+            border-radius: 6px !important;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-filter-custom:hover {
+            background-color: rgba(16, 185, 129, 0.12) !important;
+            color: #047857 !important;
+        }
+
+        .btn-filter-custom.active {
+            background: linear-gradient(135deg, #22c55e, #10b981) !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 6px rgba(34, 197, 94, 0.35) !important;
+        }
+
+        /* SCROLL HORIZONTAL PADA GANTT CHART */
+        .gantt-target-wrapper {
+            background: #ffffff;
+            max-height: 420px;
+            border-radius: 0 0 12px 12px;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+
+        #gantt-container {
+            display: block;
+            min-width: 1400px !important;
+            height: auto;
+        }
+
+        .gantt .grid-row {
+            fill: #ffffff !important;
+            stroke: #f1f5f9 !important;
+            stroke-width: 1px !important;
+        }
+        
+        .gantt .grid-header { 
+            fill: #f8fafc !important; 
+            stroke: #e2e8f0 !important; 
+        }
+
+        .gantt .tick { 
+            display: none !important; 
+        }
+
+        .gantt .upper-header { font-size: 11px; fill: #334155 !important; font-weight: 700; }
+        .gantt .lower-header { font-size: 10px; fill: #64748b !important; }
+        .gantt .bar-label { fill: #ffffff !important; font-size: 11px; font-weight: 700; }
+
+        .gantt-container .gantt-to-do .bar { fill: #3b82f6 !important; }
+        .gantt-container .gantt-to-do .bar-progress { fill: #1d4ed8 !important; }
+
+        .gantt-container .gantt-in-progress .bar { fill: #f59e0b !important; }
+        .gantt-container .gantt-in-progress .bar-progress { fill: #b45309 !important; }
+
+        .gantt-container .gantt-completed .bar { fill: #10b981 !important; }
+        .gantt-container .gantt-completed .bar-progress { fill: #047857 !important; }
+
+        /* ========================================================= */
+        /* STYLING TABEL DI BAWAH */
+        /* ========================================================= */
+        .table-responsive {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+
+        .table-custom {
+            white-space: nowrap !important;
+            min-width: 1350px !important;
+            border-collapse: collapse !important;
+        }
+
+        /* HEADER TABEL KHUSUS PAKAI GRADIENT SAMA DENGAN GAMBAR */
+        .table-custom th {
+            background: linear-gradient(135deg, #005596 0%, #0099c8 50%, #15e638 100%) !important;
+            color: #ffffff !important;
+            font-weight: 800;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #005596 !important;
+            padding: 12px 14px;
+            text-align: center !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+        }
+
+        /* ISI TABEL: KOTAK BERGARIS + TULISAN RATA TENGAH */
+        .table-custom td {
+            font-size: 12px;
+            font-weight: 600;
+            color: #000000 !important;
+            padding: 11px 14px;
+            vertical-align: middle;
+            text-align: center !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+
+        /* ZEBRA STRIPING BARIS TABEL */
+        .table-custom tbody tr:nth-child(odd) {
+            background-color: #EBF5FF !important;
+        }
+
+        .table-custom tbody tr:nth-child(even) {
+            background-color: #F0FDF4 !important;
+        }
+
+        .table-custom tbody tr:hover {
+            background-color: #D1E9FF !important;
+        }
+
+        /* BADGE HEADER TABLE "1 RECORD(S)" GRADIENT */
+        .badge-gradient-record {
+            background: linear-gradient(135deg, #005596 0%, #0099c8 50%, #15e638 100%) !important;
+            color: #ffffff !important;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* BADGE STATUS DENGAN WARNA ORIGINAL (SEPERTI SEMULA) */
+        .badge-status-completed {
+            background-color: #10B981;
+            color: #ffffff !important;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+
+        .badge-status-progress {
+            background-color: #F59E0B;
+            color: #ffffff !important;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+
+        .badge-status-todo {
+            background-color: #3B82F6;
+            color: #ffffff !important;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+
+        .badge-status-inactive {
+            background-color: #64748B;
+            color: #ffffff !important;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+        }
+    </style>
+@endpush
 
 @section('content')
+<div class="dev-analytics container-fluid py-4 px-4">
 
-    <!-- Include Frappe Gantt CSS & JS via CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
-    <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
-
-    <div class="pagetitle mb-4">
-        <h1 class="fw-bold text-dark mb-1" style="font-size: 24px;">Module Timeline</h1>
-        <p class="text-muted mb-0" style="font-size: 13px;">Advanced product development roadmap with interactive gantt grid scaling.</p>
+    <!-- HEADER TITLE PAGE -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1 fs-4">Project Development Roadmap</h3>
+            <p class="text-muted small mb-0">Interactive Gantt chart roadmap based on Task database status.</p>
+        </div>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show border-0 mb-4" role="alert" style="background-color: #e1fcef; color: #0f5132; font-size: 13px;">
-            <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
+        <div class="alert alert-success alert-dismissible fade show border-0 mb-4 shadow-sm" role="alert" style="background-color: #dcfce7; color: #15803d; font-size: 13px;">
+            {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
-    <!-- ================================================================ -->
-    <!-- 🌟 ADVANCED INTERACTIVE TIMELINE ROADMAP (LIBRARY DRIVEN)       -->
-    <!-- ================================================================ -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
-            <div class="d-flex align-items-center gap-3">
-                <h5 class="card-title m-0 fw-bold" style="color: #012970; font-size: 16px;">
-                    <i class="fa-solid fa-network-wired me-2 text-primary"></i>Enterprise Gantt Interactive
-                </h5>
-                <!-- Pengatur Skala Waktu Gunting Grid -->
-                <div class="btn-group btn-group-sm shadow-sm" role="group">
-                    <button type="button" class="btn btn-outline-primary active" onclick="changeView('Day')">Day</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="changeView('Week')">Week</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="changeView('Month')">Month</button>
+    <!-- 1. FRAPPE GANTT ROADMAP CHART -->
+    <div class="card chart-card mb-4">
+        <div class="chart-header d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <h6 class="fw-bold text-dark mb-2.5" style="font-size: 16px;">
+                    Enterprise Interactive Gantt
+                </h6>
+
+                <!-- LEGEND STATUS BULAT PANJANG (WARNA DIKEMBALIKAN KE SEMULA) -->
+                @php
+                    $countToDo = $tasks->where('status', 'To Do')->count();
+                    $countInProgress = $tasks->where('status', 'In Progress')->count();
+                    $countCompleted = $tasks->where('status', 'Completed')->count();
+                @endphp
+
+                <div class="d-flex align-items-center gap-2">
+                    <div class="status-pill pill-todo">
+                        <span>To Do</span>
+                        <div class="count-circle">{{ $countToDo }}</div>
+                    </div>
+
+                    <div class="status-pill pill-progress">
+                        <span>In Progress</span>
+                        <div class="count-circle">{{ $countInProgress }}</div>
+                    </div>
+
+                    <div class="status-pill pill-completed">
+                        <span>Completed</span>
+                        <div class="count-circle">{{ $countCompleted }}</div>
+                    </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary btn-sm rounded px-3 fw-bold" style="font-size: 12px; background-color: #4154f1;" data-bs-toggle="modal" data-bs-target="#addTimelineModal">
-                <i class="fa-solid fa-plus me-1"></i> Add Schedule Task
-            </button>
+
+            <!-- TOMBOL FILTER SKALA WAKTU BERGARIS -->
+            <div class="btn-filter-group shadow-sm" role="group">
+                <button type="button" class="btn btn-filter-custom active" onclick="changeGanttView('Day', this)">Day</button>
+                <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Week', this)">Week</button>
+                <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Month', this)">Month</button>
+                <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Year', this)">Year</button>
+            </div>
         </div>
 
-        <div class="card-body p-0 bg-light">
-            <!-- Tempat Rander Canvas Gantt Chart Utama -->
-            <div class="gantt-target-wrapper overflow-auto" style="background: #ffffff; max-height: 500px;">
+        <div class="card-body p-0">
+            <div class="gantt-target-wrapper p-3">
                 <svg id="gantt-container"></svg>
             </div>
         </div>
     </div>
 
-    <!-- ================================================================ -->
-    <!-- TABEL LOG MANAGEMENT DATA (CRUD RECORD)                           -->
-    <!-- ================================================================ -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3 border-0">
-            <h6 class="m-0 fw-bold text-secondary" style="font-size: 14px;"><i class="fa-solid fa-list-check me-2"></i>Timeline Tasks Registry</h6>
+    <!-- 2. DATA TABLE RECORD -->
+    <div class="card chart-card">
+        <div class="chart-header d-flex align-items-center justify-content-between">
+            <h6 class="fw-bold mb-0" style="color: #005596;">Task Master Registry</h6>
+            <span class="badge badge-gradient-record font-monospace">{{ $tasks->count() }} Record(s)</span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
-                    <thead class="table-light text-muted">
+                <table class="table table-custom align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th class="ps-3 py-3">Project / Task</th>
-                            <th>Phase Tier</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Progress</th>
-                            <th class="pe-3 text-end" style="width: 120px;">Actions</th>
+                            <th style="width: 50px;">No.</th>
+                            <th>Item Code</th>
+                            <th>Project Name</th>
+                            <th>Customer</th>
+                            <th>Brand Family</th>
+                            <th>Market</th>
+                            <th>Info Received</th>
+                            <th>PLM Released</th>
+                            <th>SAP Number</th>
+                            <th>Development</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($timelines as $task)
+                        @forelse($tasks as $key => $task)
                         <tr>
-                            <td class="ps-3">
-                                <div class="fw-bold text-dark">{{ $task->project_name }}</div>
-                                <small class="text-muted">{{ $task->task_title }}</small>
+                            <td class="fw-bold">{{ sprintf('%02d', $key + 1) }}</td>
+                            <td class="font-monospace fw-bold">{{ $task->item_code }}</td>
+                            <td class="fw-bold">{{ $task->project_name ?? '-' }}</td>
+                            <td>{{ $task->customer ?? '-' }}</td>
+                            <td>{{ $task->brand_family ?? '-' }}</td>
+                            <td>{{ $task->market ?? '-' }}</td>
+                            <td>
+                                @if($task->information_received)
+                                    <span class="font-monospace fw-bold">{{ date('Y-m-d', strtotime($task->information_received)) }}</span>
+                                @else
+                                    <span>-</span>
+                                @endif
                             </td>
+                            <td>
+                                @if($task->plm_released)
+                                    <span class="font-monospace fw-bold">{{ date('Y-m-d', strtotime($task->plm_released)) }}</span>
+                                @else
+                                    <span>-</span>
+                                @endif
+                            </td>
+                            <td><code class="fw-bold" style="color: #000000;">{{ $task->sap_number ?? '-' }}</code></td>
+                            
+                            <!-- DEVELOPMENT STATUS BADGE -->
                             <td>
                                 @php
-                                    $badgeColor = match($task->phase) {
-                                        'Plan' => '#3b82f6',
-                                        'Test' => '#f59e0b',
-                                        'Develop' => '#10b981',
-                                        'Launch' => '#6b7280',
-                                        default => '#6c757d'
+                                    $devBadgeClass = match($task->development_status) {
+                                        'Active' => 'badge-status-completed',
+                                        'Pending' => 'badge-status-progress',
+                                        default => 'badge-status-inactive'
                                     };
                                 @endphp
-                                <span class="badge text-white" style="background-color: {{ $badgeColor }}; font-size: 11px;">
-                                    {{ $task->phase }}
+                                <span class="badge {{ $devBadgeClass }}">
+                                    {{ $task->development_status ?? 'Active' }}
                                 </span>
                             </td>
-                            <td><span class="badge bg-light text-dark border font-monospace">{{ date('Y-m-d', strtotime($task->start_date)) }}</span></td>
-                            <td><span class="badge bg-light text-dark border font-monospace">{{ date('Y-m-d', strtotime($task->end_date)) }}</span></td>
+
+                            <!-- TASK STATUS BADGE -->
                             <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-bold text-primary">{{ $task->progress_percent }}%</span>
-                                </div>
-                            </td>
-                            <td class="pe-3 text-end">
-                                <div class="d-inline-flex gap-1">
-                                    <button class="btn btn-sm btn-outline-primary border-0 p-1 px-2" data-bs-toggle="modal" data-bs-target="#editTimelineModal{{ $task->id }}">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </button>
-                                    <form action="{{ route('admin.timelines.destroy', $task->id) }}" method="POST" class="m-0" onsubmit="return confirm('Delete this timeline task?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0 p-1 px-2">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                                @php
+                                    $badgeClass = match($task->status) {
+                                        'Completed' => 'badge-status-completed',
+                                        'In Progress' => 'badge-status-progress',
+                                        default => 'badge-status-todo'
+                                    };
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">
+                                    {{ $task->status }}
+                                </span>
                             </td>
                         </tr>
-
-                        <!-- MODAL EDIT TIMELINE -->
-                        <div class="modal fade" id="editTimelineModal{{ $task->id }}" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content border-0 shadow">
-                                    <div class="modal-header border-0 bg-light py-3">
-                                        <h5 class="modal-title fw-bold" style="font-size: 16px; color:#012970;"><i class="fa-solid fa-pen-to-square me-2"></i>Modify Task Schedule</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <form action="{{ route('admin.timelines.update', $task->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-body p-4" style="font-size: 13px;">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold text-secondary">Project Name</label>
-                                                <input type="text" name="project_name" class="form-control form-control-sm rounded" value="{{ $task->project_name }}" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold text-secondary">Phase Group</label>
-                                                <select name="phase" class="form-select form-select-sm rounded" required>
-                                                    <option value="Plan" {{ $task->phase == 'Plan' ? 'selected' : '' }}>Plan</option>
-                                                    <option value="Test" {{ $task->phase == 'Test' ? 'selected' : '' }}>Test</option>
-                                                    <option value="Develop" {{ $task->phase == 'Develop' ? 'selected' : '' }}>Develop</option>
-                                                    <option value="Launch" {{ $task->phase == 'Launch' ? 'selected' : '' }}>Launch</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold text-secondary">Task Title</label>
-                                                <input type="text" name="task_title" class="form-control form-control-sm rounded" value="{{ $task->task_title }}" required>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <div class="col">
-                                                    <label class="form-label fw-bold text-secondary">Start Date</label>
-                                                    <input type="date" name="start_date" class="form-control form-control-sm rounded" value="{{ $task->start_date }}" required>
-                                                </div>
-                                                <div class="col">
-                                                    <label class="form-label fw-bold text-secondary">End Date</label>
-                                                    <input type="date" name="end_date" class="form-control form-control-sm rounded" value="{{ $task->end_date }}" required>
-                                                </div>
-                                            </div>
-                                            <div class="mb-0">
-                                                <label class="form-label fw-bold text-secondary">Progress Percent (0 - 100%)</label>
-                                                <input type="number" name="progress_percent" class="form-control form-control-sm rounded" min="0" max="100" value="{{ $task->progress_percent }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer border-0 bg-light py-2">
-                                            <button type="button" class="btn btn-sm btn-secondary rounded" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-sm btn-primary rounded" style="background-color: #4154f1;">Save Changes</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">No timeline log records found.</td>
+                            <td colspan="11" class="text-center py-4 fw-bold" style="color: #000000;">
+                                Belum ada data project task yang tersimpan.
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -176,144 +398,67 @@
         </div>
     </div>
 
-    <!-- MODAL TAMBAH TIMELINE -->
-    <div class="modal fade" id="addTimelineModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header border-0 bg-light py-3">
-                    <h5 class="modal-title fw-bold" style="font-size: 16px; color:#012970;"><i class="fa-solid fa-calendar-plus me-2"></i>New Task Schedule</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form action="{{ route('admin.timelines.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-body p-4" style="font-size: 13px;">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-secondary">Project Name</label>
-                            <input type="text" name="project_name" class="form-control form-control-sm rounded" placeholder="Contoh: AMCOR Scan Scanner System" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-secondary">Timeline Phase</label>
-                            <select name="phase" class="form-select form-select-sm rounded" required>
-                                <option value="" selected disabled>-- Pilih Fase Kategori --</option>
-                                <option value="Plan">Plan</option>
-                                <option value="Test">Test</option>
-                                <option value="Develop">Develop</option>
-                                <option value="Launch">Launch</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-secondary">Task Title</label>
-                            <input type="text" name="task_title" class="form-control form-control-sm rounded" placeholder="Contoh: Subcontractor Selection" required>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label class="form-label fw-bold text-secondary">Start Date</label>
-                                <input type="date" name="start_date" class="form-control form-control-sm rounded" required>
-                            </div>
-                            <div class="col">
-                                <label class="form-label fw-bold text-secondary">End Date</label>
-                                <input type="date" name="end_date" class="form-control form-control-sm rounded" required>
-                            </div>
-                        </div>
-                        <div class="mb-0">
-                            <label class="form-label fw-bold text-secondary">Initial Progress (%)</label>
-                            <input type="number" name="progress_percent" class="form-control form-control-sm rounded" min="0" max="100" value="0" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0 bg-light py-2">
-                        <button type="button" class="btn btn-sm btn-secondary rounded" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-sm btn-primary rounded" style="background-color: #4154f1;">Submit Task</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+</div>
+@endsection
 
-    <!-- ================================================================ -->
-    <!-- JAVASCRIPT LOGIC UNTUK FRAEPPE GANTT ENGINE                      -->
-    <!-- ================================================================ -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Passing data dari database Laravel Eloquent ke format Array JavaScript Object
-            const tasksData = [
-                @foreach($timelines as $task)
+@push('scripts')
+<!-- Frappe Gantt JS -->
+<script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const ganttTasks = [
+            @foreach($tasks as $task)
+                @php
+                    $startDate = !empty($task->information_received) ? date('Y-m-d', strtotime($task->information_received)) : date('Y-m-d', strtotime($task->created_at ?? now()));
+                    $endDate = !empty($task->plm_released) ? date('Y-m-d', strtotime($task->plm_released)) : date('Y-m-d', strtotime($startDate . ' + 14 days'));
+                @endphp
                 {
                     id: 'Task-{{ $task->id }}',
-                    name: '[{{ $task->phase }}] {{ $task->project_name }}',
-                    start: '{{ date("Y-m-d", strtotime($task->start_date)) }}',
-                    end: '{{ date("Y-m-d", strtotime($task->end_date)) }}',
-                    progress: {{ $task->progress_percent }},
-                    custom_class: 'gantt-{{ strtolower($task->phase) }}'
+                    name: '[{{ $task->status ?? "To Do" }}] {{ $task->item_code }} - {{ addslashes($task->project_name ?? "Project") }}',
+                    start: '{{ $startDate }}',
+                    end: '{{ $endDate }}',
+                    progress: {{ $task->status == 'Completed' ? 100 : ($task->status == 'In Progress' ? 50 : 0) }},
+                    custom_class: 'gantt-{{ strtolower(str_replace(" ", "-", $task->status ?? "to-do")) }}'
                 },
-                @endforeach
-            ];
+            @endforeach
+        ];
 
-            // Jika database kosong, berikan data sampel placeholder agar diagram tidak crash kosong
-            if(tasksData.length === 0) {
-                tasksData.push({
-                    id: 'Sample-1', name: '[Plan] No Active System Tasks Found',
-                    start: '2026-06-01', end: '2026-06-15', progress: 30, custom_class: 'gantt-plan'
-                });
-            }
-
-            // Inisialisasi Instance Frappe Gantt Chart
-            window.gantt_chart = new Gantt("#gantt-container", tasksData, {
+        if (ganttTasks.length > 0) {
+            window.gantt_chart = new Gantt("#gantt-container", ganttTasks, {
                 header_height: 50,
-                column_width: 30,
+                column_width: 38,
                 step: 24,
-                view_modes: ['Day', 'Week', 'Month'],
+                view_modes: ['Day', 'Week', 'Month', 'Year'],
                 view_mode: 'Day',
-                bar_height: 25,
+                bar_height: 22,
                 bar_corner_radius: 4,
                 arrow_curve: 5,
                 padding: 18,
                 date_format: 'YYYY-MM-DD',
                 custom_popup_html: function(task) {
                     return `
-                        <div class="p-2 text-white font-sans" style="background: #212529; border-radius: 5px; font-size:11px; min-width:160px;">
-                            <div class="fw-bold mb-1 border-bottom pb-1 text-warning">${task.name}</div>
-                            <div><b>Start:</b> ${task.start}</div>
+                        <div class="p-2.5 text-white font-sans" style="background: #0f172a; border-radius: 6px; font-size: 11px; min-width: 190px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                            <div class="fw-bold mb-1 border-bottom border-secondary pb-1 text-warning">${task.name}</div>
+                            <div class="mt-1"><b>Start:</b> ${task.start}</div>
                             <div><b>End:</b> ${task.end}</div>
                             <div><b>Progress:</b> ${task.progress}% Complete</div>
                         </div>
                     `;
                 }
             });
-        });
-
-        // Fungsi Tombol Switch View Mode (Day, Week, Month Grid Lines)
-        function changeView(mode) {
-            if(window.gantt_chart) {
-                window.gantt_chart.change_view_mode(mode);
-                
-                // Atur status active class tombol bootstrap nya
-                const buttons = document.querySelectorAll('.btn-group button');
-                buttons.forEach(btn => btn.classList.remove('active'));
-                event.target.classList.add('active');
-            }
         }
-    </script>
+    });
 
-    <!-- Custom CSS untuk Menyesuaikan Tema NiceAdmin dengan Warna Phase Kategori -->
-    <style>
-        /* Mengubah warna bar gantt chart berdasarkan class kategori */
-        .gantt-container .gantt-plan .bar { fill: #3b82f6 !important; }
-        .gantt-container .gantt-plan .bar-progress { fill: #1d4ed8 !important; }
-
-        .gantt-container .gantt-test .bar { fill: #f59e0b !important; }
-        .gantt-container .gantt-test .bar-progress { fill: #b45309 !important; }
-
-        .gantt-container .gantt-develop .bar { fill: #10b981 !important; }
-        .gantt-container .gantt-develop .bar-progress { fill: #047857 !important; }
-
-        .gantt-container .gantt-launch .bar { fill: #6b7280 !important; }
-        .gantt-container .gantt-launch .bar-progress { fill: #374151 !important; }
-
-        /* Styling tambahan agar teks di dalam grid SVG terbaca jelas */
-        .gantt .grid-header { fill: #f8f9fa !important; stroke: #e9ecef !important; }
-        .gantt .upper-header { font-size: 11px; fill: #495057 !important; font-weight: bold; }
-        .gantt .lower-header { font-size: 10px; fill: #6c757d !important; }
-        .gantt .bar-label { fill: #ffffff !important; font-size: 11px; font-weight: 600; }
-    </style>
-
-@endsection
+    function changeGanttView(mode, btnElement) {
+        if (window.gantt_chart) {
+            window.gantt_chart.change_view_mode(mode);
+            
+            const buttons = document.querySelectorAll('.btn-filter-custom');
+            buttons.forEach(b => b.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+        }
+    }
+</script>
+@endpush

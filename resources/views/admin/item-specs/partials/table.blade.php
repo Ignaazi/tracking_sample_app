@@ -39,7 +39,7 @@
                             <td>{{ $task->cs_brand ?? '-' }}</td>
                             <td>{{ $task->cs_hw ?? '-' }}</td>
                             <td>
-                                @if($task->itemSpecs->count() > 0)
+                                @if($task->itemSpecs && $task->itemSpecs->count() > 0)
                                     <span class="badge bg-success text-white font-monospace px-2 py-1">
                                         <i class="fa-solid fa-palette me-1"></i> {{ $task->itemSpecs->count() }} Colors/Specs
                                     </span>
@@ -49,25 +49,23 @@
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center gap-1">
-                                    <button class="btn btn-sm btn-info text-white p-1 px-2" data-bs-toggle="modal" data-bs-target="#previewTaskModal{{ $task->id ?? $loop->index }}" title="Preview Details">
+                                    <button class="btn btn-sm btn-info text-white p-1 px-2" data-bs-toggle="modal" data-bs-target="#previewTaskModal{{ $task->id }}" title="Preview Details">
                                         <i class="fa-solid fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-warning text-dark p-1 px-2" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $task->id ?? $loop->index }}" title="Edit">
+                                    <button class="btn btn-sm btn-warning text-dark p-1 px-2" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $task->id }}" title="Edit Task">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
-                                    <form action="{{ route('admin.item-specs.destroy', $task->id ?? 0) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus data item ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger p-1 px-2" title="Delete">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    
+                                    <!-- TOMBOL TAMBAH SPECIFICATION FULL PAGE -->
+                                    <a href="{{ route('admin.item-specs.create', ['task_id' => $task->id]) }}" class="btn btn-sm btn-success p-1 px-2 text-white" title="Add Spec Sequence">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
 
                         <!-- NESTED SUB-TABLE PRINTING & INK SPECS -->
-                        @if($task->itemSpecs->isNotEmpty())
+                        @if($task->itemSpecs && $task->itemSpecs->isNotEmpty())
                         <tr style="background-color: #f4fbf7;">
                             <td colspan="9" class="p-3">
                                 <div class="border border-success rounded bg-white p-3 shadow-sm">
@@ -91,7 +89,7 @@
                                                     <th>Angle / Anilox</th>
                                                     <th>Attachment</th>
                                                     <th>Status</th>
-                                                    <th style="width: 100px;">Action</th>
+                                                    <th style="width: 110px;">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -134,9 +132,22 @@
                                                             <button class="btn btn-sm btn-warning text-dark p-1 px-2" data-bs-toggle="modal" data-bs-target="#editSpecModal{{ $spec->id }}" title="Edit Spec">
                                                                 <i class="fa-solid fa-pen-to-square"></i>
                                                             </button>
+
+                                                            <!-- FORM HAPUS ITEM SPECIFICATION BERDASARKAN SPEC ID -->
+                                                            <form action="{{ route('admin.item-specs.destroy', $spec->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus spesifikasi warna ini?')">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-sm btn-danger p-1 px-2" title="Delete Spec">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </button>
+                                                            </form>
                                                         </div>
                                                     </td>
                                                 </tr>
+
+                                                <!-- INCLUDE MODAL EDIT DAN PREVIEW BILA ADA -->
+                                                @include('admin.item-specs.partials.modal-edit', ['spec' => $spec])
+
                                                 @endforeach
                                             </tbody>
                                         </table>

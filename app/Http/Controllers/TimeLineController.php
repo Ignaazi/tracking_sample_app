@@ -2,57 +2,80 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Timeline;
+use App\Models\Task;
 use Illuminate\Http\Request;
 
 class TimelineController extends Controller
 {
+    /**
+     * Display project development analytics & task timeline.
+     */
     public function index()
     {
-        // Ambil data timeline dan pisahkan berdasarkan kategori fasenya
-        $timelines = Timeline::orderBy('start_date', 'asc')->get();
-        return view('admin.timeline.index', compact('timelines'));
+        // Ambil data task dan urutkan berdasarkan tanggal dibuat/informasi diterima
+        $tasks = Task::orderBy('created_at', 'desc')->get();
+
+        return view('admin.timeline.index', compact('tasks'));
     }
 
+    /**
+     * Store new task item into database.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'project_name'     => 'required|string|max:255',
-            'phase'            => 'required|in:Plan,Test,Develop,Launch',
-            'task_title'       => 'required|string|max:255',
-            'start_date'       => 'required|date',
-            'end_date'         => 'required|date|after_or_equal:start_date',
-            'progress_percent' => 'required|integer|between:0,100',
+        $validated = $request->validate([
+            'item_code'            => 'required|string|max:255',
+            'project_name'         => 'nullable|string|max:255',
+            'brand_family'         => 'nullable|string|max:255',
+            'market'               => 'nullable|string|max:255',
+            'customer'             => 'nullable|string|max:255',
+            'information_received' => 'nullable|date',
+            'plm_released'         => 'nullable|date|after_or_equal:information_received',
+            'sap_number'           => 'nullable|string|max:255',
+            'status'               => 'required|in:To Do,In Progress,Completed',
+            'development_status'   => 'required|in:Active,Testing',
         ]);
 
-        Timeline::create($request->all());
+        Task::create($validated);
 
-        return redirect()->route('admin.timelines.index')->with('success', 'Task timeline berhasil ditambahkan!');
+        return redirect()->route('admin.timelines.index')->with('success', 'Project task berhasil ditambahkan!');
     }
 
+    /**
+     * Update existing task item.
+     */
     public function update(Request $request, $id)
     {
-        $timeline = Timeline::findOrFail($id);
+        $task = Task::findOrFail($id);
 
-        $request->validate([
-            'project_name'     => 'required|string|max:255',
-            'phase'            => 'required|in:Plan,Test,Develop,Launch',
-            'task_title'       => 'required|string|max:255',
-            'start_date'       => 'required|date',
-            'end_date'         => 'required|date|after_or_equal:start_date',
-            'progress_percent' => 'required|integer|between:0,100',
+        $validated = $request->validate([
+            'item_code'            => 'required|string|max:255',
+            'project_name'         => 'nullable|string|max:255',
+            'brand_family'         => 'nullable|string|max:255',
+            'market'               => 'nullable|string|max:255',
+            'customer'             => 'nullable|string|max:255',
+            'information_received' => 'nullable|date',
+            'plm_released'         => 'nullable|date|after_or_equal:information_received',
+            'sap_number'           => 'nullable|string|max:255',
+            'status'               => 'required|in:To Do,In Progress,Completed',
+            'development_status'   => 'required|in:Active,Testing',
         ]);
 
-        $timeline->update($request->all());
+        $task->update($validated);
 
-        return redirect()->route('admin.timelines.index')->with('success', 'Timeline berhasil diperbarui!');
+        return redirect()->route('admin.timelines.index')->with('success', 'Project task berhasil diperbarui!');
     }
 
+    /**
+     * Delete task item from database.
+     */
     public function destroy($id)
     {
-        $timeline = Timeline::findOrFail($id);
-        $timeline->delete();
+        $task = Task::findOrFail($id);
+        $itemCode = $task->item_code;
+        
+        $task->delete();
 
-        return redirect()->route('admin.timelines.index')->with('success', 'Timeline berhasil dihapus!');
+        return redirect()->route('admin.timelines.index')->with('success', "Project task [{$itemCode}] berhasil dihapus!");
     }
 }

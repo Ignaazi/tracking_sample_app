@@ -9,12 +9,11 @@ class Task extends Model
 {
     use HasFactory;
 
+    // Nama tabel di database
     protected $table = 'task';
 
-    // Primary Key berupa item_code
-    protected $primaryKey = 'item_code';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    // Primary Key bawaan tabel adalah 'id' (bigint auto-increment)
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'no',
@@ -68,8 +67,7 @@ class Task extends Model
     ];
 
     /**
-     * RELASI PENTING (Mencegah RelationNotFoundException)
-     * Menghubungkan Task ke ItemSpec berdasarkan item_code
+     * Relasi ke ItemSpec tetap menggunakan 'item_code'
      */
     public function itemSpecs()
     {

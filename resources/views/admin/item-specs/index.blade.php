@@ -85,7 +85,7 @@
         .table-header-in-progress th { background-color: #f97316 !important; color: #ffffff !important; }
         .table-header-completed th { background-color: #3b82f6 !important; color: #ffffff !important; }
 
-        /* GAP / JARAK RENGGANG TOMBOL ACTION */
+        /* GAP JARAK UNTUK ACTION BUTTONS */
         .action-btn-container {
             display: flex !important;
             align-items: center !important;
@@ -106,12 +106,13 @@
             color: #ffffff !important;
             transition: all 0.2s ease-in-out;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-decoration: none;
+            text-decoration: none !important;
+            cursor: pointer !important;
         }
-        .action-btn-grad:hover { transform: translateY(-2px); color: #ffffff !important; }
+        .action-btn-grad:hover { transform: translateY(-2px); color: #ffffff !important; opacity: 0.9; }
         .btn-preview-grad { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); }
         .btn-edit-grad { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); }
-        .btn-add-grad { background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%); }
+        .btn-add-grad { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
     </style>
 @endpush
 
@@ -126,6 +127,13 @@
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-3" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
@@ -163,7 +171,7 @@
         </div>
     </div>
 
-    <!-- TABEL TASK UTAMA & NESTED SPECIFICATIONS -->
+    <!-- TABEL TASK UTAMA (CLEAN & COMPACT LIST) -->
     <div id="itemSpecSectionsContainer">
         @foreach($columns as $col)
         <div class="card border-0 shadow-sm rounded-3 p-4 bg-white mb-4 status-card-wrapper" data-status="{{ $col['status'] }}">
@@ -213,93 +221,31 @@
                                     @endif
                                 </td>
                                 
-                                <!-- ACTION UTAMA (TANPA TOMBOL DELETE) -->
                                 <td class="text-center py-2">
                                     <div class="action-btn-container">
-                                        <button class="action-btn-grad btn-preview-grad" type="button" data-bs-toggle="modal" data-bs-target="#previewTaskModal{{ $task->id }}" title="Preview Details">
+                                        <!-- TOMBOL PREVIEW (DIRECT LINK KE PREVIEW A4 SHEET) -->
+                                        <a href="{{ route('admin.item-specs.show', $task->id) }}" 
+                                            class="action-btn-grad btn-preview-grad" 
+                                            title="Preview Details">
                                             <i class="bi bi-eye-fill"></i>
-                                        </button>
-                                        <button class="action-btn-grad btn-edit-grad" type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $task->id }}" title="Edit Task">
+                                        </a>
+
+                                        <!-- TOMBOL EDIT (DIRECT LINK KE addItemSpecs FULL PAGE) -->
+                                        <a href="{{ route('admin.item-specs.create', ['task_id' => $task->id]) }}" 
+                                           class="action-btn-grad btn-edit-grad" 
+                                           title="Edit Item Specification">
                                             <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <button class="action-btn-grad btn-add-grad" type="button" data-bs-toggle="modal" data-bs-target="#addSpecModal{{ $task->id }}" title="Add Spec Sequence">
+                                        </a>
+
+                                        <!-- TOMBOL (+) ADD SPECIFICATION (DIRECT LINK KE addItemSpecs FULL PAGE) -->
+                                        <a href="{{ route('admin.item-specs.create', ['task_id' => $task->id]) }}" 
+                                           class="action-btn-grad btn-add-grad" 
+                                           title="Add Spec Sequence">
                                             <i class="bi bi-plus-lg"></i>
-                                        </button>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
-
-                            <!-- SUB-TABEL SPESIFIKASI UNTUK TASK YBS -->
-                            @if($task->itemSpecs && $task->itemSpecs->isNotEmpty())
-                            <tr style="background-color: #f4fbf7;">
-                                <td colspan="11" class="p-3">
-                                    <div class="border border-success rounded bg-white p-3 shadow-sm text-start">
-                                        <div class="fw-bold text-success mb-2" style="font-size: 12px;">
-                                            <i class="bi bi-palette me-1"></i> PRINTING COLOUR & INK SPECIFICATIONS FOR [{{ $task->item_code }}]:
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm table-bordered align-middle mb-0" style="font-size: 12px;">
-                                                <thead class="bg-success text-white">
-                                                    <tr>
-                                                        <th>Sequence</th>
-                                                        <th>Colour</th>
-                                                        <th>BAAN Cylinder</th>
-                                                        <th>Film No.</th>
-                                                        <th>Ink System</th>
-                                                        <th>Ink Code</th>
-                                                        <th>Supplier</th>
-                                                        <th>BAAN Ink Code</th>
-                                                        <th>Coverage (%)</th>
-                                                        <th>Usage (Kg/TH)</th>
-                                                        <th>Angle / Anilox</th>
-                                                        <th>Attachment</th>
-                                                        <th style="width: 110px;">Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($task->itemSpecs->sortBy('sequence') as $spec)
-                                                    <tr>
-                                                        <td><span class="badge bg-dark rounded-pill px-2">Seq {{ $spec->sequence }}</span></td>
-                                                        <td class="fw-bold">{{ $spec->colour }}</td>
-                                                        <td><code>{{ $spec->baan_cylinder ?? '-' }}</code></td>
-                                                        <td>{{ $spec->film_number ?? '-' }}</td>
-                                                        <td>{{ $spec->ink_system ?? '-' }}</td>
-                                                        <td><span class="badge bg-light text-dark border">{{ $spec->ink_code ?? '-' }}</span></td>
-                                                        <td><span class="badge bg-secondary">{{ $spec->supplier_ink ?? '-' }}</span></td>
-                                                        <td><code>{{ $spec->baan_ink_code ?? '-' }}</code></td>
-                                                        <td>{{ $spec->coverage ? $spec->coverage . '%' : '-' }}</td>
-                                                        <td>{{ $spec->usage_kg_th ? number_format($spec->usage_kg_th, 2) : '-' }}</td>
-                                                        <td>{{ $spec->angle_anilox ?? '-' }}</td>
-                                                        <td>
-                                                            @if($spec->main_design_attachment)
-                                                                <a href="{{ asset($spec->main_design_attachment) }}" target="_blank" class="btn btn-xs btn-outline-success p-0 px-1"><i class="bi bi-paperclip me-1"></i>File</a>
-                                                            @else
-                                                                <span class="text-muted" style="font-size: 10px;">None</span>
-                                                            @endif
-                                                        </td>
-                                                        <!-- ACTIONS UNTUK SPEC (TANPA TOMBOL DELETE) -->
-                                                        <td class="text-center py-2">
-                                                            <div class="action-btn-container">
-                                                                <button class="action-btn-grad btn-preview-grad" type="button" data-bs-toggle="modal" data-bs-target="#previewSpecModal{{ $spec->id }}" title="Preview Details">
-                                                                    <i class="bi bi-eye-fill"></i>
-                                                                </button>
-                                                                <button class="action-btn-grad btn-edit-grad" type="button" data-bs-toggle="modal" data-bs-target="#editSpecModal{{ $spec->id }}" title="Edit Specification">
-                                                                    <i class="bi bi-pencil-square"></i>
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-
-                                                    @include('admin.item-specs.partials.modal-edit', ['spec' => $spec])
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endif
-
                             @empty
                             <tr>
                                 <td colspan="11" class="text-center py-4 text-muted border border-dashed bg-white fw-semibold">

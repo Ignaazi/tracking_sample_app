@@ -1,10 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', 'Multi-series Timeline Gantt')
+@section('title', 'Multi-series Timeline Gantt Roadmap')
 
 @push('styles')
     <!-- Frappe Gantt CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -26,7 +27,7 @@
             padding: 1.25rem 1.5rem;
         }
 
-        /* STYLING BADGE STATUS LEGEND (DIBALIKIN KE WARNA SEMULA: BIRU, OREN, HIJAU) */
+        /* STYLING BADGE STATUS LEGEND */
         .status-pill {
             display: inline-flex;
             align-items: center;
@@ -110,6 +111,11 @@
             height: auto;
         }
 
+        /* POINTER / HAND-CURSOR PADA BARIS GANTT */
+        .gantt .bar-wrapper {
+            cursor: pointer !important;
+        }
+
         .gantt .grid-row {
             fill: #ffffff !important;
             stroke: #f1f5f9 !important;
@@ -129,18 +135,16 @@
         .gantt .lower-header { font-size: 10px; fill: #64748b !important; }
         .gantt .bar-label { fill: #ffffff !important; font-size: 11px; font-weight: 700; }
 
-        .gantt-container .gantt-to-do .bar { fill: #3b82f6 !important; }
-        .gantt-container .gantt-to-do .bar-progress { fill: #1d4ed8 !important; }
+        .gantt-container .gantt-to-do .bar, .gantt .gantt-to-do .bar { fill: #3b82f6 !important; }
+        .gantt-container .gantt-to-do .bar-progress, .gantt .gantt-to-do .bar-progress { fill: #1d4ed8 !important; }
 
-        .gantt-container .gantt-in-progress .bar { fill: #f59e0b !important; }
-        .gantt-container .gantt-in-progress .bar-progress { fill: #b45309 !important; }
+        .gantt-container .gantt-in-progress .bar, .gantt .gantt-in-progress .bar { fill: #f59e0b !important; }
+        .gantt-container .gantt-in-progress .bar-progress, .gantt .gantt-in-progress .bar-progress { fill: #b45309 !important; }
 
-        .gantt-container .gantt-completed .bar { fill: #10b981 !important; }
-        .gantt-container .gantt-completed .bar-progress { fill: #047857 !important; }
+        .gantt-container .gantt-completed .bar, .gantt .gantt-completed .bar { fill: #10b981 !important; }
+        .gantt-container .gantt-completed .bar-progress, .gantt .gantt-completed .bar-progress { fill: #047857 !important; }
 
-        /* ========================================================= */
-        /* STYLING TABEL DI BAWAH */
-        /* ========================================================= */
+        /* STYLING TABEL */
         .table-responsive {
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch;
@@ -153,7 +157,6 @@
             border-collapse: collapse !important;
         }
 
-        /* HEADER TABEL KHUSUS PAKAI GRADIENT SAMA DENGAN GAMBAR */
         .table-custom th {
             background: linear-gradient(135deg, #005596 0%, #0099c8 50%, #15e638 100%) !important;
             color: #ffffff !important;
@@ -167,7 +170,6 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.25);
         }
 
-        /* ISI TABEL: KOTAK BERGARIS + TULISAN RATA TENGAH */
         .table-custom td {
             font-size: 12px;
             font-weight: 600;
@@ -178,20 +180,14 @@
             border: 1px solid #cbd5e1 !important;
         }
 
-        /* ZEBRA STRIPING BARIS TABEL */
-        .table-custom tbody tr:nth-child(odd) {
-            background-color: #EBF5FF !important;
-        }
-
-        .table-custom tbody tr:nth-child(even) {
-            background-color: #F0FDF4 !important;
-        }
+        .table-custom tbody tr:nth-child(odd) { background-color: #EBF5FF !important; }
+        .table-custom tbody tr:nth-child(even) { background-color: #F0FDF4 !important; }
 
         .table-custom tbody tr:hover {
             background-color: #D1E9FF !important;
+            cursor: pointer;
         }
 
-        /* BADGE HEADER TABLE "1 RECORD(S)" GRADIENT */
         .badge-gradient-record {
             background: linear-gradient(135deg, #005596 0%, #0099c8 50%, #15e638 100%) !important;
             color: #ffffff !important;
@@ -202,42 +198,10 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
-        /* BADGE STATUS DENGAN WARNA ORIGINAL (SEPERTI SEMULA) */
-        .badge-status-completed {
-            background-color: #10B981;
-            color: #ffffff !important;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-        }
-
-        .badge-status-progress {
-            background-color: #F59E0B;
-            color: #ffffff !important;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-        }
-
-        .badge-status-todo {
-            background-color: #3B82F6;
-            color: #ffffff !important;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-        }
-
-        .badge-status-inactive {
-            background-color: #64748B;
-            color: #ffffff !important;
-            font-weight: 800;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 10px;
-        }
+        .badge-status-completed { background-color: #10B981; color: #ffffff !important; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
+        .badge-status-progress { background-color: #F59E0B; color: #ffffff !important; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
+        .badge-status-todo { background-color: #3B82F6; color: #ffffff !important; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
+        .badge-status-inactive { background-color: #64748B; color: #ffffff !important; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
     </style>
 @endpush
 
@@ -248,7 +212,7 @@
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
             <h3 class="fw-bold text-dark mb-1 fs-4">Project Development Roadmap</h3>
-            <p class="text-muted small mb-0">Interactive Gantt chart roadmap based on Task database status.</p>
+            <p class="text-muted small mb-0">Klik pada <b>garis baris Gantt Chart</b> atau <b>baris tabel</b> untuk mengelola detail timeline per project.</p>
         </div>
     </div>
 
@@ -267,7 +231,6 @@
                     Enterprise Interactive Gantt
                 </h6>
 
-                <!-- LEGEND STATUS BULAT PANJANG (WARNA DIKEMBALIKAN KE SEMULA) -->
                 @php
                     $countToDo = $tasks->where('status', 'To Do')->count();
                     $countInProgress = $tasks->where('status', 'In Progress')->count();
@@ -334,9 +297,12 @@
                     </thead>
                     <tbody>
                         @forelse($tasks as $key => $task)
-                        <tr>
+                        @php
+                            $targetKey = $task->item_code ?? $task->id;
+                        @endphp
+                        <tr onclick="window.location='{{ route('admin.task.timeline.detail', $targetKey) }}'">
                             <td class="fw-bold">{{ sprintf('%02d', $key + 1) }}</td>
-                            <td class="font-monospace fw-bold">{{ $task->item_code }}</td>
+                            <td class="font-monospace fw-bold text-primary">{{ $task->item_code }}</td>
                             <td class="fw-bold">{{ $task->project_name ?? '-' }}</td>
                             <td>{{ $task->customer ?? '-' }}</td>
                             <td>{{ $task->brand_family ?? '-' }}</td>
@@ -408,14 +374,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
+        // Dapatkan base URL route secara dinamis untuk JavaScript
+        const baseUrl = "{{ route('admin.task.timeline.detail', ':id') }}";
+
         const ganttTasks = [
             @foreach($tasks as $task)
                 @php
+                    $targetKey = $task->item_code ?? $task->id;
                     $startDate = !empty($task->information_received) ? date('Y-m-d', strtotime($task->information_received)) : date('Y-m-d', strtotime($task->created_at ?? now()));
                     $endDate = !empty($task->plm_released) ? date('Y-m-d', strtotime($task->plm_released)) : date('Y-m-d', strtotime($startDate . ' + 14 days'));
                 @endphp
                 {
-                    id: 'Task-{{ $task->id }}',
+                    id: '{{ $targetKey }}',
                     name: '[{{ $task->status ?? "To Do" }}] {{ $task->item_code }} - {{ addslashes($task->project_name ?? "Project") }}',
                     start: '{{ $startDate }}',
                     end: '{{ $endDate }}',
@@ -437,6 +407,13 @@
                 arrow_curve: 5,
                 padding: 18,
                 date_format: 'YYYY-MM-DD',
+
+                // EVENT ON_CLICK: REDIRECT KE DETAIL TIMELINE PER PROJECT
+                on_click: function (task) {
+                    const detailUrl = baseUrl.replace(':id', task.id);
+                    window.location.href = detailUrl;
+                },
+
                 custom_popup_html: function(task) {
                     return `
                         <div class="p-2.5 text-white font-sans" style="background: #0f172a; border-radius: 6px; font-size: 11px; min-width: 190px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
@@ -444,6 +421,7 @@
                             <div class="mt-1"><b>Start:</b> ${task.start}</div>
                             <div><b>End:</b> ${task.end}</div>
                             <div><b>Progress:</b> ${task.progress}% Complete</div>
+                            <div class="mt-2 text-info fw-bold text-end"><i>Klik baris untuk detail &rarr;</i></div>
                         </div>
                     `;
                 }

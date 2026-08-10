@@ -6,7 +6,7 @@
                 <h5 class="modal-title fw-bold" style="color: #0f172a; font-size: 16px;"><i class="bi bi-person-plus-fill me-2 text-success"></i>Add New User Account</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('admin.users.store') }}" method="POST">
+            <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body p-4" style="font-size: 13px;">
                     <div class="mb-3">
@@ -21,10 +21,15 @@
                         <label class="form-label fw-semibold text-secondary">System Role</label>
                         <select name="role" class="form-select rounded" required style="font-size: 13px; height: 38px;">
                             <option value="Administrator" selected>Administrator</option>
-                            <option value="PD">PD</option>
-                            <option value="QA">QA</option>
-                            <option value="PLANNER">PLANNER</option>
+                            <option value="PD">Project Developer (PD)</option>
+                            <option value="QA">Quality Assurance (QA)</option>
+                            <option value="PLANNER">Planner</option>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary">Digital Signature (Tanda Tangan)</label>
+                        <input type="file" name="signature" class="form-control rounded" accept="image/png, image/jpeg, image/jpg, image/webp" style="font-size: 13px;">
+                        <small class="text-muted" style="font-size: 11px;">* Format: PNG, JPG, JPEG, WEBP (Max. 2MB). Disarankan transparan (PNG).</small>
                     </div>
                     <div class="mb-0">
                         <label class="form-label fw-semibold text-secondary">Account Password</label>

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class TimelineController extends Controller
 {
     /**
-     * Display project development analytics & task timeline.
+     * Display project development analytics & task timeline (Master Gantt).
      */
     public function index()
     {
@@ -16,6 +16,19 @@ class TimelineController extends Controller
         $tasks = Task::orderBy('created_at', 'desc')->get();
 
         return view('admin.timeline.index', compact('tasks'));
+    }
+
+    /**
+     * Display detail timeline per project (Sub-process Gantt & Stage Management).
+     */
+    public function detail($id)
+    {
+        // Cari project berdasarkan item_code ATAU id database
+        $task = Task::where('item_code', $id)
+                    ->orWhere('id', $id)
+                    ->firstOrFail();
+
+        return view('admin.timeline.detailTimeline', compact('task'));
     }
 
     /**
@@ -46,7 +59,7 @@ class TimelineController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
+        $task = Task::where('item_code', $id)->orWhere('id', $id)->firstOrFail();
 
         $validated = $request->validate([
             'item_code'            => 'required|string|max:255',
@@ -71,7 +84,7 @@ class TimelineController extends Controller
      */
     public function destroy($id)
     {
-        $task = Task::findOrFail($id);
+        $task = Task::where('item_code', $id)->orWhere('id', $id)->firstOrFail();
         $itemCode = $task->item_code;
         
         $task->delete();

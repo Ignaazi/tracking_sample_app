@@ -30,17 +30,27 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'nik'      => ['required', 'string', 'max:50', 'unique:users,nik'],
-            'role'     => ['required', Rule::in(['Administrator'])], // Hanya Administrator
-            'password' => ['required', 'string', 'min:8'],
+            'name'      => ['required', 'string', 'max:255'],
+            'nik'       => ['required', 'string', 'max:50', 'unique:users,nik'],
+            'role'      => ['required', Rule::in(['Administrator', 'PD', 'QA', 'PLANNER'])],
+            'password'  => ['required', 'string', 'min:8'],
+            'signature' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
         ]);
 
+        $signaturePath = null;
+        if ($request->hasFile('signature')) {
+            $file = $request->file('signature');
+            $filename = time() . '_sign_' . preg_replace('/[^A-Za-z0-9_\.-]/', '', $file->getClientOriginalName());
+            $file->move(public_path('uploads/signatures'), $filename);
+            $signaturePath = 'uploads/signatures/' . $filename;
+        }
+
         $user = User::create([
-            'name'     => $request->name,
-            'nik'      => $request->nik,
-            'role'     => $request->role,
-            'password' => Hash::make($request->password),
+            'name'      => $request->name,
+            'nik'       => $request->nik,
+            'role'      => $request->role,
+            'password'  => Hash::make($request->password),
+            'signature' => $signaturePath,
         ]);
 
         if ($request->ajax() || $request->wantsJson()) {
@@ -62,10 +72,11 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'nik'      => ['required', 'string', 'max:50', Rule::unique('users', 'nik')->ignore($user->id)],
-            'role'     => ['required', Rule::in(['Administrator'])], // Hanya Administrator
-            'password' => ['nullable', 'string', 'min:8'],
+            'name'      => ['required', 'string', 'max:255'],
+            'nik'       => ['required', 'string', 'max:50', Rule::unique('users', 'nik')->ignore($user->id)],
+            'role'      => ['required', Rule::in(['Administrator', 'PD', 'QA', 'PLANNER'])],
+            'password'  => ['nullable', 'string', 'min:8'],
+            'signature' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
         ]);
 
         $user->name = $request->name;
@@ -74,6 +85,19 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
+        }
+
+        // Jika mengunggah gambar tanda tangan baru
+        if ($request->hasFile('signature')) {
+            // Hapus file tanda tangan lama jika ada
+            if ($user->signature && file_exists(public_path($user->signature))) {
+                @unlink(public_path($user->signature));
+            }
+
+            $file = $request->file('signature');
+            $filename = time() . '_sign_' . preg_replace('/[^A-Za-z0-9_\.-]/', '', $file->getClientOriginalName());
+            $file->move(public_path('uploads/signatures'), $filename);
+            $user->signature = 'uploads/signatures/' . $filename;
         }
 
         $user->save();
@@ -104,6 +128,11 @@ class UserController extends Controller
                 ], 422);
             }
             return redirect()->route('admin.users.index')->with('error', 'Kamu tidak bisa menghapus akunmu sendiri yang sedang aktif, bor!');
+        }
+
+        // Hapus file gambar tanda tangan jika ada
+        if ($user->signature && file_exists(public_path($user->signature))) {
+            @unlink(public_path($user->signature));
         }
 
         $user->delete();

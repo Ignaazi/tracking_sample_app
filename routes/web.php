@@ -8,6 +8,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\WorkflowController;
 use App\Http\Controllers\ItemSpecController;
+use App\Http\Controllers\TaskListProjectController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,7 @@ Route::middleware('auth')->group(function () {
 
         // MODULE: TRACKING SYSTEM - TIMELINE
         Route::get('/timelines', [TimelineController::class, 'index'])->name('timelines.index');
+        Route::get('/timeline/{id}', [TimelineController::class, 'detail'])->name('task.timeline.detail'); // <-- ROUTE DETAIL TIMELINE PER PROJECT
         Route::post('/timelines', [TimelineController::class, 'store'])->name('timelines.store');
         Route::put('/timelines/{id}', [TimelineController::class, 'update'])->name('timelines.update');
         Route::delete('/timelines/{id}', [TimelineController::class, 'destroy'])->name('timelines.destroy');
@@ -67,10 +69,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/emails/{id}/toggle-star', [EmailController::class, 'toggleStar'])->name('emails.star');
         Route::delete('/emails/{id}', [EmailController::class, 'destroy'])->name('emails.destroy');
 
-            // MODULE: ITEM SPECIFICATION & REQUIREMENTS
+        // MODULE: ITEM SPECIFICATION & REQUIREMENTS
         Route::get('/item-specs', [ItemSpecController::class, 'index'])->name('item-specs.index');
         Route::get('/item-specs/create', [ItemSpecController::class, 'create'])->name('item-specs.create');
-        Route::get('/item-specs/{id}', [ItemSpecController::class, 'show'])->name('item-specs.show'); // <--- TAMBAHKAN BARIS INI
+        Route::get('/item-specs/{id}', [ItemSpecController::class, 'show'])->name('item-specs.show');
         Route::post('/item-specs', [ItemSpecController::class, 'store'])->name('item-specs.store');
         Route::put('/item-specs/{id}', [ItemSpecController::class, 'update'])->name('item-specs.update');
         Route::delete('/item-specs/{id}', [ItemSpecController::class, 'destroy'])->name('item-specs.destroy');
@@ -78,6 +80,9 @@ Route::middleware('auth')->group(function () {
         // MODULE: WORKFLOW ENGINE & ASSIGNMENT (PRINT PDF)
         Route::get('/workflow', [WorkflowController::class, 'index'])->name('workflow.index');
         Route::get('/workflow/{id}/print-pdf', [WorkflowController::class, 'printPdf'])->name('workflow.printPdf');
+
+        // MODULE: TASK LIST PROJECT
+        Route::get('/task-list-project', [TaskListProjectController::class, 'index'])->name('task-list-project.index');
         
     });
 

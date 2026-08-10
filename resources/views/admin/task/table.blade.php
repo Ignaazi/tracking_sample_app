@@ -2,20 +2,26 @@
 
 @section('title', 'Data Project Status - NiceAdmin')
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
 @push('styles')
+<!-- Bootstrap Icons & Google Fonts -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-    /* STYLING TABEL KOTAK-KOTAK COMPACT & HEADER HIJAU TUA */
-    .table-custom-grid {
-        table-layout: fixed !important;
-        width: 100%;
-        min-width: 4200px;
-        border-collapse: collapse !important;
+    .workspace-container, .workspace-container * {
+        font-family: 'Nunito', sans-serif !important;
     }
 
-    /* HANYA HEADER TABEL YANG BERUBAH KE HIJAU TUA */
+    /* STYLING TABEL KOTAK-KOTAK COMPACT & HEADER HIJAU TUA */
+    .table-custom-grid {
+        table-layout: auto !important;
+        width: 100%;
+        min-width: 4600px;
+        border-collapse: collapse !important;
+        font-family: 'Nunito', sans-serif !important;
+    }
+
+    /* HEADER TABEL HIJAU TUA */
     .table-custom-grid thead th {
         background-color: #005236 !important;
         color: #ffffff !important;
@@ -27,17 +33,21 @@
         padding: 8px 6px !important;
         text-align: center !important;
         vertical-align: middle !important;
+        font-family: 'Nunito', sans-serif !important;
     }
 
-    /* ISI SEL TABEL DIBUAT DENGAN PADDING COMPACT */
+    /* ISI SEL TABEL DIBUAT DENGAN PADDING COMPACT TEGAK HITAM */
     .table-custom-grid tbody td {
-        font-size: 11.5px;
-        font-weight: 600;
-        color: #000000 !important;
-        padding: 5px 6px !important;
+        font-size: 11.5px !important;
+        font-weight: 600 !important;
+        color: #0f172a !important;
+        padding: 6px 8px !important;
         vertical-align: middle !important;
         text-align: center !important;
         border: 1px solid #cbd5e1 !important;
+        font-style: normal !important;
+        font-family: 'Nunito', sans-serif !important;
+        background-color: transparent !important;
     }
 
     /* ZEBRA STRIPING BARIS TABEL */
@@ -50,25 +60,82 @@
     }
 
     .table-custom-grid tbody tr:hover {
-        background-color: #e2e8f0 !important;
+        background-color: #f0f9ff !important;
+    }
+
+    /* BADGE SEQUENCE HIJAU TUA */
+    .badge-seq-green {
+        background-color: #15803d !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        border-radius: 4px !important;
+        padding: 3px 8px !important;
+        font-size: 11px !important;
+        display: inline-block;
+        font-family: 'Nunito', sans-serif !important;
+    }
+
+    /* BADGE STATUS PROPORSI PAS */
+    .badge-status-sm {
+        font-size: 10.5px !important;
+        font-weight: 700 !important;
+        padding: 3px 8px !important;
+        border-radius: 4px !important;
+        font-family: 'Nunito', sans-serif !important;
+    }
+
+    /* STYLES TOMBOL ACTION */
+    .table-action-btns {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .btn-action-sm {
+        width: 26px;
+        height: 26px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        border: none;
+        color: #ffffff !important;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-action-sm:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+
+    .btn-edit-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .btn-delete-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     }
 </style>
 @endpush
 
 @section('content')
-<main id="main" class="main" style="font-family: 'Nunito', sans-serif; background-color: #f6f9ff; min-height: 100vh;">
+<main id="main" class="main workspace-container" style="background-color: #f6f9ff; min-height: 100vh;">
 
     <!-- Top Bar / Header -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
             <h1 style="font-size: 22px; font-weight: 700; color: #212529; margin: 0 0 4px 0;">Data Project Status</h1>
-            <p class="text-muted m-0" style="font-size: 13.5px;">Track and manage customer database records individually per entity</p>
+            <p class="text-muted m-0" style="font-size: 13.5px;">Integrated master records combining project setup (1-28) and item color specifications (29-42)</p>
         </div>
     </div>
 
     <!-- Alert Success -->
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show border-0 mb-4 shadow-sm rounded-3" role="alert" style="background-color: #e8f5e9; color: #1b5e20; font-size: 13.5px; font-family: 'Nunito', sans-serif;">
+        <div class="alert alert-success alert-dismissible fade show border-0 mb-4 shadow-sm rounded-3" role="alert" style="background-color: #e8f5e9; color: #1b5e20; font-size: 13.5px;">
             <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -80,7 +147,7 @@
         <!-- Filter, Search, dan Tombol Export CSV -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div class="d-flex align-items-center gap-2" style="font-size: 14px; color: #212529;">
-                <select class="form-select border rounded-3 shadow-none text-center" style="width: 80px; height: 38px; font-size: 14px; font-family: 'Nunito', sans-serif; color: #212529;">
+                <select class="form-select border rounded-3 shadow-none text-center" style="width: 80px; height: 38px; font-size: 14px; color: #212529;">
                     <option value="25" selected>25</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
@@ -90,9 +157,9 @@
             
             <div class="d-flex align-items-center gap-2">
                 <div style="width: 260px;">
-                    <input type="text" id="tableSearchInput" class="form-control border rounded-3 shadow-none" placeholder="Search orders..." style="height: 38px; font-size: 14px; padding-left: 15px; font-family: 'Nunito', sans-serif; color: #212529;">
+                    <input type="text" id="tableSearchInput" class="form-control border rounded-3 shadow-none" placeholder="Search orders..." style="height: 38px; font-size: 14px; padding-left: 15px; color: #212529;">
                 </div>
-                <button type="button" onclick="exportTableToCSV('data-project-status.csv')" class="btn btn-white bg-white border rounded-3 fw-semibold px-3 d-flex align-items-center gap-2 shadow-sm" style="height: 38px; font-size: 13px; color: #212529; font-family: 'Nunito', sans-serif;">
+                <button type="button" onclick="exportTableToCSV('data-project-status.csv')" class="btn btn-white bg-white border rounded-3 fw-semibold px-3 d-flex align-items-center gap-2 shadow-sm" style="height: 38px; font-size: 13px; color: #212529;">
                     <i class="bi bi-download text-success"></i> Export CSV
                 </button>
             </div>
@@ -104,284 +171,252 @@
                 <thead>
                     <tr>
                         <th style="width: 50px;">No</th>
-                        <th style="width: 130px;">Item Code</th>
-                        <th style="width: 140px;">Brand / Family</th>
-                        <th style="width: 100px;">Market</th>
-                        <th style="width: 200px;">Project Name</th>
-                        <th style="width: 120px;">PD ASCIS</th>
-                        <th style="width: 130px;">Customer</th>
-                        <th style="width: 120px;">CS Brand</th>
-                        <th style="width: 110px;">CS HW</th>
-                        <th style="width: 110px;">CPI HW</th>
+                        
+                        <!-- SECTION 1: IDENTITY & GENERAL SPECIFICATIONS (1 - 10) -->
+                        <th style="width: 120px;">Item Code</th>
+                        <th style="width: 100px;">Brand / Family</th>
+                        <th style="width: 100px;">Market Zone</th>
+                        <th style="width: 180px;">Project Name</th>
+                        <th style="width: 110px;">PD ASCIS</th>
+                        <th style="width: 130px;">Customer Name</th>
+                        <th style="width: 110px;">CS Brand</th>
+                        <th style="width: 100px;">CS HW</th>
+                        <th style="width: 100px;">CPI HW</th>
 
-                        <th style="width: 150px;">S5 Internal Approval</th>
+                        <!-- SECTION 2: APPROVAL & TECHNICAL MILESTONES (11 - 18) -->
+                        <th style="width: 140px;">S5 Internal Approval</th>
                         <th style="width: 110px;">GHW Set</th>
-                        <th style="width: 140px;">Information Received</th>
+                        <th style="width: 130px;">Information Received</th>
                         <th style="width: 130px;">PLM Released</th>
-                        <th style="width: 120px;">COI Number</th>
-                        <th style="width: 120px;">Green Light</th>
+                        <th style="width: 110px;">COI Number</th>
+                        <th style="width: 110px;">Green Light</th>
                         <th style="width: 90px;">TD</th>
                         <th style="width: 110px;">Machine</th>
-                        <th style="width: 120px;">Board</th>
-                        <th style="width: 130px;">Board U Code</th>
 
-                        <th style="width: 130px;">Board A Code</th>
-                        <th style="width: 100px;">Type CM</th>
-                        <th style="width: 130px;">Die Cut Number</th>
-                        <th style="width: 120px;">S10 Number</th>
-                        <th style="width: 120px;">S11 Number</th>
-                        <th style="width: 120px;">S12 Number</th>
-                        <th style="width: 150px;">Cylinder Supplier</th>
-                        <th style="width: 120px;">Repro By</th>
-                        <th style="width: 120px;">Sequence (Seq)</th>
-                        <th style="width: 120px;">Colour</th>
+                        <!-- SECTION 3: BOARD, CODES, DIE CUT & CYLINDER SPECS (19 - 28) -->
+                        <th style="width: 110px;">Board</th>
+                        <th style="width: 120px;">Board U Code</th>
+                        <th style="width: 120px;">Board A Code</th>
+                        <th style="width: 90px;">Type CM</th>
+                        <th style="width: 120px;">Die Cut Number</th>
+                        <th style="width: 110px;">S10 Number</th>
+                        <th style="width: 110px;">S11 Number</th>
+                        <th style="width: 110px;">S12 Number</th>
+                        <th style="width: 130px;">Cylinder Supplier</th>
+                        <th style="width: 110px;">Repro By</th>
 
-                        <th style="width: 130px;">BAAN Cylinder</th>
-                        <th style="width: 120px;">Film Number</th>
-                        <th style="width: 120px;">Ink System</th>
-                        <th style="width: 120px;">Ink Code</th>
-                        <th style="width: 130px;">Supplier Ink</th>
-                        <th style="width: 130px;">BAAN Ink Code</th>
+                        <!-- SECTION 4: PRINTING COLOUR & INK SPECS (29 - 42) -->
+                        <th style="width: 110px;">Sequence</th>
+                        <th style="width: 120px;">Colour Name</th>
+                        <th style="width: 120px;">BAAN Cylinder</th>
+                        <th style="width: 110px;">Film Number</th>
+                        <th style="width: 110px;">Ink System</th>
+                        <th style="width: 110px;">Ink Code</th>
+                        <th style="width: 110px;">Supplier Ink</th>
+                        <th style="width: 120px;">BAAN Ink Code</th>
                         <th style="width: 100px;">Coverage (%)</th>
                         <th style="width: 110px;">Usage (Kg/TH)</th>
-                        <th style="width: 130px;">Angle / Anilox</th>
-                        <th style="width: 220px;">Remarks</th>
+                        <th style="width: 120px;">Angle / Anilox</th>
+                        <th style="width: 140px;">Attachment File</th>
+                        <th style="width: 160px;">Remarks</th>
+                        <th style="width: 110px;">Seq Status</th>
 
-                        <th style="width: 200px;">Main Design / Attachment</th>
-                        <th style="width: 130px;">Project Status</th>
-                        
-                        <!-- Internal Tracking -->
-                        <th style="width: 110px;">Dev Status</th>
-                        <th style="width: 120px;">Layout Status</th>
-                        <th style="width: 120px;">Baan Status</th>
-                        <th style="width: 120px;">Promp Status</th>
-                        <th style="width: 130px;">Job Bag Status</th>
-                        <th style="width: 120px;">SAP Number</th>
+                        <!-- PROJECT MASTER STATUS -->
+                        <th style="width: 120px;">Project Status</th>
                         
                         <!-- Actions -->
-                        <th style="width: 100px;">Actions</th>
+                        <th style="width: 90px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="projectTableBody">
                     @forelse($tasks as $index => $task)
-                    <tr>
-                        <!-- No -->
-                        <td class="fw-bold">
-                            {{ str_pad($task->no ?? ($index + 1), 2, '0', STR_PAD_LEFT) }}
-                        </td>
-                        
-                        <!-- Item Code -->
-                        <td class="fw-bold font-monospace text-primary text-break" style="word-break: break-all;">{{ $task->item_code }}</td>
+                        @php
+                            $specs = $task->itemSpecs ? $task->itemSpecs->sortBy('sequence') : collect();
+                            $specCount = $specs->count();
+                        @endphp
 
-                        <!-- Brand Family -->
-                        <td class="fw-semibold">{{ $task->brand_family ?? '-' }}</td>
-
-                        <!-- Market -->
-                        <td class="fw-semibold">{{ $task->market ?? '-' }}</td>
-
-                        <!-- Project Name -->
-                        <td class="fw-semibold text-break" style="color: #012970; line-height: 1.2;">{{ $task->project_name }}</td>
-                        
-                        <!-- PD ASCIS -->
-                        <td>{{ $task->ascis_pd ?? '-' }}</td>
-
-                        <!-- Customer ID -->
-                        <td class="fw-semibold">{{ $task->customer }}</td>
-
-                        <!-- CS Brand -->
-                        <td>{{ $task->cs_brand ?? '-' }}</td>
-
-                        <!-- CS HW -->
-                        <td>{{ $task->cs_hw ?? '-' }}</td>
-
-                        <!-- CPI HW -->
-                        <td>{{ $task->cpi_hw ?? '-' }}</td>
-
-                        <!-- S5 Internal Approval -->
-                        <td class="text-break">{{ $task->s5_internal_approval ?? '-' }}</td>
-
-                        <!-- GHW Set -->
-                        <td>{{ $task->ghw_set ?? '-' }}</td>
-
-                        <!-- Information Received -->
-                        <td class="font-monospace">
-                            {{ $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('d-m-Y') : '-' }}
-                        </td>
-
-                        <!-- PLM Released -->
-                        <td class="font-monospace">
-                            {{ $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('d-m-Y') : '-' }}
-                        </td>
-
-                        <!-- COI Number -->
-                        <td class="text-break">{{ $task->coi_number ?? '-' }}</td>
-
-                        <!-- Green Light -->
-                        <td>{{ $task->green_light ?? '-' }}</td>
-
-                        <!-- TD -->
-                        <td>{{ $task->td ?? '-' }}</td>
-
-                        <!-- Machine -->
-                        <td>{{ $task->machine ?? '-' }}</td>
-
-                        <!-- Board -->
-                        <td class="text-break">{{ $task->board ?? '-' }}</td>
-
-                        <!-- Board U Code -->
-                        <td class="font-monospace text-break">{{ $task->board_u_code ?? '-' }}</td>
-
-                        <!-- Board A Code -->
-                        <td class="font-monospace text-break">{{ $task->board_a_code ?? '-' }}</td>
-
-                        <!-- Type CM -->
-                        <td>{{ $task->type_cm ?? '-' }}</td>
-
-                        <!-- Die Cut Number -->
-                        <td class="text-break">{{ $task->die_cut_number ?? '-' }}</td>
-
-                        <!-- S10 Number -->
-                        <td class="font-monospace">{{ $task->s10_number ?? '-' }}</td>
-
-                        <!-- S11 Number -->
-                        <td class="font-monospace">{{ $task->s11_number ?? '-' }}</td>
-
-                        <!-- S12 Number -->
-                        <td class="font-monospace">{{ $task->s12_number ?? '-' }}</td>
-
-                        <!-- Cylinder Supplier -->
-                        <td class="text-break" style="line-height: 1.2;">{{ $task->cylinder_supplier ?? '-' }}</td>
-
-                        <!-- Repro By -->
-                        <td>{{ $task->repro_by ?? '-' }}</td>
-
-                        <!-- Sequence (Seq) -->
-                        <td>{{ $task->sequence_seq ?? '-' }}</td>
-
-                        <!-- Colour -->
-                        <td class="text-break" style="line-height: 1.2;">{{ $task->colour ?? '-' }}</td>
-
-                        <!-- BAAN Cylinder -->
-                        <td class="font-monospace text-break">{{ $task->baan_cylinder ?? '-' }}</td>
-
-                        <!-- Film Number -->
-                        <td class="font-monospace text-break">{{ $task->film_number ?? '-' }}</td>
-
-                        <!-- Ink System -->
-                        <td class="text-break">{{ $task->ink_system ?? '-' }}</td>
-
-                        <!-- Ink Code -->
-                        <td class="font-monospace text-break">{{ $task->ink_code ?? '-' }}</td>
-
-                        <!-- Supplier Ink -->
-                        <td class="text-break">{{ $task->supplier_ink ?? '-' }}</td>
-
-                        <!-- BAAN Ink Code -->
-                        <td class="font-monospace text-break">{{ $task->baan_ink_code ?? '-' }}</td>
-
-                        <!-- Coverage (%) -->
-                        <td>{{ $task->coverage_percent ? $task->coverage_percent . '%' : '-' }}</td>
-
-                        <!-- Usage (Kg/TH) -->
-                        <td>{{ $task->usage_kg_th ? $task->usage_kg_th . ' Kg/TH' : '-' }}</td>
-
-                        <!-- Angle / Anilox -->
-                        <td class="text-break">{{ $task->angle_anilox ?? '-' }}</td>
-
-                        <!-- Remarks -->
-                        <td class="text-break" style="line-height: 1.2; font-size: 11px;">
-                            {{ $task->remark ?? '-' }}
-                        </td>
-
-                        <!-- Main Design / Attachment -->
-                        <td class="text-break" style="line-height: 1.2;">
-                            @if($task->main_design_attachment)
-                                <a href="#" class="text-decoration-none text-primary fw-semibold">
-                                    <i class="bi bi-file-earmark-arrow-down-fill me-1"></i>{{ $task->main_design_attachment }}
-                                </a>
-                            @else
-                                <span class="text-muted font-italic">-</span>
-                            @endif
-                        </td>
-
-                        <!-- Project Status -->
-                        <td>
+                        @if($specCount > 0)
+                            @foreach($specs as $sIndex => $spec)
                             @php
-                                $statusStyle = [
-                                    'To Do'        => ['bg' => '#f1f5f9', 'text' => '#475569'],
-                                    'In Progress' => ['bg' => '#fff7ed', 'text' => '#ea580c'],
-                                    'Ready for QA'=> ['bg' => '#eff6ff', 'text' => '#2563eb'],
-                                    'Completed'   => ['bg' => '#e8f5e9', 'text' => '#2e7d32']
-                                ];
-                                $style = $statusStyle[$task->status] ?? ['bg' => '#f8fafc', 'text' => '#64748b'];
+                                $isSpecComplete = !empty($spec->sequence) &&
+                                                  !empty($spec->colour) &&
+                                                  !empty($spec->baan_cylinder) &&
+                                                  !empty($spec->film_number) &&
+                                                  !empty($spec->ink_system) &&
+                                                  !empty($spec->ink_code) &&
+                                                  !empty($spec->supplier_ink) &&
+                                                  !empty($spec->baan_ink_code) &&
+                                                  !is_null($spec->coverage) &&
+                                                  !is_null($spec->usage_kg_th) &&
+                                                  !empty($spec->angle_anilox);
                             @endphp
-                            <span class="badge rounded-pill px-2 py-0.5" style="background-color: {{ $style['bg'] }}; color: {{ $style['text'] }}; font-size: 10.5px;">
-                                {{ $task->status }}
-                            </span>
-                        </td>
+                            <tr>
+                                @if($sIndex === 0)
+                                    <!-- NO & SECTION 1-3 (DATA TASK 1-28) DENGAN ROWSPAN -->
+                                    <td rowspan="{{ $specCount }}" class="fw-bold">{{ sprintf('%02d', $task->no ?? ($index + 1)) }}</td>
+                                    
+                                    <!-- SECTION 1 (1 - 10) -->
+                                    <td rowspan="{{ $specCount }}" class="fw-bold text-primary">{{ $task->item_code }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->brand_family ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->market ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}" class="fw-semibold text-start ps-2" style="color: #012970; line-height: 1.2;">{{ $task->project_name ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->ascis_pd ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->customer ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->cs_brand ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->cs_hw ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->cpi_hw ?? '-' }}</td>
 
-                        <!-- Dev Status -->
-                        <td>
-                            <span class="badge rounded-pill px-2 py-0.5 text-dark" style="font-size: 10.5px; background-color: #f1f5f9;">
-                                {{ $task->development_status ?? 'Active' }}
-                            </span>
-                        </td>
+                                    <!-- SECTION 2 (11 - 18) -->
+                                    <td rowspan="{{ $specCount }}">{{ $task->s5_internal_approval ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->ghw_set ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('d-m-Y') : '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('d-m-Y') : '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->coi_number ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->green_light ? \Carbon\Carbon::parse($task->green_light)->format('d-m-Y') : '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->td ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->machine ?? '-' }}</td>
 
-                        <!-- Layout Status -->
-                        <td>
-                            <span class="badge rounded-pill px-2 py-0.5" style="font-size: 10.5px;
-                                {{ $task->layout_status == 'Completed' ? 'background-color: #e8f5e9; color: #2e7d32;' : ($task->layout_status == 'In Progress' ? 'background-color: #fff7ed; color: #ea580c;' : 'background-color: #f1f5f9; color: #64748b;') }}">
-                                {{ $task->layout_status ?? 'Pending' }}
-                            </span>
-                        </td>
+                                    <!-- SECTION 3 (19 - 28) -->
+                                    <td rowspan="{{ $specCount }}">{{ $task->board ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->board_u_code ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->board_a_code ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->type_cm ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->die_cut_number ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->s10_number ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->s11_number ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->s12_number ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->cylinder_supplier ?? '-' }}</td>
+                                    <td rowspan="{{ $specCount }}">{{ $task->repro_by ?? '-' }}</td>
+                                @endif
 
-                        <!-- Baan Status -->
-                        <td>
-                            <span class="badge rounded-pill px-2 py-0.5" style="font-size: 10.5px;
-                                {{ $task->baan_status == 'Completed' ? 'background-color: #e8f5e9; color: #2e7d32;' : ($task->baan_status == 'In Progress' ? 'background-color: #fff7ed; color: #ea580c;' : 'background-color: #f1f5f9; color: #64748b;') }}">
-                                {{ $task->baan_status ?? 'Pending' }}
-                            </span>
-                        </td>
+                                <!-- SECTION 4: ITEM SPECS (29 - 42) PER SEQUENCE -->
+                                <td><span class="badge-seq-green">Seq {{ $spec->sequence }}</span></td>
+                                <td class="text-start ps-2">{{ $spec->colour }}</td>
+                                <td>{{ $spec->baan_cylinder ?? '-' }}</td>
+                                <td>{{ $spec->film_number ?? '-' }}</td>
+                                <td>{{ $spec->ink_system ?? '-' }}</td>
+                                <td>{{ $spec->ink_code ?? '-' }}</td>
+                                <td>{{ $spec->supplier_ink ?? '-' }}</td>
+                                <td>{{ $spec->baan_ink_code ?? '-' }}</td>
+                                <td>{{ $spec->coverage ? $spec->coverage . '%' : '-' }}</td>
+                                <td>{{ $spec->usage_kg_th ? number_format($spec->usage_kg_th, 2) : '-' }}</td>
+                                <td>{{ $spec->angle_anilox ?? '-' }}</td>
+                                <td>
+                                    @if($spec->main_design_attachment)
+                                        <a href="{{ asset($spec->main_design_attachment) }}" target="_blank" class="text-decoration-none text-primary fw-semibold" style="font-size: 11px;">
+                                            <i class="bi bi-paperclip me-1"></i>Attachment
+                                        </a>
+                                    @else
+                                        <span class="text-muted" style="font-size: 11px;">-</span>
+                                    @endif
+                                </td>
+                                <td class="text-start ps-2" style="font-size: 11px;">{{ $spec->remarks ?? '-' }}</td>
+                                <td>
+                                    @if($isSpecComplete)
+                                        <span class="badge bg-success badge-status-sm">Completed</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark badge-status-sm">Progress</span>
+                                    @endif
+                                </td>
 
-                        <!-- Promp Status -->
-                        <td>
-                            <span class="badge rounded-pill px-2 py-0.5" style="font-size: 10.5px;
-                                {{ $task->promp_status == 'Completed' ? 'background-color: #e8f5e9; color: #2e7d32;' : ($task->promp_status == 'In Progress' ? 'background-color: #fff7ed; color: #ea580c;' : 'background-color: #f1f5f9; color: #64748b;') }}">
-                                {{ $task->promp_status ?? 'Pending' }}
-                            </span>
-                        </td>
+                                @if($sIndex === 0)
+                                    <!-- PROJECT MASTER STATUS -->
+                                    <td rowspan="{{ $specCount }}">
+                                        @if(strtolower($task->status ?? '') == 'completed')
+                                            <span class="badge bg-success badge-status-sm">Completed</span>
+                                        @elseif(strtolower($task->status ?? '') == 'in progress' || strtolower($task->status ?? '') == 'progress')
+                                            <span class="badge bg-warning text-dark badge-status-sm">Progress</span>
+                                        @else
+                                            <span class="badge bg-secondary badge-status-sm">To Do</span>
+                                        @endif
+                                    </td>
 
-                        <!-- Job Bag Status -->
-                        <td>
-                            <span class="badge rounded-pill px-2 py-0.5" style="font-size: 10.5px;
-                                {{ $task->job_bag_status == 'Completed' ? 'background-color: #e8f5e9; color: #2e7d32;' : ($task->job_bag_status == 'In Progress' ? 'background-color: #fff7ed; color: #ea580c;' : 'background-color: #f1f5f9; color: #64748b;') }}">
-                                {{ $task->job_bag_status ?? 'Pending' }}
-                            </span>
-                        </td>
+                                    <!-- ACTIONS -->
+                                    <td rowspan="{{ $specCount }}">
+                                        <div class="table-action-btns">
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editTaskModalTable{{ $task->item_code }}" class="btn-action-sm btn-edit-warning" title="Edit Record">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <form id="delete-table-task-{{ $task->id ?? $task->item_code }}" action="{{ route('admin.task.destroy', $task->id ?? $task->item_code) }}" method="POST" style="display:inline;">
+                                                @csrf @method('DELETE')
+                                                <button type="button" class="btn-action-sm btn-delete-danger" onclick="if(confirm('Delete project data permanently?')) document.getElementById('delete-table-task-{{ $task->id ?? $task->item_code }}').submit();" title="Delete Task">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                @endif
+                            </tr>
+                            @endforeach
+                        @else
+                            <!-- BARIS JIKA BELUM ADA ITEM SPEC (29-42) TERHUBUNG -->
+                            <tr>
+                                <td class="fw-bold">{{ sprintf('%02d', $task->no ?? ($index + 1)) }}</td>
+                                <td class="fw-bold text-primary">{{ $task->item_code }}</td>
+                                <td>{{ $task->brand_family ?? '-' }}</td>
+                                <td>{{ $task->market ?? '-' }}</td>
+                                <td class="fw-semibold text-start ps-2" style="color: #012970; line-height: 1.2;">{{ $task->project_name ?? '-' }}</td>
+                                <td>{{ $task->ascis_pd ?? '-' }}</td>
+                                <td>{{ $task->customer ?? '-' }}</td>
+                                <td>{{ $task->cs_brand ?? '-' }}</td>
+                                <td>{{ $task->cs_hw ?? '-' }}</td>
+                                <td>{{ $task->cpi_hw ?? '-' }}</td>
 
-                        <!-- SAP Number -->
-                        <td class="fw-bold font-monospace text-break" style="font-size: 11.5px; word-break: break-all;">
-                            {{ $task->sap_number ?? '-' }}
-                        </td>
+                                <td>{{ $task->s5_internal_approval ?? '-' }}</td>
+                                <td>{{ $task->ghw_set ?? '-' }}</td>
+                                <td>{{ $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('d-m-Y') : '-' }}</td>
+                                <td>{{ $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('d-m-Y') : '-' }}</td>
+                                <td>{{ $task->coi_number ?? '-' }}</td>
+                                <td>{{ $task->green_light ? \Carbon\Carbon::parse($task->green_light)->format('d-m-Y') : '-' }}</td>
+                                <td>{{ $task->td ?? '-' }}</td>
+                                <td>{{ $task->machine ?? '-' }}</td>
 
-                        <!-- Actions Buttons -->
-                        <td>
-                            <div class="d-flex justify-content-center gap-1">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#editTaskModalTable{{ $task->item_code }}" class="btn btn-sm text-dark d-flex align-items-center justify-content-center shadow-none border-0" style="width: 26px; height: 26px; border-radius: 4px; background-color: #ffc107;" title="Edit Record">
-                                    <i class="bi bi-pencil-square" style="font-size: 12px;"></i>
-                                </button>
-                                <button type="button" onclick="event.preventDefault(); if(confirm('Delete project data permanently?')) document.getElementById('delete-table-task-{{ $task->item_code }}').submit();" class="btn btn-sm text-white d-flex align-items-center justify-content-center shadow-none border-0" style="width: 26px; height: 26px; border-radius: 4px; background-color: #dc3545;" title="Delete Record">
-                                    <i class="bi bi-trash3-fill" style="font-size: 12px;"></i>
-                                </button>
-                            </div>
-                            <form id="delete-table-task-{{ $task->item_code }}" action="{{ route('admin.task.destroy', $task->item_code) }}" method="POST" class="d-none">
-                                @csrf @method('DELETE')
-                            </form>
-                        </td>
-                    </tr>
+                                <td>{{ $task->board ?? '-' }}</td>
+                                <td>{{ $task->board_u_code ?? '-' }}</td>
+                                <td>{{ $task->board_a_code ?? '-' }}</td>
+                                <td>{{ $task->type_cm ?? '-' }}</td>
+                                <td>{{ $task->die_cut_number ?? '-' }}</td>
+                                <td>{{ $task->s10_number ?? '-' }}</td>
+                                <td>{{ $task->s11_number ?? '-' }}</td>
+                                <td>{{ $task->s12_number ?? '-' }}</td>
+                                <td>{{ $task->cylinder_supplier ?? '-' }}</td>
+                                <td>{{ $task->repro_by ?? '-' }}</td>
+
+                                <!-- EMPTY ITEM SPECS PLACEHOLDERS (29 - 42) -->
+                                <td colspan="14" class="text-muted font-italic bg-light py-2" style="font-size: 11px;">
+                                    Item specifications (29-42) not created yet.
+                                </td>
+
+                                <!-- PROJECT MASTER STATUS -->
+                                <td>
+                                    @if(strtolower($task->status ?? '') == 'completed')
+                                        <span class="badge bg-success badge-status-sm">Completed</span>
+                                    @elseif(strtolower($task->status ?? '') == 'in progress' || strtolower($task->status ?? '') == 'progress')
+                                        <span class="badge bg-warning text-dark badge-status-sm">Progress</span>
+                                    @else
+                                        <span class="badge bg-secondary badge-status-sm">To Do</span>
+                                    @endif
+                                </td>
+
+                                <!-- ACTIONS -->
+                                <td>
+                                    <div class="table-action-btns">
+                                        <button type="button" data-bs-toggle="modal" data-bs-target="#editTaskModalTable{{ $task->item_code }}" class="btn-action-sm btn-edit-warning" title="Edit Record">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <form id="delete-table-task-{{ $task->id ?? $task->item_code }}" action="{{ route('admin.task.destroy', $task->id ?? $task->item_code) }}" method="POST" style="display:inline;">
+                                            @csrf @method('DELETE')
+                                            <button type="button" class="btn-action-sm btn-delete-danger" onclick="if(confirm('Delete project data permanently?')) document.getElementById('delete-table-task-{{ $task->id ?? $task->item_code }}').submit();" title="Delete Task">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
                     @empty
                     <tr id="noDataRow">
-                        <td colspan="49" class="text-center py-4 text-muted" style="font-style: italic; font-family: 'Nunito', sans-serif;">
+                        <td colspan="45" class="text-center py-4 text-muted" style="font-style: italic;">
                             <i class="bi bi-inbox d-block mb-2 opacity-40" style="font-size: 24px;"></i>
                             No individual project data entries stored inside database.
                         </td>
@@ -391,46 +426,32 @@
             </table>
         </div>
 
-        <!-- Pagination (DIBALIKIN KE WARNA SEMULA SAMA DENGAN WARNA ORIGINAL BRO) -->
-        <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3" style="font-size: 14px; color: #212529; font-family: 'Nunito', sans-serif;">
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3" style="font-size: 14px; color: #212529;">
             <div class="fw-semibold">
-                Showing 1 to {{ min($tasks->count(), 25) }} of {{ $tasks->count() }} entries
+                Showing {{ $tasks->count() > 0 ? 1 : 0 }} to {{ min($tasks->count(), 25) }} of {{ $tasks->count() }} entries
             </div>
             
             <nav>
                 <ul class="pagination pagination-sm m-0 gap-2">
                     <li class="page-item disabled">
                         <a class="page-link d-flex align-items-center justify-content-center shadow-none text-white border-0" 
-                           style="width: 36px; height: 36px; border-radius: 6px; font-weight: 700; background: linear-gradient(135deg, #012970, #00b4d8, #39ff14); opacity: 0.6;" href="#">
-                            <i class="bi bi-chevron-left" style="font-size: 14px; display: inline-block;"></i>
+                           style="width: 36px; height: 36px; border-radius: 6px; font-weight: 700; background: linear-gradient(135deg, #012970, #00b4d8, #15803d); opacity: 0.6;" href="#">
+                            <i class="bi bi-chevron-left" style="font-size: 14px;"></i>
                         </a>
                     </li>
 
                     <li class="page-item active">
                         <a class="page-link d-flex align-items-center justify-content-center shadow-none text-white border-0" 
-                           style="width: 36px; height: 36px; border-radius: 6px; font-weight: 800; font-size: 14px; background: linear-gradient(135deg, #012970, #00b4d8, #39ff14);" href="#">
+                           style="width: 36px; height: 36px; border-radius: 6px; font-weight: 800; font-size: 14px; background: linear-gradient(135deg, #012970, #00b4d8, #15803d);" href="#">
                             1
                         </a>
                     </li>
 
                     <li class="page-item">
                         <a class="page-link d-flex align-items-center justify-content-center shadow-none text-white border-0" 
-                           style="width: 36px; height: 36px; border-radius: 6px; font-weight: 800; font-size: 14px; background: linear-gradient(135deg, #012970, #00b4d8, #39ff14);" href="#">
-                            2
-                        </a>
-                    </li>
-
-                    <li class="page-item">
-                        <a class="page-link d-flex align-items-center justify-content-center shadow-none text-white border-0" 
-                           style="width: 36px; height: 36px; border-radius: 6px; font-weight: 800; font-size: 14px; background: linear-gradient(135deg, #012970, #00b4d8, #39ff14);" href="#">
-                            3
-                        </a>
-                    </li>
-
-                    <li class="page-item">
-                        <a class="page-link d-flex align-items-center justify-content-center shadow-none text-white border-0" 
-                           style="width: 36px; height: 36px; border-radius: 6px; font-weight: 700; background: linear-gradient(135deg, #012970, #00b4d8, #39ff14);" href="#">
-                            <i class="bi bi-chevron-right" style="font-size: 14px; display: inline-block;"></i>
+                           style="width: 36px; height: 36px; border-radius: 6px; font-weight: 700; background: linear-gradient(135deg, #012970, #00b4d8, #15803d);" href="#">
+                            <i class="bi bi-chevron-right" style="font-size: 14px;"></i>
                         </a>
                     </li>
                 </ul>
@@ -441,13 +462,14 @@
 
 </main>
 
-<!-- Loop Modal Edit Specs -->
+<!-- Loop Modal Edit Specs (Mengarah ke Partial File yang Tersedia) -->
 @foreach($tasks as $task)
-    @include('admin.task.partials.modal-edit-table-specs')
+    @include('admin.task.partials.modal-edit-table-specs', ['task' => $task])
 @endforeach
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+@endsection
 
+@push('scripts')
 <!-- JAVASCRIPT SEARCH REALTIME & EXPORT CSV -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -455,20 +477,22 @@
         const tableBody = document.getElementById('projectTableBody');
         const rows = tableBody.getElementsByTagName('tr');
 
-        searchInput.addEventListener('keyup', function() {
-            const filterValue = this.value.toLowerCase().trim();
+        if(searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const filterValue = this.value.toLowerCase().trim();
 
-            for (let i = 0; i < rows.length; i++) {
-                if (rows[i].id === 'noDataRow') continue;
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].id === 'noDataRow') continue;
 
-                const rowText = rows[i].textContent.toLowerCase();
-                if (rowText.includes(filterValue)) {
-                    rows[i].style.display = '';
-                } else {
-                    rows[i].style.display = 'none';
+                    const rowText = rows[i].textContent.toLowerCase();
+                    if (rowText.includes(filterValue)) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
                 }
-            }
-        });
+            });
+        }
     });
 
     function exportTableToCSV(filename) {
@@ -489,7 +513,7 @@
             csv.push(row.join(","));
         }
 
-        const csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+        const csvFile = new Blob(["\uFEFF" + csv.join("\n")], { type: "text/csv;charset=utf-8;" });
         const downloadLink = document.createElement("a");
         downloadLink.download = filename;
         downloadLink.href = window.URL.createObjectURL(csvFile);
@@ -499,4 +523,4 @@
         document.body.removeChild(downloadLink);
     }
 </script>
-@endsection
+@endpush

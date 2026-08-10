@@ -75,13 +75,14 @@
          href="{{ route('admin.workflow.index') }}"
          style="padding: 6px 12px; height: 35px; font-size: 13.5px; font-weight: 600;">
         <i class="fa-solid fa-diagram-project me-2" style="font-size: 15px;"></i>
-        <span>Workflow Engine</span>
+        <span>Job Bag Verifications</span>
       </a>
     </li>
 
+    <!-- MENGARAH KE TASK LIST PROJECT (BUKAN EMAIL) -->
     <li class="nav-item">
-      <a class="nav-link rounded-3 d-flex align-items-center {{ request()->routeIs('admin.emails.*') ? 'active' : 'collapsed' }}"
-         href="{{ route('admin.emails.index') }}"
+      <a class="nav-link rounded-3 d-flex align-items-center {{ request()->routeIs('admin.task-list-project.*') ? 'active' : 'collapsed' }}"
+         href="{{ route('admin.task-list-project.index') }}"
          style="padding: 6px 12px; height: 35px; font-size: 13.5px; font-weight: 600;">
         <i class="fa-solid fa-list-check me-2" style="font-size: 15px;"></i>
         <span>Task List Project</span>
@@ -128,25 +129,25 @@
 <style>
 /* Reset & Base style link navigasi sidebar */
 .sidebar-nav .nav-link {
-color: #4b5563;
-transition: all 0.15s ease-in-out;
-border-radius: 6px !important; 
-text-decoration: none;
-border-left: 4px solid transparent;
+  color: #4b5563;
+  transition: all 0.15s ease-in-out;
+  border-radius: 6px !important; 
+  text-decoration: none;
+  border-left: 4px solid transparent;
 }
 
 /* KONDISI HOVER */
 .sidebar-nav .nav-link:hover,
 .sidebar-nav .nav-link.active:hover {
-background-color: #f1f5f9 !important;
-color: #1e293b !important;
-border-left: 4px solid #94a3b8 !important;
+  background-color: #f1f5f9 !important;
+  color: #1e293b !important;
+  border-left: 4px solid #94a3b8 !important;
 }
 
 /* KONDISI AKTIF/DIKLIK */
 .sidebar-nav .nav-link.active {
-background-color: #eff6ff !important;
-color: #2563eb !important;
-border-left: 4px solid #3b82f6 !important;
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
+  border-left: 4px solid #3b82f6 !important;
 }
 </style>

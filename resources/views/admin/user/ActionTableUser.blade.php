@@ -28,20 +28,55 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4" style="font-size: 13px;">
+                @php
+                    $rawRole = $user->role ?: 'Administrator';
+                    $roleKey = strtolower($rawRole);
+                    
+                    $roleLabels = [
+                        'administrator' => 'Administrator',
+                        'pd'            => 'Project Developer',
+                        'qa'            => 'Quality Assurance',
+                        'planner'       => 'Planner',
+                    ];
+
+                    $roleIcons = [
+                        'administrator' => 'bi-shield-lock-fill',
+                        'pd'            => 'bi-gear-wide-connected',
+                        'qa'            => 'bi-patch-check-fill',
+                        'planner'       => 'bi-journal-text',
+                    ];
+
+                    $displayRoleName = $roleLabels[$roleKey] ?? $rawRole;
+                    $iconClass = $roleIcons[$roleKey] ?? 'bi-shield-lock-fill';
+                @endphp
+
                 <div class="text-center mb-4">
                     <div class="d-inline-flex align-items-center justify-content-center bg-light text-success fw-bold rounded-circle mb-2" style="font-size: 22px; border: 2px solid #26B170; width: 64px; height: 64px;">
                         {{ strtoupper(substr($user->name, 0, 2)) }}
                     </div>
                     <h5 class="fw-bold text-dark mb-1">{{ $user->name }}</h5>
-                    <span class="badge-role {{ strtolower($user->role) }}">{{ $user->role }}</span>
+                    <span class="badge-role {{ $roleKey }}">
+                        <i class="bi {{ $iconClass }}"></i> {{ $displayRoleName }}
+                    </span>
                 </div>
                 <div class="p-3 bg-light rounded-3 border">
-                    <div class="row g-2">
+                    <div class="row g-2 align-items-center">
                         <div class="col-5 text-muted">NIK / ID:</div>
                         <div class="col-7 fw-bold text-dark">{{ $user->nik }}</div>
 
                         <div class="col-5 text-muted">System Role:</div>
-                        <div class="col-7 fw-bold text-dark">{{ $user->role }}</div>
+                        <div class="col-7 fw-bold text-dark">{{ $displayRoleName }}</div>
+
+                        <div class="col-5 text-muted">Digital Signature:</div>
+                        <div class="col-7">
+                            @if($user->signature)
+                                <a href="{{ asset($user->signature) }}" target="_blank">
+                                    <img src="{{ asset($user->signature) }}" alt="Sign" style="max-height: 45px; max-width: 120px; object-fit: contain; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px; background: #fff;">
+                                </a>
+                            @else
+                                <span class="text-muted" style="font-size: 12px;">-</span>
+                            @endif
+                        </div>
 
                         <div class="col-5 text-muted">Created At:</div>
                         <div class="col-7 text-dark">{{ $user->created_at ? $user->created_at->format('d F Y, H:i') : '-' }}</div>
@@ -66,7 +101,7 @@
                 <h5 class="modal-title fw-bold" style="color: #0f172a; font-size: 16px;"><i class="bi bi-pencil-square me-2 text-warning"></i>Edit User Account</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+            <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="modal-body p-4" style="font-size: 13px;">
@@ -82,10 +117,21 @@
                         <label class="form-label fw-semibold text-secondary">System Role</label>
                         <select name="role" class="form-select rounded" required style="font-size: 13px; height: 38px;">
                             <option value="Administrator" {{ $user->role == 'Administrator' ? 'selected' : '' }}>Administrator</option>
-                            <option value="PD" {{ $user->role == 'PD' ? 'selected' : '' }}>PD</option>
-                            <option value="QA" {{ $user->role == 'QA' ? 'selected' : '' }}>QA</option>
-                            <option value="PLANNER" {{ $user->role == 'PLANNER' ? 'selected' : '' }}>PLANNER</option>
+                            <option value="PD" {{ $user->role == 'PD' ? 'selected' : '' }}>Project Developer (PD)</option>
+                            <option value="QA" {{ $user->role == 'QA' ? 'selected' : '' }}>Quality Assurance (QA)</option>
+                            <option value="PLANNER" {{ $user->role == 'PLANNER' ? 'selected' : '' }}>Planner</option>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary">Digital Signature (Tanda Tangan)</label>
+                        @if($user->signature)
+                            <div class="mb-2 p-2 bg-light border rounded d-flex align-items-center gap-2">
+                                <span class="text-muted" style="font-size: 11px;">Aktif:</span>
+                                <img src="{{ asset($user->signature) }}" alt="Current Sign" style="max-height: 30px; max-width: 100px; object-fit: contain;">
+                            </div>
+                        @endif
+                        <input type="file" name="signature" class="form-control rounded" accept="image/png, image/jpeg, image/jpg, image/webp" style="font-size: 13px;">
+                        <small class="text-muted" style="font-size: 11px;">* Format: PNG, JPG, JPEG, WEBP (Max. 2MB). Kosongi jika tidak diubah.</small>
                     </div>
                     <div class="mb-0">
                         <label class="form-label fw-semibold text-secondary">Password <small class="text-muted fw-normal">(Opsional, kosongi jika tidak diubah)</small></label>

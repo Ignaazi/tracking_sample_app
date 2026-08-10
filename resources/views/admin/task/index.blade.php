@@ -47,7 +47,6 @@
         /* FILTER GRID ATAS DENGAN PATTERN BATIK GEOMETRIS HIJAU TUA YANG JELAS & ELEGANT */
         .filter-card-wrapper {
             background-color: #ffffff;
-            /* Pattern Batik Kawung / Geometri Hijau Tua SVG SVG Inline Clear */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0 C15 15, 15 45, 30 60 C45 45, 45 15, 30 0 Z M0 30 C15 15, 45 15, 60 30 C45 45, 15 45, 0 30 Z' fill='none' stroke='%2315803d' stroke-width='1.2' stroke-opacity='0.18'/%3E%3Ccircle cx='30' cy='30' r='3' fill='%2315803d' fill-opacity='0.25'/%3E%3C/svg%3E");
             background-repeat: repeat;
             background-size: 40px 40px;
@@ -89,7 +88,6 @@
             color: #ffffff !important;
         }
 
-        /* KEADAAN KLIK / AKTIF: ICON & TEKS BERUBAH HIJAU TUA KELIATAN JELAS */
         .filter-nav-link.active {
             background: #ffffff !important;
             color: #15803d !important;
@@ -103,7 +101,6 @@
             color: #15803d !important;
         }
 
-        /* TOMBOL CREATE TASK HIJAU TUA DI DALAM GRID */
         .btn-create-task-green {
             background-color: #15803d !important;
             border-color: #15803d !important;
@@ -148,7 +145,6 @@
         .count-badge-floating.bg-progress { background-color: #f97316; }
         .count-badge-floating.bg-complete { background-color: #3b82f6; }
 
-        /* BADGE HEADER STATUS KOMPAK */
         .status-header-pill {
             display: inline-flex;
             align-items: center;
@@ -167,7 +163,6 @@
         .status-pill-progress { background-color: #f97316; }
         .status-pill-completed { background-color: #3b82f6; }
 
-        /* LINGKARAN PUTIH MINI DENGAN TEKS SESUAI TEMA */
         .status-circle-badge {
             width: 16px;
             height: 16px;
@@ -216,7 +211,6 @@
             text-decoration: none;
         }
         .action-btn-grad:hover { transform: translateY(-2px); color: #ffffff !important; }
-        .btn-preview-grad { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); }
         .btn-edit-grad { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); }
         .btn-delete-grad { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); }
     </style>
@@ -230,6 +224,33 @@
         <h2 class="fw-bold text-dark mb-1">Project Specification Tracker</h2>
         <p class="text-muted small mb-0">Comprehensive multi-point project specifications workflow management.</p>
     </div>
+
+    <!-- ALERT SUKSES DAN ERROR -->
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4 border-0 shadow-sm rounded-3" role="alert">
+            <i class="bi bi-check-circle-fill fs-3 me-3 text-success"></i>
+            <div>
+                <strong class="d-block fs-6">Berhasil Disimpan!</strong>
+                <span class="small">{{ session('success') }}</span>
+            </div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-start mb-4 border-0 shadow-sm rounded-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill fs-3 me-3 text-danger mt-1"></i>
+            <div class="flex-grow-1">
+                <strong class="d-block fs-6 mb-1">Gagal Menyimpan Project!</strong>
+                <ul class="mb-0 ps-3 small">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     @php
         $countTodo = $todo->count();
@@ -289,7 +310,7 @@
                 </button>
             </div>
 
-            <!-- BUTTON CREATE TASK HIJAU TUA MASUK DI DALAM GRID FILTER -->
+            <!-- BUTTON CREATE TASK -->
             <div>
                 <button type="button" class="btn btn-create-task-green shadow-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
                     <i class="bi bi-plus-lg me-1"></i> Create Task
@@ -299,7 +320,7 @@
         </div>
     </div>
 
-    <!-- TABEL DATA PROJECT -->
+    <!-- TABEL DATA PROJECT (28 KOLOM MURNI TABLE CREATE_TASK) -->
     <div id="projectSectionsContainer">
         @foreach($columns as $col)
         <div class="card border-0 shadow-sm rounded-3 p-4 bg-white mb-4 status-card-wrapper" data-status="{{ $col['status'] }}">
@@ -315,85 +336,66 @@
             <!-- TABLE WRAPPER -->
             <div class="custom-table-wrapper shadow-sm">
                 <div class="table-responsive">
-                    <table class="table table-grid-bordered align-middle mb-0" style="font-size: 13px; table-layout: fixed; width: 100%; min-width: 4200px; --bs-table-hover-bg: #f8fafc;">
+                    <table class="table table-grid-bordered align-middle mb-0" style="font-size: 13px; table-layout: fixed; width: 100%; min-width: 3200px; --bs-table-hover-bg: #f8fafc;">
                         <thead class="{{ $col['header_class'] }}">
                             <tr>
-                                <th class="py-2.5 text-center" style="width: 60px;">No</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">Item Code</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">SAP Number</th>
-                                <th class="py-2.5 text-center" style="width: 150px;">Brand / Family</th>
-                                <th class="py-2.5 text-center" style="width: 110px;">Market</th>
-                                <th class="py-2.5 text-center" style="width: 220px;">Project Name</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">PD ASCIS</th>
-                                <th class="py-2.5 text-center" style="width: 150px;">Customer</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">CS Brand</th>
-                                <th class="py-2.5 text-center" style="width: 120px;">CS HW</th>
-                                <th class="py-2.5 text-center" style="width: 120px;">CPI HW</th>
-                                <th class="py-2.5 text-center" style="width: 160px;">S5 Internal Approval</th>
-                                <th class="py-2.5 text-center" style="width: 120px;">GHW Set</th>
-                                <th class="py-2.5 text-center" style="width: 150px;">Information Received</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">PLM Released</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">COI Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Green Light</th>
-                                <th class="py-2.5 text-center" style="width: 100px;">TD</th>
-                                <th class="py-2.5 text-center" style="width: 120px;">Machine</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Board</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">Board U Code</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">Board A Code</th>
-                                <th class="py-2.5 text-center" style="width: 110px;">Type CM</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">Die Cut Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">S10 Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">S11 Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">S12 Number</th>
-                                <th class="py-2.5 text-center" style="width: 160px;">Cylinder Supplier</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Repro By</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Sequence (Seq)</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Colour</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">BAAN Cylinder</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Film Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Ink System</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Ink Code</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">Supplier Ink</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">BAAN Ink Code</th>
-                                <th class="py-2.5 text-center" style="width: 110px;">Coverage (%)</th>
-                                <th class="py-2.5 text-center" style="width: 120px;">Usage (Kg/TH)</th>
-                                <th class="py-2.5 text-center" style="width: 140px;">Angle / Anilox</th>
-                                <th class="py-2.5 text-center" style="width: 250px;">Remarks</th>
-                                <th class="py-2.5 text-center" style="width: 240px;">Main Design / Attachment</th>
-                                <th class="py-2.5 text-center" style="width: 130px;">Target Date</th>
+                                <th class="py-2.5 text-center" style="width: 60px;"> No</th>
+                                <th class="py-2.5 text-center" style="width: 140px;"> Item Code</th>
+                                <th class="py-2.5 text-center" style="width: 150px;"> Brand / Family</th>
+                                <th class="py-2.5 text-center" style="width: 110px;"> Market</th>
+                                <th class="py-2.5 text-center" style="width: 220px;"> Project Name</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> PD ASCIS</th>
+                                <th class="py-2.5 text-center" style="width: 150px;"> Customer</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> CS Brand</th>
+                                <th class="py-2.5 text-center" style="width: 120px;"> CS HW</th>
+                                <th class="py-2.5 text-center" style="width: 120px;"> CPI HW</th>
+                                <th class="py-2.5 text-center" style="width: 160px;"> S5 Internal Approval</th>
+                                <th class="py-2.5 text-center" style="width: 120px;"> GHW Set</th>
+                                <th class="py-2.5 text-center" style="width: 150px;"> Information Received</th>
+                                <th class="py-2.5 text-center" style="width: 140px;"> PLM Released</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> COI Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> Green Light</th>
+                                <th class="py-2.5 text-center" style="width: 100px;"> TD</th>
+                                <th class="py-2.5 text-center" style="width: 120px;"> Machine</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> Board</th>
+                                <th class="py-2.5 text-center" style="width: 140px;"> Board U Code</th>
+                                <th class="py-2.5 text-center" style="width: 140px;"> Board A Code</th>
+                                <th class="py-2.5 text-center" style="width: 110px;"> Type CM</th>
+                                <th class="py-2.5 text-center" style="width: 140px;"> Die Cut Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> S10 Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> S11 Number</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> S12 Number</th>
+                                <th class="py-2.5 text-center" style="width: 160px;"> Cylinder Supplier</th>
+                                <th class="py-2.5 text-center" style="width: 130px;"> Repro By</th>
                                 <th class="py-2.5 text-center" style="width: 150px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($col['data'] as $index => $task)
                             @php
-                                $realId = $task->id ?? $task['id'] ?? $task->task_id ?? null;
+                                $realId = $task->id ?? null;
                             @endphp
                             <tr>
-                                <td class="text-center table-text-unified">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</td>
-                                <td class="table-text-unified fw-bold">{{ $task->item_code }}</td>
-                                <td class="table-text-unified">{{ $task->sap_number ?? '000-000' }}</td>
-
+                                <td class="text-center table-text-unified">{{ str_pad($task->no ?? ($index + 1), 2, '0', STR_PAD_LEFT) }}</td>
+                                <td class="table-text-unified fw-bold text-primary">{{ $task->item_code }}</td>
                                 <td class="table-text-unified">{{ $task->brand_family ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->market ?? 'INDO' }}</td>
-                                <td class="table-text-unified">{{ $task->project_name }}</td>
+                                <td class="table-text-unified">{{ $task->market ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->project_name ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->ascis_pd ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->customer }}</td>
+                                <td class="table-text-unified">{{ $task->customer ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->cs_brand ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->cs_hw ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->cpi_hw ?? '-' }}</td>
-
                                 <td class="table-text-unified">{{ $task->s5_internal_approval ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->ghw_set ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('d-m-Y') : '-' }}</td>
                                 <td class="table-text-unified">{{ $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('d-m-Y') : '-' }}</td>
                                 <td class="table-text-unified">{{ $task->coi_number ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->green_light ?? '-' }}</td>
+                                <td class="table-text-unified">{{ $task->green_light ? \Carbon\Carbon::parse($task->green_light)->format('d-m-Y') : '-' }}</td>
                                 <td class="table-text-unified">{{ $task->td ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->machine ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->board ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->board_u_code ?? '-' }}</td>
-
                                 <td class="table-text-unified">{{ $task->board_a_code ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->type_cm ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->die_cut_number ?? '-' }}</td>
@@ -402,40 +404,11 @@
                                 <td class="table-text-unified">{{ $task->s12_number ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->cylinder_supplier ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->repro_by ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->sequence_seq ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->colour ?? '-' }}</td>
-
-                                <td class="table-text-unified">{{ $task->baan_cylinder ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->film_number ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->ink_system ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->ink_code ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->supplier_ink ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->baan_ink_code ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->coverage_percent ? $task->coverage_percent . '%' : '-' }}</td>
-                                <td class="table-text-unified">{{ $task->usage_kg_th ? $task->usage_kg_th . ' Kg/TH' : '-' }}</td>
-                                <td class="table-text-unified">{{ $task->angle_anilox ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->remark ?? '-' }}</td>
-
-                                <td class="table-text-unified text-center">
-                                    @if($task->main_design_attachment)
-                                        <a href="#" class="text-decoration-none table-text-unified">
-                                            <i class="bi bi-file-earmark-arrow-down-fill me-1"></i>{{ $task->main_design_attachment }}
-                                        </a>
-                                    @else
-                                        <span>-</span>
-                                    @endif
-                                </td>
-                                <td class="table-text-unified text-center">
-                                    <i class="bi bi-calendar-event me-1"></i>{{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('d M Y') : '18 Jan 2026' }}
-                                </td>
 
                                 <!-- ACTIONS -->
                                 <td class="text-center py-2">
-                                    <div class="d-flex align-items-center justify-content-center gap-1.5">
+                                    <div class="d-flex align-items-center justify-content-center gap-3">
                                         @if($realId)
-                                            <a href="#" class="action-btn-grad btn-preview-grad" data-bs-toggle="modal" data-bs-target="#previewTaskModal{{ $realId }}" title="Preview Details">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </a>
                                             <button class="action-btn-grad btn-edit-grad" type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $realId }}" title="Edit Specification">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
@@ -447,21 +420,21 @@
                                                 @method('DELETE')
                                             </form>
                                         @else
-                                            <button class="action-btn-grad btn-preview-grad opacity-50" type="button" disabled><i class="bi bi-eye-fill"></i></button>
                                             <button class="action-btn-grad btn-edit-grad opacity-50" type="button" disabled><i class="bi bi-pencil-square"></i></button>
                                             <button class="action-btn-grad btn-delete-grad opacity-50" type="button" disabled><i class="bi bi-trash-fill"></i></button>
                                         @endif
                                     </div>
                                 </td>
                             </tr>
-                            
+
+                            <!-- INCLUDE MODAL EDIT PER BARIS DATA -->
                             @if($realId)
-                                @include('admin.task.partials.modal-edit-specs')
+                                @include('admin.task.partials.modal-edit-specs', ['task' => $task])
                             @endif
 
                             @empty
                             <tr>
-                                <td colspan="44" class="text-center py-4 text-muted border border-dashed bg-white fw-semibold" style="font-style: italic; font-size: 13px;">
+                                <td colspan="29" class="text-center py-4 text-muted border border-dashed bg-white fw-semibold" style="font-style: italic; font-size: 13px;">
                                     <i class="bi bi-info-circle me-1.5"></i>No active projects under this status.
                                 </td>
                             </tr>
@@ -483,6 +456,7 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // --- LOGIKA FILTER TABEL ---
         const filterButtons = document.querySelectorAll('.filter-nav-link');
         const statusCards = document.querySelectorAll('.status-card-wrapper');
 
@@ -507,4 +481,16 @@
         });
     });
 </script>
+
+@if ($errors->any())
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var addTaskModalElement = document.getElementById('addTaskModal');
+        if (addTaskModalElement) {
+            var addTaskModal = new bootstrap.Modal(addTaskModalElement);
+            addTaskModal.show();
+        }
+    });
+</script>
+@endif
 @endpush

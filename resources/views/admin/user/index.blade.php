@@ -20,19 +20,19 @@
 
     /* Header Grid Utama Tebal dengan Motif Batik */
     .header-green-grid {
-        background-color: #064e3b; /* Hijau Pekat Solid (Tidak Transparan) */
+        background-color: #064e3b;
         background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2310b981' fill-opacity='0.12' fill-rule='evenodd'%3E%3Cpath d='M30 30L15 15l15-15 15 15-15 15zm0 0l15 15-15 15-15-15 15-15zm-15 0L0 15l15-15 15 15-15 15zm30 0l15-15 15 15-15 15-15-15z'/%3E%3C/g%3E%3C/svg%3E");
         border: 1px solid #047857;
-        border-radius: 8px; /* Tumpul Sedikit */
+        border-radius: 8px;
         padding: 22px 28px;
         box-shadow: 0 4px 12px rgba(6, 78, 59, 0.15);
     }
 
-    /* Outer Card Wrapper (Kotak dengan Sudut Sedikit Tumpul) */
+    /* Outer Card Wrapper */
     .bordered-grid-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 8px; /* Tumpul Sedikit */
+        border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
@@ -45,17 +45,22 @@
         font-size: 12px;
         letter-spacing: 0.5px;
         border-bottom: 2px solid #047857 !important;
+        padding: 12px 10px;
     }
 
-    /* Styling Badge Role */
+    /* Styling Badge Role Kotak Compact (Kecil & Presisi) */
     .badge-role {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 11.5px;
+        padding: 3px 8px;
+        border-radius: 5px;
+        font-size: 10.5px;
         font-weight: 700;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 4px;
+        width: auto;
+        max-width: 135px;
+        white-space: nowrap;
     }
     .badge-role.administrator { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
     .badge-role.pd { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
@@ -99,16 +104,9 @@
         opacity: 0.95;
     }
 
-    /* Gradient Warna Aksi */
-    .btn-preview { 
-        background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); 
-    }
-    .btn-edit { 
-        background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); 
-    }
-    .btn-delete { 
-        background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); 
-    }
+    .btn-preview { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); }
+    .btn-edit { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); }
+    .btn-delete { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); }
 
     /* Style Card Snapshot Minimalis */
     .snapshot-item {
@@ -126,6 +124,17 @@
         justify-content: center;
         font-size: 20px;
         flex-shrink: 0;
+    }
+
+    /* Style Tanda Tangan Thumb */
+    .signature-thumb {
+        max-width: 85px;
+        max-height: 34px;
+        object-fit: contain;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        padding: 2px;
+        background: #ffffff;
     }
 </style>
 
@@ -151,7 +160,7 @@
         </div>
     @endif
 
-    <!-- Main Header Card (Tebal Solid + Motif Batik) -->
+    <!-- Main Header Card -->
     <div class="header-green-grid d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
         <div>
             <h1 class="fw-extrabold mb-1" style="font-size: 24px; color: #ffffff;">People Directory</h1>
@@ -178,13 +187,13 @@
                             <li><a class="dropdown-item filter-tab-option fw-semibold" href="#" data-role="all"><i class="bi bi-people-fill me-2 text-primary"></i>All Roles</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item filter-tab-option fw-semibold" href="#" data-role="Administrator"><i class="bi bi-shield-lock-fill me-2 text-primary"></i>Administrator</a></li>
-                            <li><a class="dropdown-item filter-tab-option fw-semibold" href="#" data-role="PD"><i class="bi bi-gear-wide-connected me-2 text-warning"></i>PD</a></li>
-                            <li><a class="dropdown-item filter-tab-option fw-semibold" href="#" data-role="QA"><i class="bi bi-patch-check-fill me-2 text-danger"></i>QA</a></li>
-                            <li><a class="dropdown-item filter-tab-option fw-semibold" href="#" data-role="PLANNER"><i class="bi bi-journal-text me-2 text-info"></i>PLANNER</a></li>
+                            <li><a class="dropdown-item filter-tab-option fw-semibold" href="#" data-role="PD"><i class="bi bi-gear-wide-connected me-2 text-warning"></i>Project Developer</a></li>
+                            <li><a class="dropdown-item filter-tab-option fw-semibold" href="#" data-role="QA"><i class="bi bi-patch-check-fill me-2 text-danger"></i>Quality Assurance</a></li>
+                            <li><a class="dropdown-item filter-tab-option fw-semibold" href="#" data-role="PLANNER"><i class="bi bi-journal-text me-2 text-info"></i>Planner</a></li>
                         </ul>
                     </div>
 
-                    <!-- 2. Live Search & 3. Button Add User (Gradient) -->
+                    <!-- 2. Live Search & 3. Button Add User -->
                     <div class="d-flex gap-2 align-items-center w-100 w-md-auto">
                         <div class="position-relative flex-grow-1" style="min-width: 180px;">
                             <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 13px;"></i>
@@ -199,22 +208,23 @@
 
                 <!-- Tabel User -->
                 <div class="table-responsive" style="width: 100%; overflow-x: auto;">
-                    <table class="table dir-table align-middle mb-0" id="userDirectoryTable" style="min-width: 880px;">
-                        <thead class="table-dark-green-header">
+                    <table class="table dir-table align-middle mb-0" id="userDirectoryTable" style="min-width: 1150px;">
+                        <thead class="table-dark-green-header text-center">
                             <tr>
-                                <th style="width: 50px;" class="ps-4">No</th>
-                                <th style="min-width: 170px;">Name</th>
-                                <th style="width: 110px;">NIK</th>
-                                <th style="width: 130px;">Role</th>
-                                <th style="width: 120px;">Created At</th>
-                                <th style="width: 120px;">Updated At</th>
-                                <th class="text-center pe-4" style="width: 160px;">Actions</th>
+                                <th style="width: 60px;" class="text-center ps-3">No</th>
+                                <th style="min-width: 200px;" class="text-start">Name</th>
+                                <th style="width: 120px;" class="text-center">NIK</th>
+                                <th style="width: 150px;" class="text-center">Role</th>
+                                <th style="width: 120px;" class="text-center">Sign</th>
+                                <th style="width: 130px;" class="text-center">Created At</th>
+                                <th style="width: 130px;" class="text-center">Updated At</th>
+                                <th class="text-center pe-3" style="width: 150px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if($users->isEmpty())
                                 <tr id="noDataRow">
-                                    <td colspan="7" class="text-center py-5 text-muted">
+                                    <td colspan="8" class="text-center py-5 text-muted">
                                         <i class="bi bi-person-x fs-4 d-block mb-2 text-secondary"></i>
                                         No users registered in system.
                                     </td>
@@ -223,10 +233,13 @@
 
                             @foreach($users as $index => $user)
                             <tr class="user-row" data-role="{{ $user->role }}" data-search="{{ strtolower($user->name . ' ' . $user->nik . ' ' . $user->role) }}">
-                                <td class="ps-4 fw-medium text-secondary" style="font-size: 13px;">
-                                    {{ $users->firstItem() + $index }}
+                                <!-- No dengan Format 01, 02, dst. -->
+                                <td class="text-center ps-3 fw-medium text-secondary" style="font-size: 13px;">
+                                    {{ sprintf('%02d', $users->firstItem() + $index) }}
                                 </td>
-                                <td>
+                                
+                                <!-- Name -->
+                                <td class="text-start">
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="user-avatar d-flex align-items-center justify-content-center bg-light text-success fw-bold rounded-circle" style="font-size: 13px; border: 1.5px solid #26B170; width: 36px; height: 36px; flex-shrink: 0;">
                                             {{ strtoupper(substr($user->name, 0, 2)) }}
@@ -236,25 +249,63 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                
+                                <!-- NIK Center -->
+                                <td class="text-center">
                                     <span class="text-secondary fw-semibold" style="font-size: 12.5px;">{{ $user->nik }}</span>
                                 </td>
-                                <td>
+                                
+                                <!-- Role Center & Compact Badge -->
+                                <td class="text-center">
                                     @php
-                                        $roleClass = strtolower($user->role ?: 'administrator');
+                                        $rawRole = $user->role ?: 'Administrator';
+                                        $roleKey = strtolower($rawRole);
+                                        
+                                        $roleLabels = [
+                                            'administrator' => 'Administrator',
+                                            'pd'            => 'Project Developer',
+                                            'qa'            => 'Quality Assurance',
+                                            'planner'       => 'Planner',
+                                        ];
+                                        
+                                        $roleIcons = [
+                                            'administrator' => 'bi-shield-lock-fill',
+                                            'pd'            => 'bi-gear-wide-connected',
+                                            'qa'            => 'bi-patch-check-fill',
+                                            'planner'       => 'bi-journal-text',
+                                        ];
+
+                                        $displayRoleName = $roleLabels[$roleKey] ?? $rawRole;
+                                        $iconClass = $roleIcons[$roleKey] ?? 'bi-shield-lock-fill';
                                     @endphp
-                                    <span class="badge-role {{ $roleClass }}">
-                                        <i class="bi bi-shield-check"></i>{{ $user->role ?: 'Administrator' }}
+                                    <span class="badge-role {{ $roleKey }}">
+                                        <i class="bi {{ $iconClass }}"></i> {{ $displayRoleName }}
                                     </span>
                                 </td>
-                                <td>
+                                
+                                <!-- Sign Center -->
+                                <td class="text-center">
+                                    @if($user->signature)
+                                        <a href="{{ asset($user->signature) }}" target="_blank">
+                                            <img src="{{ asset($user->signature) }}" alt="Sign" class="signature-thumb shadow-sm">
+                                        </a>
+                                    @else
+                                        <span class="text-muted" style="font-size: 11px;">-</span>
+                                    @endif
+                                </td>
+                                
+                                <!-- Created At Center -->
+                                <td class="text-center">
                                     <span class="text-muted" style="font-size: 12.5px; white-space: nowrap;">{{ $user->created_at ? $user->created_at->format('M d, Y') : '-' }}</span>
                                 </td>
-                                <td>
+                                
+                                <!-- Updated At Center -->
+                                <td class="text-center">
                                     <span class="text-muted" style="font-size: 12.5px; white-space: nowrap;">{{ $user->updated_at ? $user->updated_at->format('M d, Y') : '-' }}</span>
                                 </td>
-                                <td class="text-center pe-4">
-                                    <!-- Include Action Component -->
+                                
+                                <!-- Actions Center -->
+                                <td class="text-center pe-3">
                                     @include('admin.user.ActionTableUser')
                                 </td>
                             </tr>

@@ -14,7 +14,7 @@
             font-family: 'Nunito', sans-serif !important;
         }
         
-        /* WORKSPACE DILEBARIN DIKIT KIRI KANAN ATAS BAWAH */
+        /* WORKSPACE CONTAINER */
         .workspace-container { 
             background-color: transparent !important; 
             background: transparent !important;
@@ -77,7 +77,7 @@
             box-shadow: 0 6px 12px rgba(239, 68, 68, 0.35);
         }
 
-        /* CARD FORM UTAMA (DIBALIKIN KE STYLE SEMULA) */
+        /* CARD FORM UTAMA */
         .form-card-wrapper {
             background-color: #ffffff;
             border: 1.5px solid #0369a1 !important;
@@ -114,7 +114,7 @@
             box-shadow: 0 0 0 0.2rem rgba(2, 132, 199, 0.2) !important;
         }
 
-        /* PREVIEW CARD & DETAILS (DIBALIKIN KE BLUE STYLE SEMULA) */
+        /* PREVIEW CARD & DETAILS */
         .preview-card-wrapper {
             background-color: #ffffff;
             border: 1.5px solid #38bdf8;
@@ -145,7 +145,7 @@
             display: none;
         }
 
-        /* ITEM MASTER DETAILS CARD (DIBALIKIN KE STYLE BLUE/GREEN SEMULA) */
+        /* ITEM MASTER DETAILS CARD */
         .master-details-card {
             border: 1.5px solid #0284c7;
             border-radius: 8px;
@@ -174,7 +174,7 @@
             border-bottom: none;
         }
 
-        /* TABEL HISTORY & HEADER GRADIENT BLUE SEMULA */
+        /* TABEL HISTORY & HEADER GRADIENT BLUE */
         .history-card-wrapper {
             background-color: #ffffff;
             border: 1.5px solid #475569 !important;
@@ -188,6 +188,7 @@
         .table-grid-bordered {
             border-collapse: collapse !important;
             font-size: 12.5px !important;
+            font-family: 'Nunito', sans-serif !important;
         }
         .table-grid-bordered th {
             background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
@@ -198,27 +199,48 @@
             padding: 8px 10px !important;
             text-align: center !important;
             vertical-align: middle !important;
+            font-family: 'Nunito', sans-serif !important;
         }
 
-        /* KHUSUS ISIAN TABEL (TBODY): WARNA SERAGAM GELAP / TIDAK ADA PINK / UNIFORM */
+        /* ISIAN TABEL (TBODY) KONSISTEN BISA BACA DENGEN UKURAN SAMA */
         .table-grid-bordered tbody td {
             border: 1px solid #cbd5e1 !important;
-            padding: 8px 10px !important;
+            padding: 6px 8px !important;
             text-align: center !important;
             vertical-align: middle !important;
-            color: #0f172a !important; /* SERAGAM HITAM GELAP */
-            font-weight: 600;
-        }
-        .table-grid-bordered tbody code {
-            color: #0f172a !important; /* HILANGKAN WARNA PINK BANYAK PADA CODE TAG */
+            color: #0f172a !important;
+            font-weight: 600 !important;
+            font-style: normal !important;
+            font-size: 12.5px !important;
+            font-family: 'Nunito', sans-serif !important;
             background-color: transparent !important;
-            font-family: var(--bs-font-monospace);
         }
         .table-grid-bordered tbody tr:hover {
             background-color: #f0f9ff !important;
         }
 
-        /* STYLES TOMBOL ACTION EDIT & DELETE */
+        /* BADGE SEQUENCE HIJAU TUA DISESUAIKAN UKURAN TABLE */
+        .badge-seq-green {
+            background-color: #15803d !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            border-radius: 4px !important;
+            padding: 3px 8px !important;
+            font-size: 11.5px !important;
+            display: inline-block;
+            font-family: 'Nunito', sans-serif !important;
+        }
+
+        /* BADGE STATUS PROPORSI PAS SAMA TEKS TABLE */
+        .badge-status-sm {
+            font-size: 11.5px !important;
+            font-weight: 700 !important;
+            padding: 3px 8px !important;
+            border-radius: 4px !important;
+            font-family: 'Nunito', sans-serif !important;
+        }
+
+        /* STYLES TOMBOL ACTION */
         .table-action-btns {
             display: flex;
             align-items: center;
@@ -237,10 +259,14 @@
             color: #ffffff !important;
             transition: all 0.2s ease;
             cursor: pointer;
+            text-decoration: none;
         }
         .btn-action-sm:hover {
             transform: translateY(-1px);
             opacity: 0.9;
+        }
+        .btn-preview-info {
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
         }
         .btn-edit-warning {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
@@ -254,7 +280,7 @@
 @section('content')
 <div class="container-fluid workspace-container">
 
-    <!-- HEADER & TOMBOL BACK FONT PUTIH -->
+    <!-- HEADER & TOMBOL BACK -->
     <div class="d-flex align-items-center justify-content-between mb-3">
         <div>
             <h3 class="fw-bold text-dark mb-0 fs-4">Add Printing Specification</h3>
@@ -317,7 +343,13 @@
                             <div class="col-md-6">
                                 <div class="form-group-item">
                                     <label class="form-label">Supplier Ink</label>
-                                    <input type="text" name="supplier_ink" class="form-control" placeholder="Supplier Ink (e.g. SIEG, DIC)">
+                                    <select name="supplier_ink" class="form-select">
+                                        <option value="">-- Pilih Supplier --</option>
+                                        <option value="SIEG">SIEG</option>
+                                        <option value="DIC">DIC</option>
+                                        <option value="HUBER">HUBER</option>
+                                        <option value="SC">SC</option>
+                                    </select>
                                 </div>
                                 <div class="form-group-item">
                                     <label class="form-label">BAAN Ink Code</label>
@@ -346,9 +378,9 @@
                             </div>
                         </div>
 
-                        <!-- ATTACHMENT FILE -->
+                        <!-- ATTACHMENT FILE UTAMA (SINGLE ATTACHMENT PER ITEM CODE) -->
                         <div class="form-group-item mt-1">
-                            <label class="form-label">Main Design / Attachment File</label>
+                            <label class="form-label">Main Design / Attachment File (1 File Utama untuk {{ $task->item_code }})</label>
                             <input type="file" name="main_design_attachment" id="attachmentInput" class="form-control" accept="image/*,.pdf,.ai,.psd,.zip">
                         </div>
 
@@ -381,9 +413,19 @@
 
                         <!-- LIVE PREVIEW IMAGE BOX -->
                         <div class="image-preview-box mb-3" id="previewContainer">
-                            <i class="bi bi-cloud-upload text-primary display-6 mb-1" id="placeholderIcon"></i>
-                            <span class="text-muted fw-bold" style="font-size: 11.5px;" id="placeholderText">Pilih foto untuk preview</span>
-                            <img id="imagePreview" alt="Design Artwork Preview">
+                            @php
+                                $existingAttachment = $task->itemSpecs->whereNotNull('main_design_attachment')->first()->main_design_attachment ?? null;
+                            @endphp
+
+                            @if($existingAttachment && file_exists(public_path($existingAttachment)))
+                                <i class="bi bi-cloud-upload text-primary display-6 mb-1" id="placeholderIcon" style="display: none;"></i>
+                                <span class="text-muted fw-bold" style="font-size: 11.5px; display: none;" id="placeholderText">Pilih foto untuk preview</span>
+                                <img id="imagePreview" src="{{ asset($existingAttachment) }}" alt="Design Artwork Preview" style="display: block;">
+                            @else
+                                <i class="bi bi-cloud-upload text-primary display-6 mb-1" id="placeholderIcon"></i>
+                                <span class="text-muted fw-bold" style="font-size: 11.5px;" id="placeholderText">Pilih foto untuk preview</span>
+                                <img id="imagePreview" alt="Design Artwork Preview">
+                            @endif
                         </div>
                     </div>
 
@@ -465,49 +507,69 @@
                             <th>Coverage (%)</th>
                             <th>Usage (Kg/TH)</th>
                             <th>Angle / Anilox</th>
+                            <th>Remarks</th>
                             <th>Attachment</th>
                             <th>Status</th>
-                            <th style="width: 85px;">Actions</th>
+                            <th style="width: 110px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($task->itemSpecs->sortBy('sequence') as $index => $spec)
+                        @php
+                            // CEK KELENGKAPAN FIELD UNTUK MENENTUKAN STATUS OTOMATIS
+                            $isComplete = !empty($spec->sequence) &&
+                                          !empty($spec->colour) &&
+                                          !empty($spec->baan_cylinder) &&
+                                          !empty($spec->film_number) &&
+                                          !empty($spec->ink_system) &&
+                                          !empty($spec->ink_code) &&
+                                          !empty($spec->supplier_ink) &&
+                                          !empty($spec->baan_ink_code) &&
+                                          !is_null($spec->coverage) &&
+                                          !is_null($spec->usage_kg_th) &&
+                                          !empty($spec->angle_anilox);
+                        @endphp
                         <tr>
-                            <!-- FORMAT NOMOR URUT DUA DIGIT 01, 02 DST -->
-                            <td class="fw-bold text-center">
-                                {{ sprintf('%02d', $spec->no ?? ($index + 1)) }}
+                            <td class="text-center">
+                                {{ sprintf('%02d', $index + 1) }}
                             </td>
-                            <td><span class="badge bg-dark rounded-pill px-2.5 py-1">Seq {{ $spec->sequence }}</span></td>
-                            <td class="fw-bold text-dark text-start ps-3">{{ $spec->colour }}</td>
-                            <td><code>{{ $spec->baan_cylinder ?? '-' }}</code></td>
+                            <td><span class="badge-seq-green">Seq {{ $spec->sequence }}</span></td>
+                            <td class="text-start ps-3">{{ $spec->colour }}</td>
+                            <td>{{ $spec->baan_cylinder ?? '-' }}</td>
                             <td>{{ $spec->film_number ?? '-' }}</td>
                             <td>{{ $spec->ink_system ?? '-' }}</td>
-                            <td><span class="badge bg-light text-dark border border-dark px-2 py-1">{{ $spec->ink_code ?? '-' }}</span></td>
-                            <td><span class="badge bg-secondary px-2 py-1">{{ $spec->supplier_ink ?? '-' }}</span></td>
-                            <td><code>{{ $spec->baan_ink_code ?? '-' }}</code></td>
-                            <td class="fw-semibold">{{ $spec->coverage ? $spec->coverage . '%' : '-' }}</td>
-                            <td class="fw-semibold">{{ $spec->usage_kg_th ? number_format($spec->usage_kg_th, 2) : '-' }}</td>
+                            <td>{{ $spec->ink_code ?? '-' }}</td>
+                            <td>{{ $spec->supplier_ink ?? '-' }}</td>
+                            <td>{{ $spec->baan_ink_code ?? '-' }}</td>
+                            <td>{{ $spec->coverage ? $spec->coverage . '%' : '-' }}</td>
+                            <td>{{ $spec->usage_kg_th ? number_format($spec->usage_kg_th, 2) : '-' }}</td>
                             <td>{{ $spec->angle_anilox ?? '-' }}</td>
+                            <td>{{ $spec->remarks ?? '-' }}</td>
                             <td>
                                 @if($spec->main_design_attachment)
-                                    <a href="{{ asset($spec->main_design_attachment) }}" target="_blank" class="btn btn-xs btn-outline-primary p-0 px-2 py-0.5 fw-bold" style="font-size: 11px;">
+                                    <a href="{{ asset($spec->main_design_attachment) }}" target="_blank" class="btn btn-xs btn-outline-primary p-0 px-2 py-0.5 fw-bold" style="font-size: 11.5px;">
                                         <i class="bi bi-paperclip me-1"></i>File
                                     </a>
                                 @else
-                                    <span class="text-muted" style="font-size: 11px;">-</span>
+                                    <span class="text-muted" style="font-size: 11.5px;">-</span>
                                 @endif
                             </td>
                             <td>
-                                @if($spec->project_status == 'Completed')
-                                    <span class="badge bg-success px-2 py-1">Completed</span>
-                                @elseif($spec->project_status == 'Progress')
-                                    <span class="badge bg-warning text-dark px-2 py-1">Progress</span>
+                                @if($isComplete)
+                                    <span class="badge bg-success badge-status-sm">Completed</span>
                                 @else
-                                    <span class="badge bg-secondary px-2 py-1">To Do</span>
+                                    <span class="badge bg-warning text-dark badge-status-sm">Progress</span>
                                 @endif
                             </td>
                             <td>
                                 <div class="table-action-btns">
+                                    <!-- TOMBOL PREVIEW -->
+                                    <a href="{{ route('admin.item-specs.show', $task->id) }}" 
+                                       class="btn-action-sm btn-preview-info" 
+                                       title="Preview Details">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+
                                     <!-- TOMBOL EDIT MODAL -->
                                     <button type="button" 
                                             class="btn-action-sm btn-edit-warning" 
@@ -530,7 +592,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="15" class="text-center py-4 text-muted fw-semibold">
+                            <td colspan="16" class="text-center py-4 text-muted fw-semibold">
                                 <i class="bi bi-info-circle me-1"></i> Belum ada spesifikasi warna yang tersimpan untuk item ini.
                             </td>
                         </tr>
@@ -542,7 +604,7 @@
     </div>
 </div>
 
-<!-- LOOP MODAL EDIT (DITARUH DI LUAR TABLE AGAR LAYOUT/HTML VALID) -->
+<!-- LOOP MODAL EDIT PER SEQUENCE -->
 @foreach($task->itemSpecs as $spec)
 <div class="modal fade" id="editSpecModal{{ $spec->id }}" tabindex="-1" aria-labelledby="editSpecModalLabel{{ $spec->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -590,7 +652,13 @@
                         <div class="col-md-6">
                             <div class="form-group-item">
                                 <label class="form-label">Supplier Ink</label>
-                                <input type="text" name="supplier_ink" class="form-control" value="{{ $spec->supplier_ink }}">
+                                <select name="supplier_ink" class="form-select">
+                                    <option value="">-- Pilih Supplier --</option>
+                                    <option value="SIEG" {{ $spec->supplier_ink == 'SIEG' ? 'selected' : '' }}>SIEG</option>
+                                    <option value="DIC" {{ $spec->supplier_ink == 'DIC' ? 'selected' : '' }}>DIC</option>
+                                    <option value="HUBER" {{ $spec->supplier_ink == 'HUBER' ? 'selected' : '' }}>HUBER</option>
+                                    <option value="SC" {{ $spec->supplier_ink == 'SC' ? 'selected' : '' }}>SC</option>
+                                </select>
                             </div>
                             <div class="form-group-item">
                                 <label class="form-label">BAAN Ink Code</label>
@@ -620,7 +688,7 @@
                     </div>
 
                     <div class="form-group-item mt-2">
-                        <label class="form-label">Update Attachment File</label>
+                        <label class="form-label">Update Attachment File (1 File Utama untuk {{ $task->item_code }})</label>
                         <input type="file" name="main_design_attachment" class="form-control" accept="image/*,.pdf,.ai,.psd,.zip">
                     </div>
 
@@ -678,35 +746,42 @@
         });
     }
 
-    // Live Image Preview Script
-    document.getElementById('attachmentInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        const previewImage = document.getElementById('imagePreview');
-        const placeholderIcon = document.getElementById('placeholderIcon');
-        const placeholderText = document.getElementById('placeholderText');
+    // 3. LIVE IMAGE PREVIEW SCRIPT
+    document.addEventListener('DOMContentLoaded', function() {
+        const attachmentInput = document.getElementById('attachmentInput');
+        if(attachmentInput) {
+            attachmentInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                const previewImage = document.getElementById('imagePreview');
+                const placeholderIcon = document.getElementById('placeholderIcon');
+                const placeholderText = document.getElementById('placeholderText');
 
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImage.src = e.target.result;
-                previewImage.style.display = 'block';
-                placeholderIcon.style.display = 'none';
-                placeholderText.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        } else {
-            previewImage.style.display = 'none';
-            placeholderIcon.style.display = 'block';
-            placeholderText.style.display = 'block';
-            if (file) {
-                placeholderText.innerText = "File (" + file.name.split('.').pop().toUpperCase() + ") dipilih";
-            } else {
-                placeholderText.innerText = "Pilih foto untuk preview";
-            }
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.style.display = 'block';
+                        if(placeholderIcon) placeholderIcon.style.display = 'none';
+                        if(placeholderText) placeholderText.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    previewImage.style.display = 'none';
+                    if(placeholderIcon) placeholderIcon.style.display = 'block';
+                    if(placeholderText) {
+                        placeholderText.style.display = 'block';
+                        if (file) {
+                            placeholderText.innerText = "File (" + file.name.split('.').pop().toUpperCase() + ") dipilih";
+                        } else {
+                            placeholderText.innerText = "Pilih foto untuk preview";
+                        }
+                    }
+                }
+            });
         }
     });
 
-    // Function Export Table to CSV
+    // 4. FUNCTION EXPORT TABLE TO CSV
     function exportTableToCSV(filename) {
         const table = document.getElementById("specsTable");
         const rows = table.querySelectorAll("tr");

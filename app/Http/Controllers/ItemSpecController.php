@@ -140,6 +140,7 @@ class ItemSpecController extends Controller
         ]);
 
         if ($request->hasFile('main_design_attachment')) {
+            // Hapus file lama jika ada
             if ($itemSpec->main_design_attachment && file_exists(public_path($itemSpec->main_design_attachment))) {
                 @unlink(public_path($itemSpec->main_design_attachment));
             }

@@ -73,4 +73,13 @@ class Task extends Model
     {
         return $this->hasMany(ItemSpec::class, 'item_code', 'item_code');
     }
+
+    /**
+     * Relasi ke Timeline (One to Many)
+     * Mengaitkan Task dengan poin sub-process checklist timeline
+     */
+    public function timelines()
+    {
+        return $this->hasMany(Timeline::class, 'task_id', 'id');
+    }
 }

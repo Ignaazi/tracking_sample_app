@@ -40,9 +40,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // MODULE: TRACKING SYSTEM - TIMELINE
+        // MODULE: TRACKING SYSTEM - TIMELINE & ROADMAP GANTT
         Route::get('/timelines', [TimelineController::class, 'index'])->name('timelines.index');
-        Route::get('/timeline/{id}', [TimelineController::class, 'detail'])->name('task.timeline.detail'); // <-- ROUTE DETAIL TIMELINE PER PROJECT
+        Route::get('/task/roadmap', [TaskController::class, 'roadmapIndex'])->name('task.roadmap'); // 🌟 Tambahan Route Roadmap Gantt
+        Route::get('/timeline/{id}', [TimelineController::class, 'detail'])->name('task.timeline.detail');
         Route::post('/timelines', [TimelineController::class, 'store'])->name('timelines.store');
         Route::put('/timelines/{id}', [TimelineController::class, 'update'])->name('timelines.update');
         Route::delete('/timelines/{id}', [TimelineController::class, 'destroy'])->name('timelines.destroy');
@@ -52,9 +53,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/task/table', [TaskController::class, 'tableIndex'])->name('task.table'); 
         Route::post('/task', [TaskController::class, 'store'])->name('task.store');
         
-        // --- ROUTE: Full Page Sub-Process (Layout, BaaN, Promp, Job Bag) ---
+        // --- ROUTE: Full Page Sub-Process (Layout, BaaN, Prompt, Job Bag) ---
         Route::get('/task/{id}/sub-process', [TaskController::class, 'subProcess'])->name('task.subProcess');
-        Route::put('/task/{id}/sub-process', [TaskController::class, 'updateSubProcess'])->name('task.updateSubProcess');
+        Route::put('/task/{id}/sub-process', [TaskController::class, 'updateSubStatus'])->name('task.updateSubProcess');
+        Route::post('/task/{id}/sub-process', [TaskController::class, 'updateSubStatus'])->name('task.updateSubStatus');
         
         // --- ROUTE: Preview & Print A4 Job Sheet Sub-Process ---
         Route::get('/task/{id}/sub-process/preview', [TaskController::class, 'previewSubProcess'])->name('task.previewSubProcess');
@@ -81,8 +83,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/workflow', [WorkflowController::class, 'index'])->name('workflow.index');
         Route::get('/workflow/{id}/print-pdf', [WorkflowController::class, 'printPdf'])->name('workflow.printPdf');
 
-        // MODULE: TASK LIST PROJECT
+        // MODULE: TASK LIST PROJECT & UPDATE SUB STATUS
         Route::get('/task-list-project', [TaskListProjectController::class, 'index'])->name('task-list-project.index');
+        Route::post('/task-list-project/{id}/update-sub-status', [TaskController::class, 'updateSubStatus'])->name('task-list-project.updateSubStatus');
         
     });
 

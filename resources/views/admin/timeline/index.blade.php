@@ -135,14 +135,14 @@
         .gantt .lower-header { font-size: 10px; fill: #64748b !important; }
         .gantt .bar-label { fill: #ffffff !important; font-size: 11px; font-weight: 700; }
 
-        .gantt-container .gantt-to-do .bar, .gantt .gantt-to-do .bar { fill: #3b82f6 !important; }
-        .gantt-container .gantt-to-do .bar-progress, .gantt .gantt-to-do .bar-progress { fill: #1d4ed8 !important; }
+        .gantt-container .gantt-to-do .bar, .gantt .gantt-to-do .bar, .gantt .gantt-todo .bar { fill: #3b82f6 !important; }
+        .gantt-container .gantt-to-do .bar-progress, .gantt .gantt-to-do .bar-progress, .gantt .gantt-todo .bar-progress { fill: #1d4ed8 !important; }
 
-        .gantt-container .gantt-in-progress .bar, .gantt .gantt-in-progress .bar { fill: #f59e0b !important; }
-        .gantt-container .gantt-in-progress .bar-progress, .gantt .gantt-in-progress .bar-progress { fill: #b45309 !important; }
+        .gantt-container .gantt-in-progress .bar, .gantt .gantt-in-progress .bar, .gantt .gantt-progress .bar { fill: #f59e0b !important; }
+        .gantt-container .gantt-in-progress .bar-progress, .gantt .gantt-in-progress .bar-progress, .gantt .gantt-progress .bar-progress { fill: #b45309 !important; }
 
-        .gantt-container .gantt-completed .bar, .gantt .gantt-completed .bar { fill: #10b981 !important; }
-        .gantt-container .gantt-completed .bar-progress, .gantt .gantt-completed .bar-progress { fill: #047857 !important; }
+        .gantt-container .gantt-completed .bar, .gantt .gantt-completed .bar, .gantt .gantt-done .bar { fill: #10b981 !important; }
+        .gantt-container .gantt-completed .bar-progress, .gantt .gantt-completed .bar-progress, .gantt .gantt-done .bar-progress { fill: #047857 !important; }
 
         /* STYLING TABEL */
         .table-responsive {
@@ -231,10 +231,19 @@
                     Enterprise Interactive Gantt
                 </h6>
 
+                <!-- PENYESUAIAN JUMLAH HITUNGAN STATUS DI SINI -->
                 @php
-                    $countToDo = $tasks->where('status', 'To Do')->count();
-                    $countInProgress = $tasks->where('status', 'In Progress')->count();
-                    $countCompleted = $tasks->where('status', 'Completed')->count();
+                    $countToDo = $tasks->filter(function($t) {
+                        return in_array(strtolower(trim($t->status ?? '')), ['todo', 'to do', '']);
+                    })->count();
+
+                    $countInProgress = $tasks->filter(function($t) {
+                        return in_array(strtolower(trim($t->status ?? '')), ['in-progress', 'in progress', 'progress']);
+                    })->count();
+
+                    $countCompleted = $tasks->filter(function($t) {
+                        return in_array(strtolower(trim($t->status ?? '')), ['completed', 'done']);
+                    })->count();
                 @endphp
 
                 <div class="d-flex align-items-center gap-2">
@@ -299,6 +308,7 @@
                         @forelse($tasks as $key => $task)
                         @php
                             $targetKey = $task->item_code ?? $task->id;
+                            $normStatus = strtolower(trim($task->status ?? ''));
                         @endphp
                         <tr onclick="window.location='{{ route('admin.task.timeline.detail', $targetKey) }}'">
                             <td class="fw-bold">{{ sprintf('%02d', $key + 1) }}</td>
@@ -337,17 +347,22 @@
                                 </span>
                             </td>
 
-                            <!-- TASK STATUS BADGE -->
+                            <!-- TASK STATUS BADGE FLEXIBLE -->
                             <td>
                                 @php
-                                    $badgeClass = match($task->status) {
-                                        'Completed' => 'badge-status-completed',
-                                        'In Progress' => 'badge-status-progress',
-                                        default => 'badge-status-todo'
-                                    };
+                                    if (in_array($normStatus, ['completed', 'done'])) {
+                                        $badgeClass = 'badge-status-completed';
+                                        $displayStatus = 'Completed';
+                                    } elseif (in_array($normStatus, ['in-progress', 'in progress', 'progress'])) {
+                                        $badgeClass = 'badge-status-progress';
+                                        $displayStatus = 'In Progress';
+                                    } else {
+                                        $badgeClass = 'badge-status-todo';
+                                        $displayStatus = 'To Do';
+                                    }
                                 @endphp
                                 <span class="badge {{ $badgeClass }}">
-                                    {{ $task->status }}
+                                    {{ $displayStatus }}
                                 </span>
                             </td>
                         </tr>
@@ -374,23 +389,38 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        // Dapatkan base URL route secara dinamis untuk JavaScript
         const baseUrl = "{{ route('admin.task.timeline.detail', ':id') }}";
 
         const ganttTasks = [
             @foreach($tasks as $task)
                 @php
                     $targetKey = $task->item_code ?? $task->id;
+                    $normStatus = strtolower(trim($task->status ?? ''));
+                    
+                    if (in_array($normStatus, ['completed', 'done'])) {
+                        $statusText = 'Completed';
+                        $progressVal = 100;
+                        $ganttClass = 'gantt-completed';
+                    } elseif (in_array($normStatus, ['in-progress', 'in progress', 'progress'])) {
+                        $statusText = 'In Progress';
+                        $progressVal = 50;
+                        $ganttClass = 'gantt-in-progress';
+                    } else {
+                        $statusText = 'To Do';
+                        $progressVal = 0;
+                        $ganttClass = 'gantt-to-do';
+                    }
+
                     $startDate = !empty($task->information_received) ? date('Y-m-d', strtotime($task->information_received)) : date('Y-m-d', strtotime($task->created_at ?? now()));
                     $endDate = !empty($task->plm_released) ? date('Y-m-d', strtotime($task->plm_released)) : date('Y-m-d', strtotime($startDate . ' + 14 days'));
                 @endphp
                 {
                     id: '{{ $targetKey }}',
-                    name: '[{{ $task->status ?? "To Do" }}] {{ $task->item_code }} - {{ addslashes($task->project_name ?? "Project") }}',
+                    name: '[{{ $statusText }}] {{ $task->item_code }} - {{ addslashes($task->project_name ?? "Project") }}',
                     start: '{{ $startDate }}',
                     end: '{{ $endDate }}',
-                    progress: {{ $task->status == 'Completed' ? 100 : ($task->status == 'In Progress' ? 50 : 0) }},
-                    custom_class: 'gantt-{{ strtolower(str_replace(" ", "-", $task->status ?? "to-do")) }}'
+                    progress: {{ $progressVal }},
+                    custom_class: '{{ $ganttClass }}'
                 },
             @endforeach
         ];
@@ -408,7 +438,6 @@
                 padding: 18,
                 date_format: 'YYYY-MM-DD',
 
-                // EVENT ON_CLICK: REDIRECT KE DETAIL TIMELINE PER PROJECT
                 on_click: function (task) {
                     const detailUrl = baseUrl.replace(':id', task.id);
                     window.location.href = detailUrl;

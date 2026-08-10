@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Project Timeline - ' . $task->item_code)
+@section('title', 'Detail Project Timeline - ' . ($task->item_code ?? $task->project_name))
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -68,7 +68,7 @@
 
         .sidebar-group-wrapper {
             display: flex;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #cbd5e1;
         }
 
         .vertical-group-pill {
@@ -88,11 +88,11 @@
         }
 
         .pill-done-group {
-            background-color: #f97316;
+            background-color: #10b981;
         }
 
         .pill-ongoing-group {
-            background-color: #a855f7;
+            background-color: #f97316;
         }
 
         .sidebar-tasks-list {
@@ -107,9 +107,16 @@
             align-items: center;
             padding: 0 16px;
             font-weight: 700;
-            font-size: 13.5px;
+            font-size: 12.5px;
             color: #334155;
             border-bottom: 1px solid #f1f5f9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-task-item:last-child {
+            border-bottom: none;
         }
 
         /* RIGHT TIMELINE GRID */
@@ -140,7 +147,7 @@
         }
 
         .week-col-header.active-week {
-            background-color: #2dd4bf;
+            background-color: #0284c7;
             color: #ffffff;
             font-weight: 800;
         }
@@ -150,7 +157,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background-size: calc(100% / 9) 100%;
+            background-size: calc(100% / 8) 100%;
             background-image: linear-gradient(to right, #cbd5e1 1px, transparent 1px);
         }
 
@@ -159,14 +166,14 @@
             position: relative;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #fed7aa;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         /* BARIS WARNA PROGRESS GANTT */
         .gantt-bar-pill {
             position: absolute;
-            height: 24px;
-            border-radius: 12px;
+            height: 26px;
+            border-radius: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -175,14 +182,15 @@
             font-weight: 800;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            padding: 0 10px;
         }
 
         .bar-done {
-            background-color: #f97316;
+            background: linear-gradient(135deg, #10b981, #059669);
         }
 
         .bar-ongoing {
-            background-color: #c084fc;
+            background: linear-gradient(135deg, #f97316, #ea580c);
         }
 
         /* PRODUCT SPEC & PHOTO HEADER CARD */
@@ -203,17 +211,17 @@
         <a href="{{ route('admin.timelines.index') }}" class="btn btn-sm btn-outline-secondary fw-bold">
             <i class="bi bi-arrow-left me-1"></i> Kembali ke Master Roadmap
         </a>
-        <button class="btn btn-sm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#editDatesModal">
-            <i class="bi bi-pencil-square me-1"></i> Edit Schedule & Dates
-        </button>
+        <a href="{{ route('admin.task.subProcess', $task->item_code ?? $task->id) }}" class="btn btn-sm btn-primary fw-bold">
+            <i class="bi bi-pencil-square me-1"></i> Kelola Checklist Sub-Process
+        </a>
     </div>
 
-    <!-- PROJECT INFO HEADER CARD WITH SPEC & IMAGE -->
+    <!-- PROJECT INFO HEADER CARD -->
     <div class="project-spec-card mb-4">
         <div class="row align-items-center">
             <div class="col-md-2 text-center border-end">
-                @if(!empty($task->image))
-                    <img src="{{ asset('storage/' . $task->image) }}" alt="Spec Image" class="img-fluid rounded shadow-sm" style="max-height: 80px; object-fit: cover;">
+                @if(!empty($task->main_design_attachment))
+                    <img src="{{ asset('storage/' . $task->main_design_attachment) }}" alt="Spec Image" class="img-fluid rounded shadow-sm" style="max-height: 80px; object-fit: cover;">
                 @else
                     <div class="bg-light border rounded py-3 text-muted small">
                         <i class="bi bi-image fs-3 d-block mb-1 opacity-50"></i>
@@ -230,201 +238,173 @@
                     <div class="col-md-3"><i class="bi bi-building me-1"></i> Customer: <span class="text-dark">{{ $task->customer ?? '-' }}</span></div>
                     <div class="col-md-3"><i class="bi bi-tags me-1"></i> Brand: <span class="text-dark">{{ $task->brand_family ?? '-' }}</span></div>
                     <div class="col-md-3"><i class="bi bi-globe me-1"></i> Market: <span class="text-dark">{{ $task->market ?? '-' }}</span></div>
-                    <div class="col-md-3"><i class="bi bi-calendar-check me-1"></i> Info Rec: <span class="text-dark">{{ $task->information_received ?? '-' }}</span></div>
+                    <div class="col-md-3"><i class="bi bi-calendar-check me-1"></i> Info Rec: <span class="text-dark">{{ $task->information_received ? date('Y-m-d', strtotime($task->information_received)) : '-' }}</span></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN GANTT GRAPH CARD (SAMA SEPERTI GAMBAR) -->
+    <!-- DB TIMELINE PROCESSING & FILTERING -->
+    @php
+        // Ambil data timeline dari relasi database
+        $allTimelines = $task->timelines ?? collect();
+
+        // Pisahkan menjadi Done (is_completed = 1) dan On Going (is_completed = 0)
+        $subTasksDone = $allTimelines->where('is_completed', 1);
+        $subTasksOngoing = $allTimelines->where('is_completed', 0);
+
+        // Cari tanggal paling awal dan paling akhir untuk skala waktu Gantt
+        $minDate = $allTimelines->pluck('start_date')->filter()->min() ?? ($task->information_received ?? date('Y-m-d'));
+        $maxDate = $allTimelines->pluck('end_date')->filter()->max() ?? ($task->plm_released ?? date('Y-m-d', strtotime($minDate . ' + 30 days')));
+
+        $startTimestamp = strtotime($minDate);
+        $endTimestamp = strtotime($maxDate);
+        $totalDays = max(1, ($endTimestamp - $startTimestamp) / 86400);
+
+        // Helper Function menghitung posisi persentase baris Gantt Chart
+        $getBarPosition = function($start, $end) use ($startTimestamp, $totalDays) {
+            if (!$start || !$end) {
+                return ['left' => '10%', 'width' => '30%'];
+            }
+            $s = strtotime($start);
+            $e = strtotime($end);
+            
+            $leftPercent = max(0, (($s - $startTimestamp) / 86400) / $totalDays) * 100;
+            $widthPercent = max(5, (($e - $s) / 86400) / $totalDays) * 100;
+
+            if (($leftPercent + $widthPercent) > 100) {
+                $widthPercent = 100 - $leftPercent;
+            }
+
+            return [
+                'left' => round($leftPercent, 1) . '%',
+                'width' => round($widthPercent, 1) . '%'
+            ];
+        };
+    @endphp
+
+    <!-- MAIN GANTT GRAPH CARD -->
     <div class="gantt-card">
         
         <!-- HEADER GRAPH -->
         <div class="d-flex align-items-center justify-content-between border-bottom pb-3 mb-2">
-            <div class="gantt-header-title">
-                Gantt Chart <span style="color: #f97316;">Graph</span>
+            <div>
+                <div class="gantt-header-title">
+                    Gantt Chart <span style="color: #f97316;">Graph</span>
+                </div>
+                <div class="text-muted small fw-bold mt-1">
+                    <i class="bi bi-clock me-1"></i> Rentang Waktu: {{ date('d M Y', strtotime($minDate)) }} s/d {{ date('d M Y', strtotime($maxDate)) }}
+                </div>
             </div>
             <div class="company-badge">
                 {{ $task->customer ?? 'Enterprise Roadmap' }}
             </div>
         </div>
 
-        @php
-            // MAPPING SUB-TASKS & TANGGAL
-            $subTasksDone = [
-                [
-                    'name' => 'Layout Management',
-                    'progress' => $task->layout_status == 'Completed' ? '100%' : '50%',
-                    'left_pos' => '5%',
-                    'width_pos' => '20%',
-                ],
-                [
-                    'name' => 'BaaN ERP System Mapping',
-                    'progress' => $task->baan_status == 'Completed' ? '100%' : '60%',
-                    'left_pos' => '18%',
-                    'width_pos' => '25%',
-                ],
-                [
-                    'name' => 'Prompt Quality Verification',
-                    'progress' => $task->promp_status == 'Completed' ? '100%' : '40%',
-                    'left_pos' => '38%',
-                    'width_pos' => '18%',
-                ],
-            ];
-
-            $subTasksOngoing = [
-                [
-                    'name' => 'Job Bag Production Release',
-                    'progress' => '90%',
-                    'left_pos' => '52%',
-                    'width_pos' => '38%',
-                ],
-                [
-                    'name' => 'Optimization & Trial Run',
-                    'progress' => '70%',
-                    'left_pos' => '52%',
-                    'width_pos' => '22%',
-                ],
-                [
-                    'name' => 'Final PLM Results',
-                    'progress' => '40%',
-                    'left_pos' => '68%',
-                    'width_pos' => '18%',
-                ],
-            ];
-        @endphp
-
-        <!-- GANTT MAIN CONTAINER -->
-        <div class="gantt-main-container">
-
-            <!-- SIDEBAR KIRI (TASK LIST + VERTICAL BADGES) -->
-            <div class="gantt-sidebar">
-                <div class="gantt-sidebar-header">
-                    Task List
-                </div>
-
-                <!-- GROUP DONE -->
-                <div class="sidebar-group-wrapper">
-                    <div class="vertical-group-pill pill-done-group">
-                        Done
-                    </div>
-                    <div class="sidebar-tasks-list">
-                        @foreach($subTasksDone as $sub)
-                            <div class="sidebar-task-item">{{ $sub['name'] }}</div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- GROUP ON GOING -->
-                <div class="sidebar-group-wrapper" style="border-bottom: none;">
-                    <div class="vertical-group-pill pill-ongoing-group">
-                        On Going
-                    </div>
-                    <div class="sidebar-tasks-list">
-                        @foreach($subTasksOngoing as $sub)
-                            <div class="sidebar-task-item">{{ $sub['name'] }}</div>
-                        @endforeach
-                    </div>
-                </div>
+        @if($allTimelines->isEmpty())
+            <!-- WARNING JIKA BELUM ADA DATA CHECKLIST -->
+            <div class="alert alert-warning text-center my-4 py-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-2 d-block mb-2 text-warning"></i>
+                <h6 class="fw-bold">Belum Ada Ketentuan Timeline yang Diisi!</h6>
+                <p class="small mb-3">Silakan klik tombol di bawah untuk menambah poin sub-process & tanggal timeline project ini.</p>
+                <a href="{{ route('admin.task.subProcess', $task->item_code ?? $task->id) }}" class="btn btn-sm btn-warning fw-bold text-dark">
+                    <i class="bi bi-plus-circle me-1"></i> Isi Checklist Sub-Process
+                </a>
             </div>
+        @else
+            <!-- GANTT MAIN CONTAINER -->
+            <div class="gantt-main-container">
 
-            <!-- TIMELINE AREA KANAN (WEEK 1 - WEEK 9 GRID) -->
-            <div class="gantt-timeline-area">
-                
-                <!-- HEADER WEEKS -->
-                <div class="timeline-header-weeks">
-                    <div class="week-col-header">Week 1</div>
-                    <div class="week-col-header">Week 2</div>
-                    <div class="week-col-header">Week 3</div>
-                    <div class="week-col-header">Week 4</div>
-                    <div class="week-col-header">Week 5</div>
-                    <div class="week-col-header">Week 6</div>
-                    <div class="week-col-header active-week">Week 7</div>
-                    <div class="week-col-header">Week 8</div>
-                    <div class="week-col-header" style="border-right: none;">Week 9</div>
+                <!-- SIDEBAR KIRI (TASK LIST + VERTICAL BADGES) -->
+                <div class="gantt-sidebar">
+                    <div class="gantt-sidebar-header">
+                        Sub-Process Task Title
+                    </div>
+
+                    <!-- GROUP DONE -->
+                    @if($subTasksDone->count() > 0)
+                    <div class="sidebar-group-wrapper">
+                        <div class="vertical-group-pill pill-done-group">
+                            Done ({{ $subTasksDone->count() }})
+                        </div>
+                        <div class="sidebar-tasks-list">
+                            @foreach($subTasksDone as $item)
+                                <div class="sidebar-task-item" title="{{ $item->task_title }}">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i> {{ $item->task_title }}
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- GROUP ON GOING -->
+                    @if($subTasksOngoing->count() > 0)
+                    <div class="sidebar-group-wrapper" style="border-bottom: none;">
+                        <div class="vertical-group-pill pill-ongoing-group">
+                            On Going ({{ $subTasksOngoing->count() }})
+                        </div>
+                        <div class="sidebar-tasks-list">
+                            @foreach($subTasksOngoing as $item)
+                                <div class="sidebar-task-item" title="{{ $item->task_title }}">
+                                    <i class="bi bi-hourglass-split text-warning me-2"></i> {{ $item->task_title }}
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
-                <!-- TIMELINE ROWS GRID -->
-                <div class="timeline-rows-container">
+                <!-- TIMELINE AREA KANAN (SKALA WEEK 1 - WEEK 8 GRID) -->
+                <div class="gantt-timeline-area">
                     
-                    <!-- ROWS DONE -->
-                    @foreach($subTasksDone as $sub)
-                    <div class="timeline-row">
-                        <div class="gantt-bar-pill bar-done" style="left: {{ $sub['left_pos'] }}; width: {{ $sub['width_pos'] }};">
-                            {{ $sub['progress'] }}
-                        </div>
+                    <!-- HEADER WEEKS -->
+                    <div class="timeline-header-weeks">
+                        <div class="week-col-header">Week 1</div>
+                        <div class="week-col-header">Week 2</div>
+                        <div class="week-col-header">Week 3</div>
+                        <div class="week-col-header active-week">Week 4</div>
+                        <div class="week-col-header">Week 5</div>
+                        <div class="week-col-header">Week 6</div>
+                        <div class="week-col-header">Week 7</div>
+                        <div class="week-col-header" style="border-right: none;">Week 8</div>
                     </div>
-                    @endforeach
 
-                    <!-- ROWS ON GOING -->
-                    @foreach($subTasksOngoing as $sub)
-                    <div class="timeline-row">
-                        <div class="gantt-bar-pill bar-ongoing" style="left: {{ $sub['left_pos'] }}; width: {{ $sub['width_pos'] }};">
-                            {{ $sub['progress'] }}
+                    <!-- TIMELINE ROWS GRID -->
+                    <div class="timeline-rows-container">
+                        
+                        <!-- ROWS DONE -->
+                        @foreach($subTasksDone as $item)
+                        @php $pos = $getBarPosition($item->start_date, $item->end_date); @endphp
+                        <div class="timeline-row">
+                            <div class="gantt-bar-pill bar-done" style="left: {{ $pos['left'] }}; width: {{ $pos['width'] }};">
+                                100% Complete
+                            </div>
                         </div>
+                        @endforeach
+
+                        <!-- ROWS ON GOING -->
+                        @foreach($subTasksOngoing as $item)
+                        @php $pos = $getBarPosition($item->start_date, $item->end_date); @endphp
+                        <div class="timeline-row">
+                            <div class="gantt-bar-pill bar-ongoing" style="left: {{ $pos['left'] }}; width: {{ $pos['width'] }};">
+                                {{ $item->progress_percent ?? 50 }}% Progress
+                            </div>
+                        </div>
+                        @endforeach
+
                     </div>
-                    @endforeach
 
                 </div>
 
             </div>
-
-        </div>
+        @endif
 
         <!-- FOOTER URL BRAND -->
         <div class="text-center mt-4 pt-2 text-muted small font-monospace">
-            www.company-development-roadmap.com
+            Enterprise Interactive Project Roadmap System
         </div>
 
     </div>
 
-</div>
-
-<!-- MODAL EDIT DATES & SCHEDULE -->
-<div class="modal fade" id="editDatesModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title fw-bold">Custom Sub-Process Timeline Dates</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="{{ route('admin.timelines.update', $task->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Information Received</label>
-                            <input type="date" name="information_received" class="form-control" value="{{ $task->information_received }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">PLM Released</label>
-                            <input type="date" name="plm_released" class="form-control" value="{{ $task->plm_released }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Layout Status</label>
-                            <select name="layout_status" class="form-select">
-                                <option value="Pending" {{ ($task->layout_status ?? '') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="In Progress" {{ ($task->layout_status ?? '') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="Completed" {{ ($task->layout_status ?? '') == 'Completed' ? 'selected' : '' }}>Completed</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">BaaN Status</label>
-                            <select name="baan_status" class="form-select">
-                                <option value="Pending" {{ ($task->baan_status ?? '') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="In Progress" {{ ($task->baan_status ?? '') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="Completed" {{ ($task->baan_status ?? '') == 'Completed' ? 'selected' : '' }}>Completed</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary fw-bold">Save Schedule</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 @endsection

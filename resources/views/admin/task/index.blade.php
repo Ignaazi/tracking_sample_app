@@ -253,16 +253,21 @@
     @endif
 
     @php
-        $countTodo = $todo->count();
-        $countProgress = $inProgress->count();
-        $countCompleted = $completed->count();
+        // PENANGANAN AMAN: Cek apakah variabel dikirim dari Controller, jika tidak buat otomatis dari $tasks
+        $todoData = $todoTasks ?? $todo ?? (isset($tasks) ? $tasks->filter(fn($t) => in_array(strtolower($t->status ?? ''), ['todo', 'to do', ''])) : collect());
+        $inProgressData = $inProgressTasks ?? $inProgress ?? (isset($tasks) ? $tasks->filter(fn($t) => in_array(strtolower($t->status ?? ''), ['in-progress', 'in progress', 'progress'])) : collect());
+        $completedData = $completedTasks ?? $completed ?? (isset($tasks) ? $tasks->filter(fn($t) => in_array(strtolower($t->status ?? ''), ['completed', 'done'])) : collect());
+
+        $countTodo = $todoData->count();
+        $countProgress = $inProgressData->count();
+        $countCompleted = $completedData->count();
         $countAll = $countTodo + $countProgress + $countCompleted;
 
         $columns = [
             [
                 'title' => 'To Do', 
                 'status' => 'todo', 
-                'data' => $todo, 
+                'data' => $todoData, 
                 'pill_class' => 'status-pill-todo',
                 'text_class' => 'text-todo',
                 'header_class' => 'table-header-todo'
@@ -270,7 +275,7 @@
             [
                 'title' => 'In Progress', 
                 'status' => 'in-progress', 
-                'data' => $inProgress, 
+                'data' => $inProgressData, 
                 'pill_class' => 'status-pill-progress',
                 'text_class' => 'text-progress',
                 'header_class' => 'table-header-in-progress'
@@ -278,7 +283,7 @@
             [
                 'title' => 'Completed', 
                 'status' => 'completed', 
-                'data' => $completed, 
+                'data' => $completedData, 
                 'pill_class' => 'status-pill-completed',
                 'text_class' => 'text-completed',
                 'header_class' => 'table-header-completed'

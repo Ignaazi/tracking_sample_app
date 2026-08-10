@@ -49,4 +49,28 @@ class CreateTask extends Model
     {
         return $this->hasMany(ItemSpec::class, 'item_code', 'item_code');
     }
+
+    /**
+     * Relasi 1-to-1 ke model Task berdasarkan item_code
+     */
+    public function task()
+    {
+        return $this->hasOne(Task::class, 'item_code', 'item_code');
+    }
+
+    /**
+     * Relasi ke Timelines melalui tabel Task
+     * (Memungkinkan CreateTask mengambil data timeline checklist secara langsung)
+     */
+    public function timelines()
+    {
+        return $this->hasManyThrough(
+            Timeline::class,
+            Task::class,
+            'item_code', // Foreign key di tabel task
+            'task_id',   // Foreign key di tabel timelines
+            'item_code', // Local key di tabel create_task
+            'id'         // Local key di tabel task
+        );
+    }
 }

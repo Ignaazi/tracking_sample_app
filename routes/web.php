@@ -87,9 +87,11 @@ Route::middleware('auth')->group(function () {
         Route::put('/item-specs/{id}', [ItemSpecController::class, 'update'])->name('item-specs.update');
         Route::delete('/item-specs/{id}', [ItemSpecController::class, 'destroy'])->name('item-specs.destroy');
 
-        // MODULE: WORKFLOW ENGINE & ASSIGNMENT (PRINT PDF)
-        Route::get('/workflow', [WorkflowController::class, 'index'])->name('workflow.index');
-        Route::get('/workflow/{id}/print-pdf', [WorkflowController::class, 'printPdf'])->name('workflow.printPdf');
+       // MODULE: WORKFLOW ENGINE & ASSIGNMENT (PRINT PDF, APPROVAL, & REJECT)
+       Route::get('/workflow', [WorkflowController::class, 'index'])->name('workflow.index');
+       Route::post('/workflow/{id}/approve', [WorkflowController::class, 'approve'])->name('workflow.approve');
+       Route::post('/workflow/{id}/reject', [WorkflowController::class, 'reject'])->name('workflow.reject');
+       Route::get('/workflow/{id}/print-pdf', [WorkflowController::class, 'printPdf'])->name('workflow.printPdf');
 
         // MODULE: TASK LIST PROJECT & UPDATE SUB STATUS
         Route::get('/task-list-project', [TaskListProjectController::class, 'index'])->name('task-list-project.index');

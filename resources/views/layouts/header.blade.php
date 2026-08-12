@@ -6,8 +6,9 @@
         </div>
 
         <a href="{{ route('admin.dashboard') }}" class="logo d-flex align-items-center text-decoration-none ms-2 gap-2">
-            <div class="bg-light rounded d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px; overflow: hidden; border: 1px solid #e2e8f5;">
-                <img src="{{ asset('logo.png') }}" alt="Logo" class="img-fluid">
+            <div class="bg-light rounded d-flex align-items-center justify-content-center shadow-sm p-1" style="width: 38px; height: 38px; overflow: hidden; border: 1px solid #e2e8f5;">
+                <!-- DITAMBAHKAN STYLE RENDER FIT UNTUK GAMBAR -->
+                <img src="{{ asset('logo.png') }}" alt="Logo" class="img-fluid" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
             <span class="d-none d-sm-block" style="color: #012970; font-weight: 700; font-family: 'Nunito', sans-serif; font-size: 22px;">Amcor</span>
         </a>

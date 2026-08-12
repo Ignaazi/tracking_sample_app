@@ -43,10 +43,14 @@ Route::middleware('auth')->group(function () {
         // MODULE: TRACKING SYSTEM - TIMELINE & ROADMAP GANTT
         Route::get('/timelines', [TimelineController::class, 'index'])->name('timelines.index');
         Route::get('/task/roadmap', [TaskController::class, 'roadmapIndex'])->name('task.roadmap');
+        
+        // DETAIL TIMELINE / GANTT CHART (Diberikan alias 'timelines.show' & 'task.timeline.detail')
         Route::get('/timeline/{id}', [TimelineController::class, 'detail'])->name('task.timeline.detail');
+        Route::get('/timelines/{id}', [TimelineController::class, 'detail'])->name('timelines.show'); 
+        
         Route::post('/timelines', [TimelineController::class, 'store'])->name('timelines.store');
         
-        // UPDATE: Route update timeline (mendukung AJAX dari detailTimeLine.blade.php & Endpoint standar)
+        // UPDATE TIMELINE (AJAX & Standard)
         Route::put('/timelines/{id}', [TimelineController::class, 'update'])->name('timelines.update');
         Route::put('/timeline/{id}/update', [TimelineController::class, 'update'])->name('timeline.update'); 
 

@@ -31,7 +31,6 @@ class TaskController extends Controller
     {
         $tasks = Task::with('timelines')->orderBy('created_at', 'desc')->get()->map(function ($task) {
             
-            // Auto-generate timeline checklist jika belum ada
             if ($task->timelines->count() === 0) {
                 TimelineController::generateDefaultChecklists($task);
                 $task->load('timelines');
@@ -71,13 +70,11 @@ class TaskController extends Controller
     {
         $tasks = Task::with(['itemSpecs', 'timelines'])->orderBy('created_at', 'desc')->get()->map(function($task) {
             
-            // Auto-generate timeline checklist jika belum ada
             if ($task->timelines->count() === 0) {
                 TimelineController::generateDefaultChecklists($task);
                 $task->load('timelines');
             }
 
-            // Auto-sync status jika 27 field terisi penuh
             if (strtolower($task->status ?? '') !== 'completed') {
                 $isComplete = true;
                 foreach ($this->masterFields as $field) {
@@ -120,13 +117,15 @@ class TaskController extends Controller
         $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
         $task->load(['timelines', 'itemSpecs']);
 
-        // Auto-generate timeline checklist jika belum ada
         if ($task->timelines->count() === 0) {
             TimelineController::generateDefaultChecklists($task);
             $task->load('timelines');
         }
 
-        $existingChecklists = $task->timelines->groupBy('section_key');
+        // Grouping dengan membersihkan akhiran _process agar match dengan form key view
+        $existingChecklists = $task->timelines->groupBy(function($item) {
+            return str_replace('_process', '', $item->section_key);
+        });
 
         return view('admin.task.subProcess', compact('task', 'existingChecklists'));
     }
@@ -154,36 +153,52 @@ class TaskController extends Controller
             return redirect()->back()->with('success', 'Status berhasil diperbarui!');
         }
 
-        // Handle Update Timelines Sub-Process Checklist
+        // Handle Update Timelines Sub-Process Checklist Form
         DB::transaction(function () use ($request, $task) {
-            Timeline::where('task_id', $task->id)->delete();
-
-            $totalItems = 0;
-            $completedItems = 0;
-
+            
             if ($request->has('checklists')) {
+                $processedTimelineIds = [];
+
                 foreach ($request->checklists as $sectionKey => $items) {
+                    $formattedSectionKey = str_contains($sectionKey, '_process') ? $sectionKey : $sectionKey . '_process';
+
                     foreach ($items as $item) {
                         if (!empty($item['title'])) {
                             $isDone = isset($item['done']) && $item['done'] == '1';
-                            $totalItems++;
-                            if ($isDone) $completedItems++;
 
-                            Timeline::create([
-                                'task_id'          => $task->id,
-                                'project_name'     => $task->project_name ?? 'Project Task',
-                                'section_key'      => $sectionKey,
-                                'task_title'       => $item['title'],
-                                'phase'            => 'Develop',
-                                'start_date'       => !empty($item['start_date']) ? $item['start_date'] : null,
-                                'end_date'         => !empty($item['end_date']) ? $item['end_date'] : null,
-                                'is_completed'     => $isDone,
-                                'progress_percent' => $isDone ? 100 : 0,
-                            ]);
+                            $timeline = Timeline::updateOrCreate(
+                                [
+                                    'task_id'    => $task->id,
+                                    'task_title' => $item['title'],
+                                ],
+                                [
+                                    'project_name'     => $task->project_name ?? 'Project Task',
+                                    'section_key'      => $formattedSectionKey,
+                                    'phase'            => 'Develop',
+                                    'start_date'       => !empty($item['start_date']) ? $item['start_date'] : null,
+                                    'end_date'         => !empty($item['end_date']) ? $item['end_date'] : null,
+                                    'is_completed'     => $isDone ? 1 : 0,
+                                    'progress_percent' => $isDone ? 100 : 0,
+                                ]
+                            );
+
+                            $processedTimelineIds[] = $timeline->id;
                         }
                     }
                 }
+
+                // Hapus item timeline yang dihapus user melalui interface form
+                if (!empty($processedTimelineIds)) {
+                    Timeline::where('task_id', $task->id)
+                        ->whereNotIn('id', $processedTimelineIds)
+                        ->delete();
+                }
             }
+
+            // Hitung ulang status task berdasarkan item timelines yang aktif
+            $allTimelines = Timeline::where('task_id', $task->id)->get();
+            $totalItems = $allTimelines->count();
+            $completedItems = $allTimelines->where('is_completed', 1)->count();
 
             if ($totalItems > 0) {
                 if ($completedItems === $totalItems) {
@@ -201,7 +216,7 @@ class TaskController extends Controller
     }
 
     /**
-     * Menampilkan Halaman Data Project Status Table (Auto-Sync Status Ke 'in-progress' jika 27 Field Lengkap)
+     * Menampilkan Halaman Data Project Status Table
      */
     public function tableIndex()
     {
@@ -212,13 +227,11 @@ class TaskController extends Controller
         ->get()
         ->map(function($task) {
             
-            // Auto-generate timeline checklist jika belum ada
             if ($task->timelines->count() === 0) {
                 TimelineController::generateDefaultChecklists($task);
                 $task->load('timelines');
             }
 
-            // SINKRONISASI STATUS OTOMATIS SAAT HALAMAN DIBUKA
             if (strtolower($task->status ?? '') !== 'completed') {
                 $isComplete = true;
                 foreach ($this->masterFields as $field) {
@@ -276,13 +289,11 @@ class TaskController extends Controller
             'repro_by'             => 'nullable|string|max:255',
         ]);
 
-        // 1. GENERATE NO OTOMATIS BERFORMAT 2 DIGIT (01, 02, 03, dst.)
         $latestTask = Task::latest('id')->first();
         $nextId = $latestTask ? $latestTask->id + 1 : 1;
         $formattedNo = sprintf('%02d', $nextId);
         $validated['no'] = $formattedNo;
 
-        // 2. KALKULASI STATUS AWAL PROJECT
         $isComplete = true;
         foreach ($this->masterFields as $field) {
             if (empty($validated[$field] ?? null)) {
@@ -293,7 +304,6 @@ class TaskController extends Controller
 
         $defaultStatus = $isComplete ? 'in-progress' : 'todo';
 
-        // 3. SIMPAN DATA KE TABEL TASK
         $taskData = array_merge($validated, [
             'status'             => $defaultStatus,
             'layout_status'      => 'Pending',
@@ -304,8 +314,6 @@ class TaskController extends Controller
         ]);
 
         $task = Task::create($taskData);
-
-        // 4. AUTO-GENERATE PROJECT TIMELINE CHECKLIST
         TimelineController::generateDefaultChecklists($task);
 
         return redirect()->back()->with('success', "Project Task [No. {$formattedNo}] dan Timeline berhasil dibuat!");

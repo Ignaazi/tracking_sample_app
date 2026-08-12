@@ -60,9 +60,7 @@
             gap: 14px;
         }
 
-        /* ========================================================= */
-        /* 1. TEMA FULL ABU-ABU (TO DO)                              */
-        /* ========================================================= */
+        /* 1. TEMA TO DO */
         .col-theme-todo {
             background-color: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -77,18 +75,9 @@
             background: #ffffff;
             border: 1px solid #cbd5e1;
             border-left: 4px solid #64748b;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
-        }
-        .col-theme-todo .kanban-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 18px rgba(100, 116, 139, 0.15);
-            border-color: #94a3b8;
-            border-left-color: #475569;
         }
 
-        /* ========================================================= */
-        /* 2. TEMA FULL BIRU MUDA (IN PROGRESS)                      */
-        /* ========================================================= */
+        /* 2. TEMA IN PROGRESS */
         .col-theme-progress {
             background-color: #f0f9ff;
             border: 1px solid #bae6fd;
@@ -103,18 +92,9 @@
             background: #ffffff;
             border: 1px solid #bae6fd;
             border-left: 4px solid #0284c7;
-            box-shadow: 0 3px 6px rgba(2, 132, 199, 0.05), 0 1px 2px rgba(0,0,0,0.02);
-        }
-        .col-theme-progress .kanban-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 18px rgba(2, 132, 199, 0.18);
-            border-color: #38bdf8;
-            border-left-color: #0369a1;
         }
 
-        /* ========================================================= */
-        /* 3. TEMA FULL HIJAU MUDA (COMPLETED)                       */
-        /* ========================================================= */
+        /* 3. TEMA COMPLETED */
         .col-theme-completed {
             background-color: #f0fdf4;
             border: 1px solid #bbf7d0;
@@ -129,16 +109,9 @@
             background: #ffffff;
             border: 1px solid #bbf7d0;
             border-left: 4px solid #16a34a;
-            box-shadow: 0 3px 6px rgba(22, 163, 74, 0.05), 0 1px 2px rgba(0,0,0,0.02);
-        }
-        .col-theme-completed .kanban-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 18px rgba(22, 163, 74, 0.18);
-            border-color: #4ade80;
-            border-left-color: #15803d;
         }
 
-        /* STYLING KARTU KANBAN 3D TIPIS */
+        /* STYLING KARTU KANBAN */
         .kanban-card {
             border-radius: 10px;
             padding: 14px;
@@ -146,15 +119,16 @@
             position: relative;
         }
 
-        /* BADGE SAP EMAS */
-        .badge-sap-gold {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            color: #b45309 !important;
-            border: 1px solid #fcd34d !important;
-            font-size: 10.5px !important;
-            font-weight: 800 !important;
-            padding: 3px 8px !important;
-            border-radius: 6px !important;
+        .kanban-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+        }
+
+        /* LOGO AMCOR CONTAINER */
+        .amcor-logo-img {
+            height: 22px;
+            object-fit: contain;
+            filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.05));
         }
 
         /* SUB-PROCESS GRID */
@@ -177,26 +151,26 @@
             justify-content: space-between;
         }
 
-        /* STATUS BADGE SUB-PROSES */
+        /* STATUS BADGE DENGAN WARNA OTOMATIS */
         .status-Completed, .status-completed {
-            background-color: #dcfce7;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
+            background-color: #dcfce7 !important;
+            color: #15803d !important;
+            border: 1px solid #bbf7d0 !important;
         }
 
         .status-In-Progress, .status-in-progress, .status-In_Progress {
-            background-color: #fef9c3;
-            color: #a16207;
-            border: 1px solid #fef08a;
+            background-color: #fef9c3 !important;
+            color: #a16207 !important;
+            border: 1px solid #fef08a !important;
         }
 
         .status-Pending, .status-pending, .status-To-Do {
-            background-color: #f1f5f9;
-            color: #64748b;
-            border: 1px solid #e2e8f0;
+            background-color: #f1f5f9 !important;
+            color: #64748b !important;
+            border: 1px solid #e2e8f0 !important;
         }
 
-        /* TOMBOL DETAIL (GRADIENT BLUE & SOFT HOVER/CLICK) */
+        /* TOMBOL DETAIL GRADIENT */
         .btn-detail-gradient {
             background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
             color: #ffffff !important;
@@ -213,18 +187,10 @@
             gap: 4px;
         }
 
-        /* HOVER EFFECT (EFFEK SAMAR) */
         .btn-detail-gradient:hover {
-            opacity: 0.75 !important;
+            opacity: 0.8 !important;
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2) !important;
             color: #ffffff !important;
-        }
-
-        /* ACTIVE / CLICK EFFECT (EFFEK LEBIH SAMAR) */
-        .btn-detail-gradient:active {
-            opacity: 0.5 !important;
-            transform: translateY(0);
         }
     </style>
 @endpush
@@ -232,7 +198,7 @@
 @section('content')
 <div class="container-fluid p-4 kanban-container" style="background-color: #f8fafc; min-height: 100vh;">
 
-    <!-- TOP HEADER BAR (TANPA TOMBOL CREATE PROJECT) -->
+    <!-- TOP HEADER BAR -->
     <div class="mb-4">
         <h3 class="fw-bold text-dark mb-1 fs-4" style="color: #0f172a !important;">Project Development Kanban</h3>
         <p class="text-secondary small mb-0" style="font-size: 13px;">Real-time monitoring for Layout, BaaN, Prompt, & Job Bag workflows.</p>
@@ -280,14 +246,14 @@
                 @forelse($col['tasks'] as $task)
                 <div class="kanban-card">
                     
-                    <!-- ITEM CODE & SAP NUMBER (SAP CODE DI KANAN DENGAN WARNA EMAS) -->
+                    <!-- ITEM CODE & LOGO PT AMCOR -->
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="badge bg-dark font-monospace text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">
                             {{ $task->item_code }}
                         </span>
-                        <span class="badge badge-sap-gold">
-                            SAP: {{ $task->sap_number ?? '-' }}
-                        </span>
+                        
+                        <!-- REPLACED: BADGE SAP DENGAN LOGO AMCOR -->
+                        <img src="{{ asset('logo1.png') }}" alt="Amcor Logo" class="amcor-logo-img">
                     </div>
 
                     <!-- PROJECT NAME & CUSTOMER -->
@@ -299,29 +265,29 @@
                         <span class="text-truncate">{{ $task->customer ?? '-' }}</span>
                     </p>
 
-                    <!-- 4 SUB-PROCESS STATUS GRID -->
+                    <!-- 4 SUB-PROCESS STATUS GRID (AUTOMATIC DARI DB TIMELINES) -->
                     <div class="sub-process-grid">
                         @php
                             $subProcesses = [
-                                ['label' => 'Layout', 'status' => $task->layout_status ?? 'Pending'],
-                                ['label' => 'BaaN', 'status' => $task->baan_status ?? 'Pending'],
-                                ['label' => 'Prompt', 'status' => $task->promp_status ?? 'Pending'],
-                                ['label' => 'Job Bag', 'status' => $task->job_bag_status ?? 'Pending'],
+                                ['label' => 'Layout', 'status' => $task->layout_status],
+                                ['label' => 'BaaN', 'status' => $task->baan_status],
+                                ['label' => 'Prompt', 'status' => $task->promp_status],
+                                ['label' => 'Job Bag', 'status' => $task->job_bag_status],
                             ];
                         @endphp
 
                         @foreach($subProcesses as $sub)
                         @php
-                            $normalizedStatus = str_replace([' ', '_'], '-', strtolower($sub['status']));
+                            $statusStr = $sub['status'];
                             $iconClass = 'bi-dash-circle';
                             
-                            if (in_array($normalizedStatus, ['completed', 'done'])) {
+                            if ($statusStr === 'Completed') {
                                 $iconClass = 'bi-check-circle-fill';
-                            } elseif (in_array($normalizedStatus, ['in-progress', 'progress'])) {
+                            } elseif ($statusStr === 'In Progress') {
                                 $iconClass = 'bi-clock-history';
                             }
                         @endphp
-                        <div class="sub-badge status-{{ $sub['status'] }}">
+                        <div class="sub-badge status-{{ str_replace(' ', '-', $statusStr) }}">
                             <span>{{ $sub['label'] }}</span>
                             <i class="bi {{ $iconClass }}" style="font-size: 11px;"></i>
                         </div>
@@ -331,12 +297,12 @@
                     <!-- CARD FOOTER -->
                     <div class="d-flex align-items-center justify-content-between mt-3 pt-2 border-top border-light">
                         <span class="text-secondary fw-semibold d-flex align-items-center gap-1" style="font-size: 11px;">
-                            <i class="bi bi-palette text-primary"></i>
-                            {{ $task->itemSpecs ? $task->itemSpecs->count() : 0 }} Specs
+                            <i class="bi bi-diagram-3 text-primary"></i>
+                            {{ $task->timelines ? $task->timelines->count() : 0 }} Tasks
                         </span>
                         
-                        <!-- TOMBOL DETAIL BIRU GRADIENT (SAMAR HOVER & CLICK) -->
-                        <a href="{{ route('admin.task.subProcess', $task->id ?? 1) }}" class="btn-detail-gradient">
+                        <!-- TOMBOL DETAIL MENUJU FORM CHECKLIST SUB-PROCESS (UNTUK SETTING WAKTU & ADD TASK) -->
+                        <a href="{{ route('admin.task.subProcess', $task->id) }}" class="btn-detail-gradient">
                             Detail <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>

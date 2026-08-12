@@ -89,40 +89,6 @@
       </a>
     </li>
 
-    <li class="nav-heading mt-3 mb-2 px-2 d-flex align-items-center position-relative" style="height: 20px;">
-      <span class="bg-white pe-2 text-muted fw-bold position-relative" style="font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.8px; z-index: 2; color: #747d8c !important;">
-        Color Machine & Trial
-      </span>
-      <div class="position-absolute start-0 end-0 top-50 translate-y-50" style="border-bottom: 1px solid #e2e8f5; z-index: 1; margin-left: 8px; margin-right: 8px;"></div>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link rounded-3 d-flex align-items-center collapsed"
-         href="#"
-         style="padding: 6px 12px; height: 35px; font-size: 13.5px; font-weight: 600;">
-        <i class="fa-solid fa-file-invoice me-2" style="font-size: 15px;"></i>
-        <span>Trial Report</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link rounded-3 d-flex align-items-center collapsed"
-         href="#"
-         style="padding: 6px 12px; height: 35px; font-size: 13.5px; font-weight: 600;">
-        <i class="fa-solid fa-boxes-stacked me-2" style="font-size: 15px;"></i>
-        <span>Sample Request</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a class="nav-link rounded-3 d-flex align-items-center collapsed"
-         href="#"
-         style="padding: 6px 12px; height: 35px; font-size: 13.5px; font-weight: 600;">
-        <i class="fa-solid fa-clock-rotate-left me-2" style="font-size: 15px;"></i>
-        <span>History Log</span>
-      </a>
-    </li>
-
   </ul>
 </aside>
 

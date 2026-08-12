@@ -9,14 +9,26 @@ class Task extends Model
 {
     use HasFactory;
 
-    // Nama tabel di database
+    // Nama tabel di database db_sample_app
     protected $table = 'task';
 
     // Primary Key bawaan tabel
     protected $primaryKey = 'id';
 
-    // Menggunakan $guarded = [] agar semua kolom dapat dimasukkan secara Mass Assignment
+    // Membuka seluruh kolom untuk Mass Assignment
     protected $guarded = [];
+
+    /**
+     * Default nilai atribut saat instance model dibuat
+     */
+    protected $attributes = [
+        'status'             => 'todo',
+        'development_status' => 'Active',
+        'layout_status'      => 'Pending',
+        'baan_status'        => 'Pending',
+        'promp_status'       => 'Pending',
+        'job_bag_status'     => 'Pending',
+    ];
 
     /**
      * Casting tipe data kolom tanggal & angka agar otomatis berformat Carbon / Decimal
@@ -50,6 +62,14 @@ class Task extends Model
     }
 
     /**
+     * Relasi ke Sample (BelongsTo / HasOne) berdasarkan item_code
+     */
+    public function sample()
+    {
+        return $this->belongsTo(Sample::class, 'item_code', 'item_code');
+    }
+
+    /**
      * Relasi ke User yang me-sign PREPARED (PD)
      */
     public function pdUser()
@@ -74,9 +94,9 @@ class Task extends Model
     }
 
     /**
-     * Helper untuk cek apakah project sudah fully approved oleh ketiga pihak
+     * Helper untuk cek apakah project sudah fully approved oleh ketiga pihak (PD, QA, PLANNER)
      */
-    public function isFullyApproved()
+    public function isFullyApproved(): bool
     {
         return !is_null($this->pd_prepared_at) && 
                !is_null($this->qa_checked_at) && 

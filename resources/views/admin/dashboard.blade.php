@@ -16,8 +16,8 @@
         </div>
     @endif
 
+    {{-- CARDS STATISTIK --}}
     <div class="row g-3 mb-4">
-        
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="card h-100 p-3 border-0 shadow-sm" style="background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);">
                 <div class="d-flex align-items-center gap-3">
@@ -26,8 +26,8 @@
                     </div>
                     <div>
                         <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Total Development</small>
-                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">148</span>
-                        <small class="text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-arrow-trend-up me-1"></i>12 New</small>
+                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">{{ $totalDevelopment ?? 0 }}</span>
+                        <small class="text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-arrow-trend-up me-1"></i>Active Database</small>
                     </div>
                 </div>
             </div>
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Pending Tasks</small>
-                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">24</span>
+                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">{{ $pendingTasks ?? 0 }}</span>
                         <small class="text-warning fw-bold" style="font-size: 11px;"><i class="fa-solid fa-clock me-1"></i>Awaiting Review</small>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                     </div>
                     <div>
                         <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Active Projects</small>
-                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">36</span>
+                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">{{ $activeProjects ?? 0 }}</span>
                         <small class="text-info fw-bold" style="font-size: 11px;"><i class="fa-solid fa-gears me-1"></i>Under Development</small>
                     </div>
                 </div>
@@ -71,18 +71,33 @@
                     </div>
                     <div>
                         <small class="text-muted fw-bold d-block text-uppercase" style="font-size: 10px; letter-spacing: 0.5px;">Completed Projects</small>
-                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">88</span>
+                        <span class="d-block fw-bold text-dark my-1" style="font-size: 20px;">{{ $completedProjects ?? 0 }}</span>
                         <small class="text-success fw-bold" style="font-size: 11px;"><i class="fa-solid fa-check-double me-1"></i>100% Deployed</small>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
+    {{-- BARIS UTAMA --}}
     <div class="row g-4">
         
+        {{-- TABEL & CHART --}}
         <div class="col-12 col-lg-8">
+            
+            {{-- APEXCHART BAR CHART --}}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title m-0 fw-bold" style="color: #012970; font-size: 16px;">
+                        <i class="fa-solid fa-chart-column me-2 text-primary"></i>Development Workflows Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="apexBarChart" style="min-height: 220px;"></div>
+                </div>
+            </div>
+
+            {{-- TABEL --}}
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                     <h5 class="card-title m-0 fw-bold" style="color: #012970; font-size: 16px;">
@@ -107,35 +122,36 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if($samples->isEmpty())
+                                @if(!isset($samples) || $samples->isEmpty())
                                     <tr>
                                         <td colspan="5" class="text-center py-5 text-muted">
                                             <i class="fa-solid fa-folder-open fs-3 d-block mb-2 text-secondary"></i>
                                             Belum ada data sampel di database local, bor!
                                         </td>
                                     </tr>
+                                @else
+                                    @foreach($samples as $sample)
+                                    <tr>
+                                        <td class="ps-3 fw-bold text-dark">{{ $sample->title }}</td>
+                                        <td>
+                                            <span class="badge font-monospace px-2 py-1.5 rounded" style="background-color: #e6f7ff; color: #055160; font-size: 12px;">
+                                                {{ $sample->item_code }}
+                                            </span>
+                                        </td>
+                                        <td class="text-secondary">{{ $sample->brand }}</td>
+                                        <td>
+                                            <span class="badge rounded-pill bg-light text-dark border px-2 py-1" style="font-size: 11px;">
+                                                {{ $sample->priority ?? 'Normal' }}
+                                            </span>
+                                        </td>
+                                        <td class="pe-3">
+                                            <span class="badge px-2 py-1.5 rounded-pill" style="background-color: #fff3bf; color: #664d03; font-size: 11px; font-weight: 700;">
+                                                {{ $sample->status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    @endforeach
                                 @endif
-                                @foreach($samples as $sample)
-                                <tr>
-                                    <td class="ps-3 fw-bold text-dark">{{ $sample->title }}</td>
-                                    <td>
-                                        <span class="badge font-monospace px-2 py-1.5 rounded" style="background-color: #e6f7ff; color: #055160; font-size: 12px;">
-                                            {{ $sample->item_code }}
-                                        </span>
-                                    </td>
-                                    <td class="text-secondary">{{ $sample->brand }}</td>
-                                    <td>
-                                        <span class="badge rounded-pill bg-light text-dark border px-2 py-1" style="font-size: 11px;">
-                                            {{ $sample->priority ?? 'Normal' }}
-                                        </span>
-                                    </td>
-                                    <td class="pe-3">
-                                        <span class="badge px-2 py-1.5 rounded-pill" style="background-color: #fff3bf; color: #664d03; font-size: 11px; font-weight: 700;">
-                                            {{ $sample->status }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -143,54 +159,110 @@
             </div>
         </div>
 
+        {{-- RECENT ACTIVITY (SESUAI TABEL `task` DATABASE db_sample_app) --}}
         <div class="col-12 col-lg-4">
             <div class="card border-0 shadow-sm bg-white">
                 <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                     <h5 class="card-title m-0 fw-bold" style="color: #012970; font-size: 16px;">
-                        Recent Activity <span class="text-muted fw-normal" style="font-size: 12px; display: block; margin-top: 2px;">Last 2 hours</span>
+                        Recent Activity <span class="text-muted fw-normal" style="font-size: 12px; display: block; margin-top: 2px;">Task & Approval System</span>
                     </h5>
-                    <a href="#" class="text-decoration-none fw-bold" style="font-size: 12px; color: var(--nice-blue);">View</a>
+                    <a href="#" class="text-decoration-none fw-bold" style="font-size: 12px; color: #4154f1;">View All</a>
                 </div>
                 <div class="card-body pt-0 px-3 pb-3">
-                    
                     <div class="d-flex flex-column gap-2">
-                        
-                        <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
-                            <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #198754; min-width: 8px;"></span>
-                            <span class="text-dark"><strong>Alex Thompson</strong> completed purchase workflow update.</span>
-                        </div>
-
-                        <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
-                            <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #0d6efd; min-width: 8px;"></span>
-                            <span class="text-dark"><strong>Sarah Wilson</strong> submitted dashboard UX revisions.</span>
-                        </div>
-
-                        <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
-                            <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #ffc107; min-width: 8px;"></span>
-                            <span class="text-dark">Storage usage crossed <strong>80%</strong> on media bucket.</span>
-                        </div>
-
-                        <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
-                            <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #0dcaf0; min-width: 8px;"></span>
-                            <span class="text-dark">Deployment <strong>v3.2.1</strong> passed production checks.</span>
-                        </div>
-
-                        <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
-                            <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #20c997; min-width: 8px;"></span>
-                            <span class="text-dark">New lead batch synced from CRM integrations.</span>
-                        </div>
-
-                        <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
-                            <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #dc3545; min-width: 8px;"></span>
-                            <span class="text-dark" style="color: #851c26;">Billing retry required for invoice #INV-8043.</span>
-                        </div>
-
+                        @forelse($recentActivities as $act)
+                            {{-- Status Approval Planner --}}
+                            @if($act->planner_approved_at)
+                                <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
+                                    <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #198754; min-width: 8px;"></span>
+                                    <span class="text-dark">
+                                        <strong>{{ $act->plannerUser->name ?? 'Planner' }}</strong> approved Planner stage for <strong>{{ $act->project_name ?? $act->no }}</strong>.
+                                    </span>
+                                </div>
+                            {{-- Status Approval QA --}}
+                            @elseif($act->qa_checked_at)
+                                <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
+                                    <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #0d6efd; min-width: 8px;"></span>
+                                    <span class="text-dark">
+                                        <strong>{{ $act->qaUser->name ?? 'QA User' }}</strong> verified QA check on <strong>{{ $act->project_name ?? $act->no }}</strong>.
+                                    </span>
+                                </div>
+                            {{-- Status Prepared PD --}}
+                            @elseif($act->pd_prepared_at)
+                                <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
+                                    <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #ffc107; min-width: 8px;"></span>
+                                    <span class="text-dark">
+                                        <strong>{{ $act->pdUser->name ?? 'PD User' }}</strong> prepared document for <strong>{{ $act->project_name ?? $act->no }}</strong>.
+                                    </span>
+                                </div>
+                            {{-- Task Baru Dibuat --}}
+                            @else
+                                <div class="p-2 border rounded-3 d-flex align-items-center gap-3 bg-light-subtle" style="font-size: 12.5px;">
+                                    <span class="rounded-circle d-inline-block" style="width: 8px; height: 8px; background-color: #20c997; min-width: 8px;"></span>
+                                    <span class="text-dark">
+                                        Task <strong>{{ $act->no }}</strong> ({{ $act->item_code }}) created for market <strong>{{ $act->market }}</strong>.
+                                    </span>
+                                </div>
+                            @endif
+                        @empty
+                            <div class="p-3 text-center text-muted" style="font-size: 12px;">
+                                Belum ada aktivitas task terbaru.
+                            </div>
+                        @endforelse
                     </div>
-
                 </div>
             </div>
         </div>
 
     </div>
+
+    {{-- APEXCHARTS CDN & INITIALIZATION --}}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var options = {
+                series: [{
+                    name: 'Total Tasks',
+                    data: [
+                        {{ $chartData['pending'] ?? 10 }}, 
+                        {{ $chartData['in_progress'] ?? 15 }}, 
+                        {{ $chartData['completed'] ?? 8 }}
+                    ]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 200,
+                    toolbar: { show: false }
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 6,
+                        horizontal: false,
+                        columnWidth: '35%',
+                        distributed: true
+                    }
+                },
+                colors: ['#ffc107', '#0284c7', '#198754'],
+                dataLabels: { enabled: true },
+                legend: { show: false },
+                xaxis: {
+                    categories: ['Pending', 'In Progress', 'Completed'],
+                    labels: {
+                        style: { fontSize: '11px', fontWeight: 600 }
+                    }
+                },
+                yaxis: {
+                    labels: { style: { fontSize: '11px' } }
+                },
+                grid: {
+                    borderColor: '#f1f1f1',
+                    strokeDashArray: 4
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector("#apexBarChart"), options);
+            chart.render();
+        });
+    </script>
 
 @endsection

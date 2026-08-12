@@ -9,14 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* SINKRONISASI SEMUA FONT Wajib Nunito */
         .dev-analytics, .dev-analytics * {
             font-family: 'Nunito', sans-serif !important;
         }
 
-        /* 1. METRIC CARDS STYLE (KOTAK UJUNG MELENGKUNG TIPIS + COLOR SCHEME KHUSUS) */
+        /* 1. METRIC CARDS (KOTAK MELENGKUNG TIPIS + COLOR SCHEME GRADIENT) */
         .metric-card-box {
-            border-radius: 6px !important; /* Kotak ujung melengkung tipis */
+            border-radius: 6px !important;
             background: #ffffff;
             padding: 1.1rem 1.25rem;
             display: flex;
@@ -33,22 +32,18 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
         }
 
-        /* Gradient Emas untuk TOTAL DEVELOPMENT */
         .card-box-gold { 
             background: linear-gradient(180deg, #ffffff 0%, #fffbeb 60%, #fef3c7 100%); 
             border-bottom: 3px solid #f59e0b;
         }
-        /* Gradient Abu-Abu untuk TO DO */
         .card-box-gray { 
             background: linear-gradient(180deg, #ffffff 0%, #f8fafc 60%, #e2e8f0 100%); 
             border-bottom: 3px solid #94a3b8;
         }
-        /* Gradient Orange untuk IN PROGRESS */
         .card-box-orange { 
             background: linear-gradient(180deg, #ffffff 0%, #fff7ed 60%, #ffedd5 100%); 
             border-bottom: 3px solid #f97316;
         }
-        /* Gradient Hijau untuk COMPLETED */
         .card-box-green { 
             background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 60%, #dcfce7 100%); 
             border-bottom: 3px solid #10b981;
@@ -80,7 +75,6 @@
             margin-bottom: 2px;
         }
 
-        /* NOMOR TIDAK BOLD TEBAL (FONT WEIGHT 600) */
         .metric-number {
             font-size: 1.5rem;
             font-weight: 600 !important; 
@@ -99,14 +93,13 @@
 
         /* 2. CHART CONTAINER CARD BOARD */
         .chart-card {
-            border-radius: 6px !important; /* Kotak ujung melengkung tipis */
+            border-radius: 6px !important;
             border: 1px solid #cbd5e1;
             background: #ffffff;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
             overflow: hidden;
         }
 
-        /* FILTER TOOLBAR: HANYA SEARCH & VIEW MODE FILTER */
         .filter-panel {
             background-color: #f8fafc;
             border-bottom: 1.5px solid #e2e8f0;
@@ -143,7 +136,7 @@
             box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25) !important;
         }
 
-        /* 3. STYLING GANTT CHART & HEADER GRADIENT HIJAU DENGAN GARIS SEKATION & TEKS PUTIH */
+        /* 3. STYLING GANTT CHART & HEADER HIJAU DENGAN FONT PUTIH TERANG */
         .gantt-target-wrapper {
             background: #ffffff;
             min-height: 480px;
@@ -164,23 +157,33 @@
             stroke-width: 1.5px !important;
         }
 
-        /* Upper Header (Bulan, misal August) - TEKS PUTIH TERANG + GARIS SEKATION */
+        /* FONT TEKS HEADER (BULAN & TANGGAL) PUTIH TERANG */
+        .gantt text,
+        .gantt text.upper-header,
+        .gantt text.lower-header,
+        .gantt .grid-header text,
+        svg#gantt-container text {
+            fill: #ffffff !important;
+            color: #ffffff !important;
+        }
+
+        /* Upper Header (Bulan) */
         .gantt .upper-header { 
             font-size: 12px !important; 
-            fill: #ffffff !important; /* Teks Putih */
+            fill: #ffffff !important; 
             font-weight: 800 !important; 
             letter-spacing: 0.6px;
         }
 
-        /* Lower Header (Angka Tanggal) - TEKS PUTIH TERANG */
+        /* Lower Header (Angka Tanggal) */
         .gantt .lower-header { 
             font-size: 11px !important; 
-            fill: #ffffff !important; /* Teks Putih */
+            fill: #ffffff !important; 
             font-weight: 700 !important;
             opacity: 1 !important;
         }
 
-        /* GARIS SEKATION TEGAS PEMISAH HORIZONAL BULAN & TANGGAL */
+        /* Garis Pemisah Horizontal Bulan & Tanggal */
         .gantt .header-line {
             stroke: #ffffff !important;
             stroke-width: 2px !important;
@@ -197,22 +200,27 @@
             fill: #f8fafc !important;
         }
 
-        /* GARIS VERTIKAL FULL PEMISAH TANGGAL/BULAN SAMPAI BAWAH */
+        /* Garis Vertikal Pemisah Tanggal */
         .gantt .tick { 
             stroke: #cbd5e1 !important;
             stroke-width: 1px !important;
-            stroke-dasharray: none !important; /* Garis padat/lurus sampai bawah */
+            stroke-dasharray: none !important;
         }
 
-        /* BAR TIMELINE (JUDUL PROJECT + DETAIL TANGGAL) */
+        /* BAR TIMELINE CLICKABLE STYLE */
         .gantt .bar-wrapper {
             cursor: pointer !important;
+        }
+
+        .gantt .bar-wrapper:hover .bar {
+            filter: brightness(0.9);
         }
 
         .gantt .bar-label { 
             fill: #ffffff !important; 
             font-size: 11px !important; 
             font-weight: 700 !important; 
+            cursor: pointer !important;
         }
 
         /* Warna Bar Project */
@@ -229,7 +237,7 @@
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
         <div>
             <h3 class="fw-bold text-dark mb-1 fs-4">Project Development Roadmap Timeline</h3>
-            <p class="text-muted small mb-0">Visualisasi Gantt Chart timeline project secara otomatis dengan filter search dan tampilan waktu.</p>
+            <p class="text-muted small mb-0">Visualisasi Gantt Chart timeline project. Klik pada garis baris timeline untuk membuka detail <code>detailTimeLine.blade.php</code>.</p>
         </div>
         <div>
             <span class="badge bg-white text-dark border px-3 py-2 fw-semibold rounded-2 shadow-sm" style="font-size: 12px;">
@@ -245,7 +253,7 @@
         </div>
     @endif
 
-    <!-- 1. METRIC CARDS GRID 4 (KOTAK MELENGKUNG TIPIS + COLOR SCHEME KHUSUS) -->
+    <!-- 1. METRIC CARDS GRID 4 -->
     @php
         $countToDo = $tasks->filter(function($t) {
             return in_array(strtolower(trim($t->status ?? '')), ['todo', 'to do', '']);
@@ -261,7 +269,6 @@
     @endphp
 
     <div class="row g-3 mb-4">
-        <!-- CARD 1: TOTAL DEVELOPMENT (GRADIENT EMAS) -->
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="metric-card-box card-box-gold">
                 <div class="metric-icon-circle icon-bg-gold">
@@ -277,7 +284,6 @@
             </div>
         </div>
 
-        <!-- CARD 2: PENDING TASKS / TO DO (GRADIENT ABU-ABU) -->
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="metric-card-box card-box-gray">
                 <div class="metric-icon-circle icon-bg-gray">
@@ -293,7 +299,6 @@
             </div>
         </div>
 
-        <!-- CARD 3: ACTIVE PROJECTS / IN PROGRESS (GRADIENT ORANGE) -->
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="metric-card-box card-box-orange">
                 <div class="metric-icon-circle icon-bg-orange">
@@ -302,14 +307,13 @@
                 <div>
                     <div class="metric-title">Active (In Progress)</div>
                     <div class="metric-number">{{ $countInProgress }}</div>
-                    <div class="metric-footer style="color: #c2410c;">
+                    <div class="metric-footer" style="color: #c2410c;">
                         <i class="bi bi-gear-wide-connected"></i> Under Development
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- CARD 4: COMPLETED PROJECTS (GRADIENT HIJAU) -->
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="metric-card-box card-box-green">
                 <div class="metric-icon-circle icon-bg-green">
@@ -329,19 +333,19 @@
     <!-- 2. GANTT BOARD CARD -->
     <div class="card chart-card">
         
-        <!-- FILTER TOOLBAR (HANYA SEARCH DAN VIEW MODE FILTER RIGHT) -->
+        <!-- FILTER TOOLBAR -->
         <div class="filter-panel">
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                 
-                <!-- Live Search Box -->
+                <!-- Search Box -->
                 <div style="max-width: 380px; width: 100%;">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" id="ganttSearchInput" class="form-control border-start-0 shadow-none" placeholder="Search item code / project name...">
+                        <input type="text" id="ganttSearchInput" class="form-control border-start-0 shadow-none" placeholder="Search item code / project name / customer...">
                     </div>
                 </div>
 
-                <!-- View Mode Filter Buttons (Day, Week, Month, Year) -->
+                <!-- View Mode Filter Buttons -->
                 <div>
                     <div class="btn-filter-group shadow-sm" role="group">
                         <button type="button" class="btn btn-filter-custom active" onclick="changeGanttView('Day', this)">Day</button>
@@ -375,13 +379,16 @@
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 
 <script>
+    // SESUAI DENGAN web.php: Route::get('/timeline/{id}', ...)->name('task.timeline.detail')
+    // Hasil URL akan berupa: http://127.0.0.1:8000/admin/timeline/1
     const baseUrl = "{{ route('admin.task.timeline.detail', ':id') }}";
 
     // MASTER DATA RAW
     const rawGanttTasks = [
         @foreach($tasks as $index => $task)
             @php
-                $targetKey = $task->item_code ?? $task->id;
+                // MENGGUNAKAN $task->id AGAR URL MASUK PAS KE ROUTE CONTROLLER
+                $targetId = $task->id; 
                 $normStatus = strtolower(trim($task->status ?? ''));
                 
                 if (in_array($normStatus, ['completed', 'done'])) {
@@ -398,23 +405,21 @@
                     $ganttClass = 'gantt-to-do';
                 }
 
-                $createdDateFormatted = date('Y-m-d', strtotime($task->created_at ?? now()));
-                $startDate = !empty($task->information_received) ? date('Y-m-d', strtotime($task->information_received)) : $createdDateFormatted;
-                
-                // Diperpanjang agar bar timeline cukup panjang & mudah dibaca
+                $startDate = !empty($task->information_received) ? date('Y-m-d', strtotime($task->information_received)) : date('Y-m-d', strtotime($task->created_at ?? now()));
                 $endDate = !empty($task->plm_released) ? date('Y-m-d', strtotime($task->plm_released)) : date('Y-m-d', strtotime($startDate . ' + 20 days'));
                 
                 $barLabel = ($index + 1) . '. ' . $task->item_code . ' - ' . addslashes($task->project_name ?? "Project Task");
+                $customerName = addslashes($task->customer ?? $task->customer_name ?? $task->client_name ?? '-');
             @endphp
             {
                 number: {{ $index + 1 }},
-                id: '{{ $targetKey }}',
+                id: '{{ $targetId }}',
                 item_code: '{{ $task->item_code }}',
                 project_name: '{{ addslashes($task->project_name ?? "Project Task") }}',
+                customer: '{{ $customerName }}',
                 name: '{{ $barLabel }}',
                 start: '{{ $startDate }}',
                 end: '{{ $endDate }}',
-                created_at_str: '{{ $createdDateFormatted }}',
                 progress: {{ $progressVal }},
                 status_text: '{{ $statusText }}',
                 custom_class: '{{ $ganttClass }}'
@@ -435,14 +440,19 @@
     // INJECT SVG GRADIENT HIJAU UNTUK HEADER TABLE GANTT
     function injectSVGGradient() {
         const svg = document.getElementById('gantt-container');
-        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        if (!svg) return;
+        
+        let defs = svg.querySelector('defs');
+        if (!defs) {
+            defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            svg.appendChild(defs);
+        }
         defs.innerHTML = `
             <linearGradient id="green-header-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#059669" />
                 <stop offset="100%" stop-color="#10b981" />
             </linearGradient>
         `;
-        svg.appendChild(defs);
     }
 
     function renderGanttChart(tasks) {
@@ -469,19 +479,22 @@
             padding: 18,
             date_format: 'YYYY-MM-DD',
 
+            /* SAAT GARIS/BAR DIKLIK -> PINDAH KE DETAIL (detailTimeLine.blade.php) */
             on_click: function (task) {
-                const detailUrl = baseUrl.replace(':id', task.id);
-                window.location.href = detailUrl;
+                if (task && task.id) {
+                    const redirectUrl = baseUrl.replace(':id', task.id);
+                    window.location.href = redirectUrl;
+                }
             },
 
+            /* POPUP HOVER */
             custom_popup_html: function(task) {
                 return `
-                    <div class="p-2.5 text-white font-sans" style="background: #0f172a; border-radius: 6px; font-size: 11px; min-width: 230px; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">
-                        <div class="fw-bold mb-1 border-bottom border-secondary pb-1 text-warning">${task.name}</div>
-                        <div class="mt-1"><b>Tanggal Dibuat:</b> ${task.created_at_str}</div>
-                        <div><b>Rentang Timeline:</b> ${task.start} s/d ${task.end}</div>
-                        <div><b>Status:</b> ${task.status_text} (${task.progress}%)</div>
-                        <div class="mt-2 text-info fw-bold text-end"><i>Klik untuk melihat detail &rarr;</i></div>
+                    <div class="p-2.5 text-white font-sans" style="background: #0f172a; border-radius: 6px; font-size: 11px; min-width: 220px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                        <div class="mb-1"><b>Item Code:</b> <span class="text-warning">${task.item_code}</span></div>
+                        <div class="mb-1"><b>Project Name:</b> ${task.project_name}</div>
+                        <div><b>Customer:</b> ${task.customer}</div>
+                        <div class="mt-2 text-info text-end fw-bold" style="font-size: 10px;"><i>Klik baris untuk lihat detail &rarr;</i></div>
                     </div>
                 `;
             }
@@ -495,7 +508,8 @@
 
         const filtered = rawGanttTasks.filter(task => {
             return task.item_code.toLowerCase().includes(searchValue) || 
-                   task.project_name.toLowerCase().includes(searchValue);
+                   task.project_name.toLowerCase().includes(searchValue) ||
+                   task.customer.toLowerCase().includes(searchValue);
         });
 
         renderGanttChart(filtered);

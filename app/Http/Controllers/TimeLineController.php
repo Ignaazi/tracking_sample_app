@@ -51,12 +51,15 @@ class TimelineController extends Controller
     }
 
     /**
-     * Menampilkan Halaman Detail Sub-Process Checklist & Timeline Per Project
+     * Menampilkan Halaman Detail Project Gantt Graph (detailTimeLine.blade.php)
      */
     public function detail($id)
     {
+        // Cari task berdasarkan ID atau Item Code
         $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
-        $task->load(['timelines', 'itemSpecs']);
+        
+        // Load relasi timeline
+        $task->load('timelines');
 
         // Auto-generate checklist default jika project belum memiliki timeline
         if ($task->timelines->count() === 0) {
@@ -64,9 +67,32 @@ class TimelineController extends Controller
             $task->load('timelines');
         }
 
-        $existingChecklists = $task->timelines->groupBy('section_key');
+        // RETURNING VIEW KE detailTimeLine.blade.php DI FOLDER admin/timeline/
+        return view('admin.timeline.detailTimeLine', compact('task'));
+    }
 
-        return view('admin.task.subProcess', compact('task', 'existingChecklists'));
+    /**
+     * Update data item Timeline (Termasuk Remarks & Time Unit)
+     */
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'remarks'          => 'nullable|string',
+            'time_unit'        => 'nullable|string|max:50',
+            'is_completed'     => 'nullable|boolean',
+            'progress_percent' => 'nullable|integer|min:0|max:100',
+            'start_date'       => 'nullable|date',
+            'end_date'         => 'nullable|date',
+        ]);
+
+        $timeline = Timeline::findOrFail($id);
+        $timeline->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Timeline berhasil diperbarui!',
+            'data'    => $timeline
+        ]);
     }
 
     /**
@@ -119,6 +145,8 @@ class TimelineController extends Controller
                         'end_date'         => $endDate,
                         'is_completed'     => false,
                         'progress_percent' => 0,
+                        'remarks'          => null,   // Ditambahkan
+                        'time_unit'        => 'Days', // Ditambahkan (default: Days/Hari)
                     ]);
                 }
             }

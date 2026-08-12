@@ -42,10 +42,14 @@ Route::middleware('auth')->group(function () {
 
         // MODULE: TRACKING SYSTEM - TIMELINE & ROADMAP GANTT
         Route::get('/timelines', [TimelineController::class, 'index'])->name('timelines.index');
-        Route::get('/task/roadmap', [TaskController::class, 'roadmapIndex'])->name('task.roadmap'); // 🌟 Tambahan Route Roadmap Gantt
+        Route::get('/task/roadmap', [TaskController::class, 'roadmapIndex'])->name('task.roadmap');
         Route::get('/timeline/{id}', [TimelineController::class, 'detail'])->name('task.timeline.detail');
         Route::post('/timelines', [TimelineController::class, 'store'])->name('timelines.store');
+        
+        // UPDATE: Route update timeline (mendukung AJAX dari detailTimeLine.blade.php & Endpoint standar)
         Route::put('/timelines/{id}', [TimelineController::class, 'update'])->name('timelines.update');
+        Route::put('/timeline/{id}/update', [TimelineController::class, 'update'])->name('timeline.update'); 
+
         Route::delete('/timelines/{id}', [TimelineController::class, 'destroy'])->name('timelines.destroy');
 
         // MODULE: TRACKING SYSTEM - TASK MANAGEMENT & SUB-PROCESS

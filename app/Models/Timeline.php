@@ -20,7 +20,9 @@ class Timeline extends Model
         'start_date',
         'end_date',
         'progress_percent',
-        'is_completed'
+        'is_completed',
+        'remarks',      // Ditambahkan
+        'time_unit',     // Ditambahkan
     ];
 
     /**

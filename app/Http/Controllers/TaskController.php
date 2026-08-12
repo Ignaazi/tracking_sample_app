@@ -3,172 +3,159 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\CreateTask;
+use App\Http\Controllers\TimelineController;
 use App\Models\ItemSpec;
 use App\Models\Task;
 use App\Models\Timeline;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
+    /**
+     * Daftar 27 Field Utama Spesifikasi Master Project
+     */
+    private $masterFields = [
+        'item_code', 'brand_family', 'market', 'project_name', 'ascis_pd', 'customer',
+        'cs_brand', 'cs_hw', 'cpi_hw', 's5_internal_approval', 'ghw_set',
+        'information_received', 'plm_released', 'coi_number', 'green_light', 'td',
+        'machine', 'board', 'board_u_code', 'board_a_code', 'type_cm', 'die_cut_number',
+        's10_number', 's11_number', 's12_number', 'cylinder_supplier', 'repro_by'
+    ];
+
     /**
      * Menampilkan Halaman Project Development Roadmap (Gantt Chart & Master Registry)
      */
     public function roadmapIndex()
     {
-        // Ambil data utama dari CreateTask beserta relasi Task dan Timelines
-        $tasks = CreateTask::orderBy('created_at', 'desc')->get()->map(function ($cTask) {
-            // Cari data di tabel 'task' berdasarkan item_code
-            $taskRecord = Task::with('timelines')->where('item_code', $cTask->item_code)->first();
-
-            // Default status
-            $status = 'To Do';
-
-            if ($taskRecord) {
-                $status = $taskRecord->status ?? 'To Do';
-
-                // Jika ada checklist di tabel timelines, kalkulasi ulang status secara presisi
-                if ($taskRecord->timelines->count() > 0) {
-                    $totalItems = $taskRecord->timelines->count();
-                    $completedItems = $taskRecord->timelines->where('is_completed', 1)->count();
-
-                    if ($completedItems === $totalItems && $totalItems > 0) {
-                        $status = 'Completed';
-                    } elseif ($completedItems > 0) {
-                        $status = 'In Progress';
-                    } else {
-                        $status = 'To Do';
-                    }
-
-                    // Sync status terbaru ke database tabel task
-                    $taskRecord->update(['status' => strtolower(str_replace(' ', '-', $status))]);
-                }
+        $tasks = Task::with('timelines')->orderBy('created_at', 'desc')->get()->map(function ($task) {
+            
+            // Auto-generate timeline checklist jika belum ada
+            if ($task->timelines->count() === 0) {
+                TimelineController::generateDefaultChecklists($task);
+                $task->load('timelines');
             }
 
-            // Tempelkan atribut yang dibutuhkan Blade Gantt Chart
-            $cTask->id = $taskRecord ? $taskRecord->id : $cTask->id;
-            $cTask->status = $status;
-            $cTask->development_status = $taskRecord->development_status ?? 'Active';
-            $cTask->sap_number = $taskRecord->sap_number ?? '-';
+            $status = $task->status ?? 'todo';
 
-            return $cTask;
+            if ($task->timelines->count() > 0) {
+                $totalItems = $task->timelines->count();
+                $completedItems = $task->timelines->where('is_completed', 1)->count();
+
+                if ($completedItems === $totalItems && $totalItems > 0) {
+                    $status = 'completed';
+                } elseif ($completedItems > 0) {
+                    $status = 'in-progress';
+                } else {
+                    $status = 'todo';
+                }
+
+                $task->update(['status' => $status]);
+            }
+
+            $task->status = $status;
+            $task->development_status = $task->development_status ?? 'Active';
+            $task->sap_number = $task->sap_number ?? '-';
+
+            return $task;
         });
 
         return view('admin.task.roadmap', compact('tasks'));
     }
 
     /**
-     * Menampilkan Halaman Task List Project - Kanban Board
+     * Menampilkan Halaman Task List Project - Kanban / Table View
      */
     public function index()
     {
-        // Ambil seluruh data Task (Model Eloquent) beserta relasi itemSpecs
-        $tasks = Task::with(['itemSpecs'])->orderBy('created_at', 'desc')->get();
-
-        // Pemetaan default jika ada record CreateTask yang belum tercatat di tabel task
-        $createTasks = CreateTask::with(['itemSpecs'])->get();
-        foreach ($createTasks as $cTask) {
-            $exists = $tasks->firstWhere('item_code', $cTask->item_code);
-            if (!$exists) {
-                $tempTask = new Task([
-                    'item_code'            => $cTask->item_code,
-                    'brand_family'         => $cTask->brand_family,
-                    'market'               => $cTask->market,
-                    'project_name'         => $cTask->project_name,
-                    'customer'             => $cTask->customer,
-                    'information_received' => $cTask->information_received,
-                    'plm_released'         => $cTask->plm_released,
-                    'status'               => 'todo',
-                    'layout_status'        => 'Pending',
-                    'baan_status'          => 'Pending',
-                    'promp_status'         => 'Pending',
-                    'job_bag_status'       => 'Pending',
-                ]);
-                $tempTask->setRelation('itemSpecs', $cTask->itemSpecs);
-                $tasks->push($tempTask);
+        $tasks = Task::with(['itemSpecs', 'timelines'])->orderBy('created_at', 'desc')->get()->map(function($task) {
+            
+            // Auto-generate timeline checklist jika belum ada
+            if ($task->timelines->count() === 0) {
+                TimelineController::generateDefaultChecklists($task);
+                $task->load('timelines');
             }
-        }
 
-        // Kelompokkan data ke variabel yang dibutuhkan Blade Kanban Board
-        $todoTasks       = $tasks->filter(function($t) {
-            return in_array(strtolower(trim($t->status ?? '')), ['todo', 'to do', '']);
+            // Auto-sync status jika 27 field terisi penuh
+            if (strtolower($task->status ?? '') !== 'completed') {
+                $isComplete = true;
+                foreach ($this->masterFields as $field) {
+                    if (empty($task->$field)) {
+                        $isComplete = false;
+                        break;
+                    }
+                }
+                $newStatus = $isComplete ? 'in-progress' : 'todo';
+                if ($task->status !== $newStatus) {
+                    $task->update(['status' => $newStatus]);
+                }
+            }
+            return $task;
+        });
+
+        $todoTasks = $tasks->filter(function($t) {
+            $status = strtolower(trim($t->status ?? ''));
+            return in_array($status, ['todo', 'to do', '']);
         });
 
         $inProgressTasks = $tasks->filter(function($t) {
-            return in_array(strtolower(trim($t->status ?? '')), ['in-progress', 'in progress', 'progress']);
+            $status = strtolower(trim($t->status ?? ''));
+            return in_array($status, ['in-progress', 'in progress', 'progress', 'ready for qa']);
         });
 
-        $completedTasks  = $tasks->filter(function($t) {
-            return in_array(strtolower(trim($t->status ?? '')), ['completed', 'done']);
+        $completedTasks = $tasks->filter(function($t) {
+            $status = strtolower(trim($t->status ?? ''));
+            return in_array($status, ['completed', 'done']);
         });
 
-        return view('admin.task.index', compact('todoTasks', 'inProgressTasks', 'completedTasks'));
+        return view('admin.task.index', compact('tasks', 'todoTasks', 'inProgressTasks', 'completedTasks'));
     }
 
     /**
-     * Menampilkan Halaman Detail Sub-Process Checklist & Timeline (subProcess.blade.php)
+     * Menampilkan Halaman Detail Sub-Process Checklist & Timeline
      */
     public function subProcess($id)
     {
-        // Cari data berdasarkan ID atau Item Code
-        $createTask = CreateTask::find($id);
-        if (!$createTask) {
-            $createTask = CreateTask::where('item_code', $id)->firstOrFail();
+        $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
+        $task->load(['timelines', 'itemSpecs']);
+
+        // Auto-generate timeline checklist jika belum ada
+        if ($task->timelines->count() === 0) {
+            TimelineController::generateDefaultChecklists($task);
+            $task->load('timelines');
         }
 
-        // Pastikan record di tabel 'task' selalu tersedia
-        $task = Task::firstOrCreate(
-            ['item_code' => $createTask->item_code],
-            [
-                'brand_family'         => $createTask->brand_family,
-                'market'               => $createTask->market,
-                'project_name'         => $createTask->project_name,
-                'customer'             => $createTask->customer,
-                'information_received' => $createTask->information_received,
-                'plm_released'         => $createTask->plm_released,
-                'status'               => 'todo',
-                'layout_status'        => 'Pending',
-                'baan_status'          => 'Pending',
-                'promp_status'         => 'Pending',
-                'job_bag_status'       => 'Pending',
-            ]
-        );
-
-        $task->load('timelines');
-        $task->setRelation('itemSpecs', $createTask->itemSpecs ?? collect());
-
-        // Kelompokkan timeline berdasarkan section_key (layout, baan, promp, job_bag)
         $existingChecklists = $task->timelines->groupBy('section_key');
 
-        return view('admin.task.subProcess', compact('task', 'createTask', 'existingChecklists'));
+        return view('admin.task.subProcess', compact('task', 'existingChecklists'));
     }
 
     /**
-     * Menyimpan/Memperbarui Sub-Process Checklist ke Tabel Timelines
+     * Menyimpan/Memperbarui Sub-Process Checklist & Status Task
      */
     public function updateSubStatus(Request $request, $id)
     {
-        $task = Task::find($id);
+        $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
 
-        if (!$task) {
-            $createTask = CreateTask::findOrFail($id);
-            $task = Task::firstOrCreate(
-                ['item_code' => $createTask->item_code],
-                [
-                    'brand_family'         => $createTask->brand_family,
-                    'market'               => $createTask->market,
-                    'project_name'         => $createTask->project_name,
-                    'customer'             => $createTask->customer,
-                    'information_received' => $createTask->information_received,
-                    'plm_released'         => $createTask->plm_released,
-                    'status'               => 'todo',
-                ]
-            );
+        // Handle Update Status Tunggal via AJAX / Drag-and-Drop Kanban
+        if ($request->has('field') || ($request->has('status') && !$request->has('checklists'))) {
+            $validated = $request->validate([
+                'field'  => 'nullable|string|in:layout_status,baan_status,promp_status,job_bag_status,status',
+                'status' => 'required|string'
+            ]);
+
+            $fieldToUpdate = $validated['field'] ?? 'status';
+            $task->update([$fieldToUpdate => $validated['status']]);
+
+            if ($request->wantsJson()) {
+                return response()->json(['success' => true, 'message' => 'Status berhasil diperbarui!']);
+            }
+            return redirect()->back()->with('success', 'Status berhasil diperbarui!');
         }
 
+        // Handle Update Timelines Sub-Process Checklist
         DB::transaction(function () use ($request, $task) {
-            // Hapus data timeline lama terkait task ini untuk digantikan data terbaru
             Timeline::where('task_id', $task->id)->delete();
 
             $totalItems = 0;
@@ -198,7 +185,6 @@ class TaskController extends Controller
                 }
             }
 
-            // Hitung status otomatis untuk Kanban dan Roadmap
             if ($totalItems > 0) {
                 if ($completedItems === $totalItems) {
                     $task->status = 'completed';
@@ -215,140 +201,186 @@ class TaskController extends Controller
     }
 
     /**
-     * Menampilkan Halaman Data Project Status (Tabel Penggabungan)
+     * Menampilkan Halaman Data Project Status Table (Auto-Sync Status Ke 'in-progress' jika 27 Field Lengkap)
      */
     public function tableIndex()
     {
-        $tasks = CreateTask::with(['itemSpecs' => function($query) {
+        $tasks = Task::with(['itemSpecs' => function($query) {
             $query->orderBy('sequence', 'asc');
-        }])
+        }, 'timelines'])
         ->orderBy('created_at', 'desc')
-        ->get();
+        ->get()
+        ->map(function($task) {
+            
+            // Auto-generate timeline checklist jika belum ada
+            if ($task->timelines->count() === 0) {
+                TimelineController::generateDefaultChecklists($task);
+                $task->load('timelines');
+            }
 
-        $taskStatuses = Task::pluck('status', 'item_code')->toArray();
-        foreach ($tasks as $task) {
-            $task->status = $taskStatuses[$task->item_code] ?? 'To Do';
-        }
+            // SINKRONISASI STATUS OTOMATIS SAAT HALAMAN DIBUKA
+            if (strtolower($task->status ?? '') !== 'completed') {
+                $isComplete = true;
+                foreach ($this->masterFields as $field) {
+                    if (empty($task->$field)) {
+                        $isComplete = false;
+                        break;
+                    }
+                }
+
+                $expectedStatus = $isComplete ? 'in-progress' : 'todo';
+                
+                if (strtolower($task->status ?? '') !== $expectedStatus) {
+                    $task->update(['status' => $expectedStatus]);
+                    $task->status = $expectedStatus;
+                }
+            }
+            return $task;
+        });
 
         return view('admin.task.table', compact('tasks'));
     }
 
     /**
-     * Menyimpan Project Baru (Create Task)
+     * Menyimpan Project Task Baru & Auto-Generate Timeline
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'item_code' => 'required|string|max:255|unique:create_task,item_code|unique:task,item_code',
+            'item_code'            => 'required|string|max:255|unique:task,item_code',
+            'brand_family'         => 'nullable|string|max:255',
+            'market'               => 'nullable|string|max:255',
+            'project_name'         => 'nullable|string|max:255',
+            'ascis_pd'             => 'nullable|string|max:255',
+            'customer'             => 'nullable|string|max:255',
+            'cs_brand'             => 'nullable|string|max:255',
+            'cs_hw'                => 'nullable|string|max:255',
+            'cpi_hw'               => 'nullable|string|max:255',
+            's5_internal_approval' => 'nullable|string|max:255',
+            'ghw_set'              => 'nullable|string|max:255',
+            'information_received' => 'nullable|date',
+            'plm_released'         => 'nullable|date',
+            'coi_number'           => 'nullable|string|max:255',
+            'green_light'          => 'nullable|date',
+            'td'                   => 'nullable|string|max:255',
+            'machine'              => 'nullable|string|max:255',
+            'board'                => 'nullable|string|max:255',
+            'board_u_code'         => 'nullable|string|max:255',
+            'board_a_code'         => 'nullable|string|max:255',
+            'type_cm'              => 'nullable|string|max:255',
+            'die_cut_number'       => 'nullable|string|max:255',
+            's10_number'           => 'nullable|string|max:255',
+            's11_number'           => 'nullable|string|max:255',
+            's12_number'           => 'nullable|string|max:255',
+            'cylinder_supplier'    => 'nullable|string|max:255',
+            'repro_by'             => 'nullable|string|max:255',
         ]);
 
-        DB::transaction(function () use ($request) {
-            $data28Fields = $request->only([
-                'no', 'item_code', 'brand_family', 'market', 'project_name',
-                'ascis_pd', 'customer', 'cs_brand', 'cs_hw', 'cpi_hw',
-                's5_internal_approval', 'ghw_set', 'information_received',
-                'plm_released', 'coi_number', 'green_light', 'td', 'machine',
-                'board', 'board_u_code', 'board_a_code', 'type_cm',
-                'die_cut_number', 's10_number', 's11_number', 's12_number',
-                'cylinder_supplier', 'repro_by'
-            ]);
+        // 1. GENERATE NO OTOMATIS BERFORMAT 2 DIGIT (01, 02, 03, dst.)
+        $latestTask = Task::latest('id')->first();
+        $nextId = $latestTask ? $latestTask->id + 1 : 1;
+        $formattedNo = sprintf('%02d', $nextId);
+        $validated['no'] = $formattedNo;
 
-            $createTask = CreateTask::create($data28Fields);
-
-            $isComplete = true;
-            foreach ($data28Fields as $key => $value) {
-                if (is_null($value) || trim((string)$value) === '') {
-                    $isComplete = false;
-                    break;
-                }
+        // 2. KALKULASI STATUS AWAL PROJECT
+        $isComplete = true;
+        foreach ($this->masterFields as $field) {
+            if (empty($validated[$field] ?? null)) {
+                $isComplete = false;
+                break;
             }
+        }
 
-            $computedStatus = $isComplete ? 'in-progress' : 'todo';
+        $defaultStatus = $isComplete ? 'in-progress' : 'todo';
 
-            Task::updateOrCreate(
-                ['item_code' => $createTask->item_code],
-                [
-                    'brand_family'         => $createTask->brand_family,
-                    'market'               => $createTask->market,
-                    'project_name'         => $createTask->project_name,
-                    'customer'             => $createTask->customer,
-                    'information_received' => $createTask->information_received,
-                    'plm_released'         => $createTask->plm_released,
-                    'status'               => $computedStatus,
-                    'layout_status'        => 'Pending',
-                    'baan_status'          => 'Pending',
-                    'promp_status'         => 'Pending',
-                    'job_bag_status'       => 'Pending',
-                ]
-            );
-        });
+        // 3. SIMPAN DATA KE TABEL TASK
+        $taskData = array_merge($validated, [
+            'status'             => $defaultStatus,
+            'layout_status'      => 'Pending',
+            'baan_status'        => 'Pending',
+            'promp_status'       => 'Pending',
+            'job_bag_status'     => 'Pending',
+            'development_status' => 'Active',
+        ]);
 
-        return redirect()->back()->with('success', 'Task berhasil dibuat!');
+        $task = Task::create($taskData);
+
+        // 4. AUTO-GENERATE PROJECT TIMELINE CHECKLIST
+        TimelineController::generateDefaultChecklists($task);
+
+        return redirect()->back()->with('success', "Project Task [No. {$formattedNo}] dan Timeline berhasil dibuat!");
     }
 
     /**
-     * Memperbarui Project
+     * Memperbarui Project Specification pada Tabel Task
      */
     public function update(Request $request, $id)
     {
-        $createTask = CreateTask::findOrFail($id);
+        $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
 
-        DB::transaction(function () use ($request, $createTask) {
-            $dataToUpdate = $request->only([
-                'no', 'brand_family', 'market', 'project_name',
-                'ascis_pd', 'customer', 'cs_brand', 'cs_hw', 'cpi_hw',
-                's5_internal_approval', 'ghw_set', 'information_received',
-                'plm_released', 'coi_number', 'green_light', 'td', 'machine',
-                'board', 'board_u_code', 'board_a_code', 'type_cm',
-                'die_cut_number', 's10_number', 's11_number', 's12_number',
-                'cylinder_supplier', 'repro_by'
-            ]);
+        $validated = $request->validate([
+            'brand_family'         => 'nullable|string|max:255',
+            'market'               => 'nullable|string|max:255',
+            'project_name'         => 'nullable|string|max:255',
+            'ascis_pd'             => 'nullable|string|max:255',
+            'customer'             => 'nullable|string|max:255',
+            'cs_brand'             => 'nullable|string|max:255',
+            'cs_hw'                => 'nullable|string|max:255',
+            'cpi_hw'               => 'nullable|string|max:255',
+            's5_internal_approval' => 'nullable|string|max:255',
+            'ghw_set'              => 'nullable|string|max:255',
+            'information_received' => 'nullable|date',
+            'plm_released'         => 'nullable|date',
+            'coi_number'           => 'nullable|string|max:255',
+            'green_light'          => 'nullable|date',
+            'td'                   => 'nullable|string|max:255',
+            'machine'              => 'nullable|string|max:255',
+            'board'                => 'nullable|string|max:255',
+            'board_u_code'         => 'nullable|string|max:255',
+            'board_a_code'         => 'nullable|string|max:255',
+            'type_cm'              => 'nullable|string|max:255',
+            'die_cut_number'       => 'nullable|string|max:255',
+            's10_number'           => 'nullable|string|max:255',
+            's11_number'           => 'nullable|string|max:255',
+            's12_number'           => 'nullable|string|max:255',
+            'cylinder_supplier'    => 'nullable|string|max:255',
+            'repro_by'             => 'nullable|string|max:255',
+            'status'               => 'nullable|string',
+        ]);
 
-            $createTask->update($dataToUpdate);
+        $task->fill($validated);
 
-            $all28Fields = array_merge($dataToUpdate, ['item_code' => $createTask->item_code]);
+        if (strtolower($task->status ?? '') !== 'completed') {
             $isComplete = true;
-            foreach ($all28Fields as $key => $value) {
-                if (is_null($value) || trim((string)$value) === '') {
+            foreach ($this->masterFields as $field) {
+                if (empty($task->$field)) {
                     $isComplete = false;
                     break;
                 }
             }
 
-            $computedStatus = $isComplete ? 'in-progress' : 'todo';
+            $task->status = $isComplete ? 'in-progress' : 'todo';
+        }
 
-            Task::updateOrCreate(
-                ['item_code' => $createTask->item_code],
-                [
-                    'brand_family'         => $createTask->brand_family,
-                    'market'               => $createTask->market,
-                    'project_name'         => $createTask->project_name,
-                    'customer'             => $createTask->customer,
-                    'information_received' => $createTask->information_received,
-                    'plm_released'         => $createTask->plm_released,
-                    'status'               => $computedStatus,
-                ]
-            );
-        });
+        $task->save();
 
-        return redirect()->back()->with('success', 'Project Specification berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Project Task berhasil diperbarui!');
     }
 
     /**
-     * Menghapus Project
+     * Menghapus Project dari Tabel Task
      */
     public function destroy($id)
     {
-        $createTask = CreateTask::find($id);
+        $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
 
-        if (!$createTask) {
-            $createTask = CreateTask::where('item_code', $id)->firstOrFail();
-        }
-
-        DB::transaction(function () use ($createTask) {
-            ItemSpec::where('item_code', $createTask->item_code)->delete();
-            Task::where('item_code', $createTask->item_code)->delete();
-            $createTask->delete();
+        DB::transaction(function () use ($task) {
+            if ($task->main_design_attachment) {
+                Storage::disk('public')->delete($task->main_design_attachment);
+            }
+            ItemSpec::where('item_code', $task->item_code)->delete();
+            Timeline::where('task_id', $task->id)->delete();
+            $task->delete();
         });
 
         return redirect()->back()->with('success', 'Task berhasil dihapus!');

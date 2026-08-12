@@ -1,71 +1,121 @@
 @extends('layouts.admin')
 
-@section('title', 'Multi-series Timeline Gantt Roadmap')
+@section('title', 'Project Timeline Gantt Roadmap')
 
 @push('styles')
     <!-- Frappe Gantt CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        .dev-analytics * {
+        /* SINKRONISASI SEMUA FONT Wajib Nunito */
+        .dev-analytics, .dev-analytics * {
             font-family: 'Nunito', sans-serif !important;
         }
 
-        .chart-card {
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
+        /* 1. METRIC CARDS STYLE (KOTAK UJUNG MELENGKUNG TIPIS + COLOR SCHEME KHUSUS) */
+        .metric-card-box {
+            border-radius: 6px !important; /* Kotak ujung melengkung tipis */
             background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            overflow: hidden;
-        }
-
-        .chart-header {
-            background: #ffffff;
-            border-bottom: 1px solid #f1f5f9;
-            padding: 1.25rem 1.5rem;
-        }
-
-        /* STYLING BADGE STATUS LEGEND */
-        .status-pill {
-            display: inline-flex;
+            padding: 1.1rem 1.25rem;
+            display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 3px 8px;
-            border-radius: 14px;
-            color: #ffffff;
-            font-size: 10px;
-            font-weight: 800;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            height: 100%;
         }
 
-        .status-pill .count-circle {
-            width: 15px;
-            height: 15px;
-            background-color: #ffffff;
+        .metric-card-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Gradient Emas untuk TOTAL DEVELOPMENT */
+        .card-box-gold { 
+            background: linear-gradient(180deg, #ffffff 0%, #fffbeb 60%, #fef3c7 100%); 
+            border-bottom: 3px solid #f59e0b;
+        }
+        /* Gradient Abu-Abu untuk TO DO */
+        .card-box-gray { 
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 60%, #e2e8f0 100%); 
+            border-bottom: 3px solid #94a3b8;
+        }
+        /* Gradient Orange untuk IN PROGRESS */
+        .card-box-orange { 
+            background: linear-gradient(180deg, #ffffff 0%, #fff7ed 60%, #ffedd5 100%); 
+            border-bottom: 3px solid #f97316;
+        }
+        /* Gradient Hijau untuk COMPLETED */
+        .card-box-green { 
+            background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 60%, #dcfce7 100%); 
+            border-bottom: 3px solid #10b981;
+        }
+
+        .metric-icon-circle {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
-            font-weight: 800;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        /* COLOR PALETTE ORIGINAL */
-        .pill-todo { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .pill-todo .count-circle { color: #1d4ed8; }
+        .icon-bg-gold   { background-color: #fef3c7; color: #b45309; }
+        .icon-bg-gray   { background-color: #e2e8f0; color: #475569; }
+        .icon-bg-orange { background-color: #ffedd5; color: #c2410c; }
+        .icon-bg-green  { background-color: #dcfce7; color: #15803d; }
 
-        .pill-progress { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .pill-progress .count-circle { color: #b45309; }
+        .metric-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 2px;
+        }
 
-        .pill-completed { background: linear-gradient(135deg, #10b981, #059669); }
-        .pill-completed .count-circle { color: #047857; }
+        /* NOMOR TIDAK BOLD TEBAL (FONT WEIGHT 600) */
+        .metric-number {
+            font-size: 1.5rem;
+            font-weight: 600 !important; 
+            color: #1e293b;
+            line-height: 1.1;
+        }
 
-        /* STYLING BUTTON FILTER SKALA WAKTU BERGARIS */
+        .metric-footer {
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 3px;
+        }
+
+        /* 2. CHART CONTAINER CARD BOARD */
+        .chart-card {
+            border-radius: 6px !important; /* Kotak ujung melengkung tipis */
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        /* FILTER TOOLBAR: HANYA SEARCH & VIEW MODE FILTER */
+        .filter-panel {
+            background-color: #f8fafc;
+            border-bottom: 1.5px solid #e2e8f0;
+            padding: 0.85rem 1.25rem;
+        }
+
         .btn-filter-group {
-            border: 1.5px solid #10b981;
-            border-radius: 8px;
+            border: 1.5px solid #059669;
+            border-radius: 6px;
             padding: 2px;
             background-color: #ffffff;
             display: inline-flex;
@@ -77,306 +127,244 @@
             color: #059669 !important;
             border: none !important;
             font-weight: 700 !important;
-            font-size: 11.5px !important;
-            padding: 5px 14px !important;
-            border-radius: 6px !important;
-            transition: all 0.2s ease-in-out;
+            font-size: 12px !important;
+            padding: 4px 16px !important;
+            border-radius: 4px !important;
+            transition: all 0.15s ease-in-out;
         }
 
         .btn-filter-custom:hover {
-            background-color: rgba(16, 185, 129, 0.12) !important;
-            color: #047857 !important;
+            background-color: rgba(16, 185, 129, 0.1) !important;
         }
 
         .btn-filter-custom.active {
-            background: linear-gradient(135deg, #22c55e, #10b981) !important;
+            background-color: #059669 !important;
             color: #ffffff !important;
-            box-shadow: 0 2px 6px rgba(34, 197, 94, 0.35) !important;
+            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.25) !important;
         }
 
-        /* SCROLL HORIZONTAL PADA GANTT CHART */
+        /* 3. STYLING GANTT CHART & HEADER GRADIENT HIJAU DENGAN GARIS SEKATION & TEKS PUTIH */
         .gantt-target-wrapper {
             background: #ffffff;
-            max-height: 420px;
-            border-radius: 0 0 12px 12px;
+            min-height: 480px;
             overflow-x: auto !important;
             overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
             width: 100%;
         }
 
         #gantt-container {
             display: block;
             min-width: 1400px !important;
-            height: auto;
         }
 
-        /* POINTER / HAND-CURSOR PADA BARIS GANTT */
+        /* Header Background Hijau Gradient */
+        .gantt .grid-header { 
+            fill: url(#green-header-gradient) #059669 !important; 
+            stroke: #047857 !important;
+            stroke-width: 1.5px !important;
+        }
+
+        /* Upper Header (Bulan, misal August) - TEKS PUTIH TERANG + GARIS SEKATION */
+        .gantt .upper-header { 
+            font-size: 12px !important; 
+            fill: #ffffff !important; /* Teks Putih */
+            font-weight: 800 !important; 
+            letter-spacing: 0.6px;
+        }
+
+        /* Lower Header (Angka Tanggal) - TEKS PUTIH TERANG */
+        .gantt .lower-header { 
+            font-size: 11px !important; 
+            fill: #ffffff !important; /* Teks Putih */
+            font-weight: 700 !important;
+            opacity: 1 !important;
+        }
+
+        /* GARIS SEKATION TEGAS PEMISAH HORIZONAL BULAN & TANGGAL */
+        .gantt .header-line {
+            stroke: #ffffff !important;
+            stroke-width: 2px !important;
+        }
+
+        /* Garis Horizontal Row Area Chart */
+        .gantt .grid-row {
+            fill: #ffffff !important;
+            stroke: #e2e8f0 !important;
+            stroke-width: 1px !important;
+        }
+
+        .gantt .grid-row:nth-child(even) {
+            fill: #f8fafc !important;
+        }
+
+        /* GARIS VERTIKAL FULL PEMISAH TANGGAL/BULAN SAMPAI BAWAH */
+        .gantt .tick { 
+            stroke: #cbd5e1 !important;
+            stroke-width: 1px !important;
+            stroke-dasharray: none !important; /* Garis padat/lurus sampai bawah */
+        }
+
+        /* BAR TIMELINE (JUDUL PROJECT + DETAIL TANGGAL) */
         .gantt .bar-wrapper {
             cursor: pointer !important;
         }
 
-        .gantt .grid-row {
-            fill: #ffffff !important;
-            stroke: #f1f5f9 !important;
-            stroke-width: 1px !important;
-        }
-        
-        .gantt .grid-header { 
-            fill: #f8fafc !important; 
-            stroke: #e2e8f0 !important; 
+        .gantt .bar-label { 
+            fill: #ffffff !important; 
+            font-size: 11px !important; 
+            font-weight: 700 !important; 
         }
 
-        .gantt .tick { 
-            display: none !important; 
-        }
-
-        .gantt .upper-header { font-size: 11px; fill: #334155 !important; font-weight: 700; }
-        .gantt .lower-header { font-size: 10px; fill: #64748b !important; }
-        .gantt .bar-label { fill: #ffffff !important; font-size: 11px; font-weight: 700; }
-
-        .gantt-container .gantt-to-do .bar, .gantt .gantt-to-do .bar, .gantt .gantt-todo .bar { fill: #3b82f6 !important; }
-        .gantt-container .gantt-to-do .bar-progress, .gantt .gantt-to-do .bar-progress, .gantt .gantt-todo .bar-progress { fill: #1d4ed8 !important; }
-
-        .gantt-container .gantt-in-progress .bar, .gantt .gantt-in-progress .bar, .gantt .gantt-progress .bar { fill: #f59e0b !important; }
-        .gantt-container .gantt-in-progress .bar-progress, .gantt .gantt-in-progress .bar-progress, .gantt .gantt-progress .bar-progress { fill: #b45309 !important; }
-
-        .gantt-container .gantt-completed .bar, .gantt .gantt-completed .bar, .gantt .gantt-done .bar { fill: #10b981 !important; }
-        .gantt-container .gantt-completed .bar-progress, .gantt .gantt-completed .bar-progress, .gantt .gantt-done .bar-progress { fill: #047857 !important; }
-
-        /* STYLING TABEL */
-        .table-responsive {
-            overflow-x: auto !important;
-            -webkit-overflow-scrolling: touch;
-            width: 100%;
-        }
-
-        .table-custom {
-            white-space: nowrap !important;
-            min-width: 1350px !important;
-            border-collapse: collapse !important;
-        }
-
-        .table-custom th {
-            background: linear-gradient(135deg, #005596 0%, #0099c8 50%, #15e638 100%) !important;
-            color: #ffffff !important;
-            font-weight: 800;
-            font-size: 11.5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border: 1px solid #005596 !important;
-            padding: 12px 14px;
-            text-align: center !important;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.25);
-        }
-
-        .table-custom td {
-            font-size: 12px;
-            font-weight: 600;
-            color: #000000 !important;
-            padding: 11px 14px;
-            vertical-align: middle;
-            text-align: center !important;
-            border: 1px solid #cbd5e1 !important;
-        }
-
-        .table-custom tbody tr:nth-child(odd) { background-color: #EBF5FF !important; }
-        .table-custom tbody tr:nth-child(even) { background-color: #F0FDF4 !important; }
-
-        .table-custom tbody tr:hover {
-            background-color: #D1E9FF !important;
-            cursor: pointer;
-        }
-
-        .badge-gradient-record {
-            background: linear-gradient(135deg, #005596 0%, #0099c8 50%, #15e638 100%) !important;
-            color: #ffffff !important;
-            font-weight: 800;
-            padding: 5px 12px;
-            border-radius: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .badge-status-completed { background-color: #10B981; color: #ffffff !important; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
-        .badge-status-progress { background-color: #F59E0B; color: #ffffff !important; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
-        .badge-status-todo { background-color: #3B82F6; color: #ffffff !important; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
-        .badge-status-inactive { background-color: #64748B; color: #ffffff !important; font-weight: 800; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
+        /* Warna Bar Project */
+        .gantt-container .gantt-to-do .bar, .gantt .gantt-to-do .bar { fill: #64748b !important; }
+        .gantt-container .gantt-in-progress .bar, .gantt .gantt-in-progress .bar { fill: #f97316 !important; }
+        .gantt-container .gantt-completed .bar, .gantt .gantt-completed .bar { fill: #10b981 !important; }
     </style>
 @endpush
 
 @section('content')
 <div class="dev-analytics container-fluid py-4 px-4">
 
-    <!-- HEADER TITLE PAGE -->
-    <div class="d-flex align-items-center justify-content-between mb-4">
+    <!-- PAGE HEADER -->
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
         <div>
-            <h3 class="fw-bold text-dark mb-1 fs-4">Project Development Roadmap</h3>
-            <p class="text-muted small mb-0">Klik pada <b>garis baris Gantt Chart</b> atau <b>baris tabel</b> untuk mengelola detail timeline per project.</p>
+            <h3 class="fw-bold text-dark mb-1 fs-4">Project Development Roadmap Timeline</h3>
+            <p class="text-muted small mb-0">Visualisasi Gantt Chart timeline project secara otomatis dengan filter search dan tampilan waktu.</p>
+        </div>
+        <div>
+            <span class="badge bg-white text-dark border px-3 py-2 fw-semibold rounded-2 shadow-sm" style="font-size: 12px;">
+                <i class="bi bi-layers-half me-1 text-success"></i> Total: {{ $tasks->count() }} Projects
+            </span>
         </div>
     </div>
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show border-0 mb-4 shadow-sm" role="alert" style="background-color: #dcfce7; color: #15803d; font-size: 13px;">
-            {{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
-    <!-- 1. FRAPPE GANTT ROADMAP CHART -->
-    <div class="card chart-card mb-4">
-        <div class="chart-header d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-                <h6 class="fw-bold text-dark mb-2.5" style="font-size: 16px;">
-                    Enterprise Interactive Gantt
-                </h6>
+    <!-- 1. METRIC CARDS GRID 4 (KOTAK MELENGKUNG TIPIS + COLOR SCHEME KHUSUS) -->
+    @php
+        $countToDo = $tasks->filter(function($t) {
+            return in_array(strtolower(trim($t->status ?? '')), ['todo', 'to do', '']);
+        })->count();
 
-                <!-- PENYESUAIAN JUMLAH HITUNGAN STATUS DI SINI -->
-                @php
-                    $countToDo = $tasks->filter(function($t) {
-                        return in_array(strtolower(trim($t->status ?? '')), ['todo', 'to do', '']);
-                    })->count();
+        $countInProgress = $tasks->filter(function($t) {
+            return in_array(strtolower(trim($t->status ?? '')), ['in-progress', 'in progress', 'progress']);
+        })->count();
 
-                    $countInProgress = $tasks->filter(function($t) {
-                        return in_array(strtolower(trim($t->status ?? '')), ['in-progress', 'in progress', 'progress']);
-                    })->count();
+        $countCompleted = $tasks->filter(function($t) {
+            return in_array(strtolower(trim($t->status ?? '')), ['completed', 'done']);
+        })->count();
+    @endphp
 
-                    $countCompleted = $tasks->filter(function($t) {
-                        return in_array(strtolower(trim($t->status ?? '')), ['completed', 'done']);
-                    })->count();
-                @endphp
-
-                <div class="d-flex align-items-center gap-2">
-                    <div class="status-pill pill-todo">
-                        <span>To Do</span>
-                        <div class="count-circle">{{ $countToDo }}</div>
-                    </div>
-
-                    <div class="status-pill pill-progress">
-                        <span>In Progress</span>
-                        <div class="count-circle">{{ $countInProgress }}</div>
-                    </div>
-
-                    <div class="status-pill pill-completed">
-                        <span>Completed</span>
-                        <div class="count-circle">{{ $countCompleted }}</div>
+    <div class="row g-3 mb-4">
+        <!-- CARD 1: TOTAL DEVELOPMENT (GRADIENT EMAS) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="metric-card-box card-box-gold">
+                <div class="metric-icon-circle icon-bg-gold">
+                    <i class="bi bi-boxes"></i>
+                </div>
+                <div>
+                    <div class="metric-title">Total Development</div>
+                    <div class="metric-number">{{ $tasks->count() }}</div>
+                    <div class="metric-footer text-warning">
+                        <i class="bi bi-graph-up-arrow"></i> Active Master Registry
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- TOMBOL FILTER SKALA WAKTU BERGARIS -->
-            <div class="btn-filter-group shadow-sm" role="group">
-                <button type="button" class="btn btn-filter-custom active" onclick="changeGanttView('Day', this)">Day</button>
-                <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Week', this)">Week</button>
-                <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Month', this)">Month</button>
-                <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Year', this)">Year</button>
+        <!-- CARD 2: PENDING TASKS / TO DO (GRADIENT ABU-ABU) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="metric-card-box card-box-gray">
+                <div class="metric-icon-circle icon-bg-gray">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div>
+                    <div class="metric-title">Pending Tasks (To Do)</div>
+                    <div class="metric-number">{{ $countToDo }}</div>
+                    <div class="metric-footer text-secondary">
+                        <i class="bi bi-clock-history"></i> Awaiting Review
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card-body p-0">
-            <div class="gantt-target-wrapper p-3">
-                <svg id="gantt-container"></svg>
+        <!-- CARD 3: ACTIVE PROJECTS / IN PROGRESS (GRADIENT ORANGE) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="metric-card-box card-box-orange">
+                <div class="metric-icon-circle icon-bg-orange">
+                    <i class="bi bi-diagram-2"></i>
+                </div>
+                <div>
+                    <div class="metric-title">Active (In Progress)</div>
+                    <div class="metric-number">{{ $countInProgress }}</div>
+                    <div class="metric-footer style="color: #c2410c;">
+                        <i class="bi bi-gear-wide-connected"></i> Under Development
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 4: COMPLETED PROJECTS (GRADIENT HIJAU) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="metric-card-box card-box-green">
+                <div class="metric-icon-circle icon-bg-green">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div>
+                    <div class="metric-title">Completed Projects</div>
+                    <div class="metric-number">{{ $countCompleted }}</div>
+                    <div class="metric-footer text-success">
+                        <i class="bi bi-check2-all"></i> 100% Deployed
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 2. DATA TABLE RECORD -->
+    <!-- 2. GANTT BOARD CARD -->
     <div class="card chart-card">
-        <div class="chart-header d-flex align-items-center justify-content-between">
-            <h6 class="fw-bold mb-0" style="color: #005596;">Task Master Registry</h6>
-            <span class="badge badge-gradient-record font-monospace">{{ $tasks->count() }} Record(s)</span>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-custom align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th style="width: 50px;">No.</th>
-                            <th>Item Code</th>
-                            <th>Project Name</th>
-                            <th>Customer</th>
-                            <th>Brand Family</th>
-                            <th>Market</th>
-                            <th>Info Received</th>
-                            <th>PLM Released</th>
-                            <th>SAP Number</th>
-                            <th>Development</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($tasks as $key => $task)
-                        @php
-                            $targetKey = $task->item_code ?? $task->id;
-                            $normStatus = strtolower(trim($task->status ?? ''));
-                        @endphp
-                        <tr onclick="window.location='{{ route('admin.task.timeline.detail', $targetKey) }}'">
-                            <td class="fw-bold">{{ sprintf('%02d', $key + 1) }}</td>
-                            <td class="font-monospace fw-bold text-primary">{{ $task->item_code }}</td>
-                            <td class="fw-bold">{{ $task->project_name ?? '-' }}</td>
-                            <td>{{ $task->customer ?? '-' }}</td>
-                            <td>{{ $task->brand_family ?? '-' }}</td>
-                            <td>{{ $task->market ?? '-' }}</td>
-                            <td>
-                                @if($task->information_received)
-                                    <span class="font-monospace fw-bold">{{ date('Y-m-d', strtotime($task->information_received)) }}</span>
-                                @else
-                                    <span>-</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($task->plm_released)
-                                    <span class="font-monospace fw-bold">{{ date('Y-m-d', strtotime($task->plm_released)) }}</span>
-                                @else
-                                    <span>-</span>
-                                @endif
-                            </td>
-                            <td><code class="fw-bold" style="color: #000000;">{{ $task->sap_number ?? '-' }}</code></td>
-                            
-                            <!-- DEVELOPMENT STATUS BADGE -->
-                            <td>
-                                @php
-                                    $devBadgeClass = match($task->development_status) {
-                                        'Active' => 'badge-status-completed',
-                                        'Pending' => 'badge-status-progress',
-                                        default => 'badge-status-inactive'
-                                    };
-                                @endphp
-                                <span class="badge {{ $devBadgeClass }}">
-                                    {{ $task->development_status ?? 'Active' }}
-                                </span>
-                            </td>
+        
+        <!-- FILTER TOOLBAR (HANYA SEARCH DAN VIEW MODE FILTER RIGHT) -->
+        <div class="filter-panel">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                
+                <!-- Live Search Box -->
+                <div style="max-width: 380px; width: 100%;">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" id="ganttSearchInput" class="form-control border-start-0 shadow-none" placeholder="Search item code / project name...">
+                    </div>
+                </div>
 
-                            <!-- TASK STATUS BADGE FLEXIBLE -->
-                            <td>
-                                @php
-                                    if (in_array($normStatus, ['completed', 'done'])) {
-                                        $badgeClass = 'badge-status-completed';
-                                        $displayStatus = 'Completed';
-                                    } elseif (in_array($normStatus, ['in-progress', 'in progress', 'progress'])) {
-                                        $badgeClass = 'badge-status-progress';
-                                        $displayStatus = 'In Progress';
-                                    } else {
-                                        $badgeClass = 'badge-status-todo';
-                                        $displayStatus = 'To Do';
-                                    }
-                                @endphp
-                                <span class="badge {{ $badgeClass }}">
-                                    {{ $displayStatus }}
-                                </span>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="11" class="text-center py-4 fw-bold" style="color: #000000;">
-                                Belum ada data project task yang tersimpan.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                <!-- View Mode Filter Buttons (Day, Week, Month, Year) -->
+                <div>
+                    <div class="btn-filter-group shadow-sm" role="group">
+                        <button type="button" class="btn btn-filter-custom active" onclick="changeGanttView('Day', this)">Day</button>
+                        <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Week', this)">Week</button>
+                        <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Month', this)">Month</button>
+                        <button type="button" class="btn btn-filter-custom" onclick="changeGanttView('Year', this)">Year</button>
+                    </div>
+                </div>
+
             </div>
         </div>
+
+        <!-- GANTT CONTAINER BOARD -->
+        <div class="card-body p-0">
+            <div class="gantt-target-wrapper p-3">
+                <div id="ganttEmptyState" class="text-center py-5 d-none">
+                    <i class="bi bi-calendar-x text-muted opacity-50" style="font-size: 2.5rem;"></i>
+                    <p class="text-muted fw-semibold mt-2 mb-0" style="font-size: 13px;">No project timelines match your search criteria.</p>
+                </div>
+                <svg id="gantt-container"></svg>
+            </div>
+        </div>
+
     </div>
 
 </div>
@@ -387,85 +375,141 @@
 <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@0.6.1/dist/frappe-gantt.min.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    const baseUrl = "{{ route('admin.task.timeline.detail', ':id') }}";
 
-        const baseUrl = "{{ route('admin.task.timeline.detail', ':id') }}";
-
-        const ganttTasks = [
-            @foreach($tasks as $task)
-                @php
-                    $targetKey = $task->item_code ?? $task->id;
-                    $normStatus = strtolower(trim($task->status ?? ''));
-                    
-                    if (in_array($normStatus, ['completed', 'done'])) {
-                        $statusText = 'Completed';
-                        $progressVal = 100;
-                        $ganttClass = 'gantt-completed';
-                    } elseif (in_array($normStatus, ['in-progress', 'in progress', 'progress'])) {
-                        $statusText = 'In Progress';
-                        $progressVal = 50;
-                        $ganttClass = 'gantt-in-progress';
-                    } else {
-                        $statusText = 'To Do';
-                        $progressVal = 0;
-                        $ganttClass = 'gantt-to-do';
-                    }
-
-                    $startDate = !empty($task->information_received) ? date('Y-m-d', strtotime($task->information_received)) : date('Y-m-d', strtotime($task->created_at ?? now()));
-                    $endDate = !empty($task->plm_released) ? date('Y-m-d', strtotime($task->plm_released)) : date('Y-m-d', strtotime($startDate . ' + 14 days'));
-                @endphp
-                {
-                    id: '{{ $targetKey }}',
-                    name: '[{{ $statusText }}] {{ $task->item_code }} - {{ addslashes($task->project_name ?? "Project") }}',
-                    start: '{{ $startDate }}',
-                    end: '{{ $endDate }}',
-                    progress: {{ $progressVal }},
-                    custom_class: '{{ $ganttClass }}'
-                },
-            @endforeach
-        ];
-
-        if (ganttTasks.length > 0) {
-            window.gantt_chart = new Gantt("#gantt-container", ganttTasks, {
-                header_height: 50,
-                column_width: 38,
-                step: 24,
-                view_modes: ['Day', 'Week', 'Month', 'Year'],
-                view_mode: 'Day',
-                bar_height: 22,
-                bar_corner_radius: 4,
-                arrow_curve: 5,
-                padding: 18,
-                date_format: 'YYYY-MM-DD',
-
-                on_click: function (task) {
-                    const detailUrl = baseUrl.replace(':id', task.id);
-                    window.location.href = detailUrl;
-                },
-
-                custom_popup_html: function(task) {
-                    return `
-                        <div class="p-2.5 text-white font-sans" style="background: #0f172a; border-radius: 6px; font-size: 11px; min-width: 190px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                            <div class="fw-bold mb-1 border-bottom border-secondary pb-1 text-warning">${task.name}</div>
-                            <div class="mt-1"><b>Start:</b> ${task.start}</div>
-                            <div><b>End:</b> ${task.end}</div>
-                            <div><b>Progress:</b> ${task.progress}% Complete</div>
-                            <div class="mt-2 text-info fw-bold text-end"><i>Klik baris untuk detail &rarr;</i></div>
-                        </div>
-                    `;
+    // MASTER DATA RAW
+    const rawGanttTasks = [
+        @foreach($tasks as $index => $task)
+            @php
+                $targetKey = $task->item_code ?? $task->id;
+                $normStatus = strtolower(trim($task->status ?? ''));
+                
+                if (in_array($normStatus, ['completed', 'done'])) {
+                    $statusText = 'Completed';
+                    $progressVal = 100;
+                    $ganttClass = 'gantt-completed';
+                } elseif (in_array($normStatus, ['in-progress', 'in progress', 'progress'])) {
+                    $statusText = 'In Progress';
+                    $progressVal = 50;
+                    $ganttClass = 'gantt-in-progress';
+                } else {
+                    $statusText = 'To Do';
+                    $progressVal = 0;
+                    $ganttClass = 'gantt-to-do';
                 }
-            });
-        }
+
+                $createdDateFormatted = date('Y-m-d', strtotime($task->created_at ?? now()));
+                $startDate = !empty($task->information_received) ? date('Y-m-d', strtotime($task->information_received)) : $createdDateFormatted;
+                
+                // Diperpanjang agar bar timeline cukup panjang & mudah dibaca
+                $endDate = !empty($task->plm_released) ? date('Y-m-d', strtotime($task->plm_released)) : date('Y-m-d', strtotime($startDate . ' + 20 days'));
+                
+                $barLabel = ($index + 1) . '. ' . $task->item_code . ' - ' . addslashes($task->project_name ?? "Project Task");
+            @endphp
+            {
+                number: {{ $index + 1 }},
+                id: '{{ $targetKey }}',
+                item_code: '{{ $task->item_code }}',
+                project_name: '{{ addslashes($task->project_name ?? "Project Task") }}',
+                name: '{{ $barLabel }}',
+                start: '{{ $startDate }}',
+                end: '{{ $endDate }}',
+                created_at_str: '{{ $createdDateFormatted }}',
+                progress: {{ $progressVal }},
+                status_text: '{{ $statusText }}',
+                custom_class: '{{ $ganttClass }}'
+            },
+        @endforeach
+    ];
+
+    let currentViewMode = 'Day';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        injectSVGGradient();
+        renderGanttChart(rawGanttTasks);
+
+        // SEARCH EVENT
+        document.getElementById('ganttSearchInput').addEventListener('input', filterGanttChart);
     });
 
+    // INJECT SVG GRADIENT HIJAU UNTUK HEADER TABLE GANTT
+    function injectSVGGradient() {
+        const svg = document.getElementById('gantt-container');
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        defs.innerHTML = `
+            <linearGradient id="green-header-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#059669" />
+                <stop offset="100%" stop-color="#10b981" />
+            </linearGradient>
+        `;
+        svg.appendChild(defs);
+    }
+
+    function renderGanttChart(tasks) {
+        const svgContainer = document.getElementById('gantt-container');
+        const emptyState = document.getElementById('ganttEmptyState');
+
+        if (!tasks || tasks.length === 0) {
+            svgContainer.innerHTML = '';
+            emptyState.classList.remove('d-none');
+            return;
+        }
+
+        emptyState.classList.add('d-none');
+
+        window.gantt_chart = new Gantt("#gantt-container", tasks, {
+            header_height: 52,
+            column_width: 42,
+            step: 24,
+            view_modes: ['Day', 'Week', 'Month', 'Year'],
+            view_mode: currentViewMode,
+            bar_height: 24,
+            bar_corner_radius: 4,
+            arrow_curve: 5,
+            padding: 18,
+            date_format: 'YYYY-MM-DD',
+
+            on_click: function (task) {
+                const detailUrl = baseUrl.replace(':id', task.id);
+                window.location.href = detailUrl;
+            },
+
+            custom_popup_html: function(task) {
+                return `
+                    <div class="p-2.5 text-white font-sans" style="background: #0f172a; border-radius: 6px; font-size: 11px; min-width: 230px; box-shadow: 0 4px 12px rgba(0,0,0,0.25);">
+                        <div class="fw-bold mb-1 border-bottom border-secondary pb-1 text-warning">${task.name}</div>
+                        <div class="mt-1"><b>Tanggal Dibuat:</b> ${task.created_at_str}</div>
+                        <div><b>Rentang Timeline:</b> ${task.start} s/d ${task.end}</div>
+                        <div><b>Status:</b> ${task.status_text} (${task.progress}%)</div>
+                        <div class="mt-2 text-info fw-bold text-end"><i>Klik untuk melihat detail &rarr;</i></div>
+                    </div>
+                `;
+            }
+        });
+
+        injectSVGGradient();
+    }
+
+    function filterGanttChart() {
+        const searchValue = document.getElementById('ganttSearchInput').value.toLowerCase().trim();
+
+        const filtered = rawGanttTasks.filter(task => {
+            return task.item_code.toLowerCase().includes(searchValue) || 
+                   task.project_name.toLowerCase().includes(searchValue);
+        });
+
+        renderGanttChart(filtered);
+    }
+
     function changeGanttView(mode, btnElement) {
+        currentViewMode = mode;
         if (window.gantt_chart) {
             window.gantt_chart.change_view_mode(mode);
-            
-            const buttons = document.querySelectorAll('.btn-filter-custom');
-            buttons.forEach(b => b.classList.remove('active'));
-            if (btnElement) btnElement.classList.add('active');
         }
+        
+        const buttons = document.querySelectorAll('.btn-filter-custom');
+        buttons.forEach(b => b.classList.remove('active'));
+        if (btnElement) btnElement.classList.add('active');
     }
 </script>
 @endpush

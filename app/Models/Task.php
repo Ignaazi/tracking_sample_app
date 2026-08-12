@@ -12,62 +12,25 @@ class Task extends Model
     // Nama tabel di database
     protected $table = 'task';
 
-    // Primary Key bawaan tabel adalah 'id' (bigint auto-increment)
+    // Primary Key bawaan tabel
     protected $primaryKey = 'id';
 
-    protected $fillable = [
-        'no',
-        'item_code',
-        'brand_family',
-        'market',
-        'project_name',
-        'ascis_pd',
-        'customer',
-        'cs_brand',
-        'cs_hw',
-        'cpi_hw',
-        's5_internal_approval',
-        'ghw_set',
-        'information_received',
-        'plm_released',
-        'coi_number',
-        'green_light',
-        'td',
-        'machine',
-        'board',
-        'board_u_code',
-        'board_a_code',
-        'type_cm',
-        'die_cut_number',
-        's10_number',
-        's11_number',
-        's12_number',
-        'cylinder_supplier',
-        'repro_by',
-        'sequence_seq',
-        'colour',
-        'baan_cylinder',
-        'film_number',
-        'ink_system',
-        'ink_code',
-        'supplier_ink',
-        'baan_ink_code',
-        'coverage_percent',
-        'usage_kg_th',
-        'angle_anilox',
-        'remark',
-        'main_design_attachment',
-        'status',
-        'development_status',
-        'layout_status',
-        'baan_status',
-        'promp_status',
-        'job_bag_status',
-        'sap_number'
+    // Menggunakan $guarded = [] agar semua kolom dapat dimasukkan secara Mass Assignment
+    // tanpa perlu khawatir ada atribut/kolom baru yang tertinggal di $fillable
+    protected $guarded = [];
+
+    /**
+     * Casting tipe data kolom tanggal & angka agar otomatis berformat Carbon / Decimal
+     */
+    protected $casts = [
+        'information_received' => 'date',
+        'plm_released'         => 'date',
+        'coverage_percent'     => 'decimal:2',
+        'usage_kg_th'          => 'decimal:3',
     ];
 
     /**
-     * Relasi ke ItemSpec tetap menggunakan 'item_code'
+     * Relasi ke ItemSpec (One-to-Many) berdasarkan item_code
      */
     public function itemSpecs()
     {
@@ -75,7 +38,7 @@ class Task extends Model
     }
 
     /**
-     * Relasi ke Timeline (One to Many)
+     * Relasi ke Timeline (One-to-Many)
      * Mengaitkan Task dengan poin sub-process checklist timeline
      */
     public function timelines()

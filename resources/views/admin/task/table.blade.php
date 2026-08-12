@@ -12,36 +12,50 @@
         font-family: 'Nunito', sans-serif !important;
     }
 
-    /* STYLING TABEL KOTAK-KOTAK COMPACT & HEADER HIJAU TUA */
+    /* STYLING TABEL KOTAK-KOTAK LEBIH LEGA & PANJANG */
     .table-custom-grid {
         table-layout: auto !important;
         width: 100%;
-        min-width: 4600px;
+        min-width: 5000px;
         border-collapse: collapse !important;
         font-family: 'Nunito', sans-serif !important;
     }
 
-    /* HEADER TABEL HIJAU TUA */
+    /* HEADER TABEL UTAMA (KOLOM 1-28) - HIJAU TUA */
     .table-custom-grid thead th {
         background-color: #005236 !important;
         color: #ffffff !important;
         font-weight: 800;
-        font-size: 11px;
+        font-size: 11.5px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         border: 1px solid #003824 !important;
-        padding: 8px 6px !important;
+        padding: 12px 10px !important;
         text-align: center !important;
         vertical-align: middle !important;
         font-family: 'Nunito', sans-serif !important;
     }
 
-    /* ISI SEL TABEL DIBUAT DENGAN PADDING COMPACT TEGAK HITAM */
+    /* HEADER TABEL KHUSUS ITEM SPECS (KOLOM 29-42) - HIJAU TERANG */
+    .table-custom-grid thead th.th-spec-green {
+        background-color: #16a34a !important;
+        color: #ffffff !important;
+        border: 1px solid #15803d !important;
+    }
+
+    /* HEADER TABEL KHUSUS PROJECT STATUS & ACTIONS - ABU-ABU */
+    .table-custom-grid thead th.th-gray {
+        background-color: #475569 !important;
+        color: #ffffff !important;
+        border: 1px solid #334155 !important;
+    }
+
+    /* ISI SEL TABEL DIBUAT BEREGANG DAN LEGA */
     .table-custom-grid tbody td {
-        font-size: 11.5px !important;
+        font-size: 12px !important;
         font-weight: 600 !important;
         color: #0f172a !important;
-        padding: 6px 8px !important;
+        padding: 10px 12px !important;
         vertical-align: middle !important;
         text-align: center !important;
         border: 1px solid #cbd5e1 !important;
@@ -63,13 +77,13 @@
         background-color: #f0f9ff !important;
     }
 
-    /* BADGE SEQUENCE HIJAU TUA */
+    /* BADGE SEQUENCE HIJAU TERANG */
     .badge-seq-green {
-        background-color: #15803d !important;
+        background-color: #16a34a !important;
         color: #ffffff !important;
         font-weight: 700 !important;
         border-radius: 4px !important;
-        padding: 3px 8px !important;
+        padding: 4px 10px !important;
         font-size: 11px !important;
         display: inline-block;
         font-family: 'Nunito', sans-serif !important;
@@ -77,9 +91,9 @@
 
     /* BADGE STATUS PROPORSI PAS */
     .badge-status-sm {
-        font-size: 10.5px !important;
+        font-size: 11px !important;
         font-weight: 700 !important;
-        padding: 3px 8px !important;
+        padding: 4px 10px !important;
         border-radius: 4px !important;
         font-family: 'Nunito', sans-serif !important;
     }
@@ -89,17 +103,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
+        gap: 6px;
     }
 
     .btn-action-sm {
-        width: 26px;
-        height: 26px;
+        width: 28px;
+        height: 28px;
         border-radius: 4px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 13px;
         border: none;
         color: #ffffff !important;
         transition: all 0.2s ease;
@@ -165,67 +179,65 @@
             </div>
         </div>
 
-        <!-- Table Responsive COMPACT dengan Header Hijau Tua -->
+        <!-- Table Responsive dengan Kombinasi Header: Hijau Tua | Hijau Terang | Abu-abu -->
         <div class="table-responsive shadow-sm rounded-3 border">
             <table class="table table-custom-grid align-middle mb-0" id="projectDataTable">
                 <thead>
                     <tr>
-                        <th style="width: 50px;">No</th>
+                        <th style="width: 60px;">No</th>
                         
-                        <!-- SECTION 1: IDENTITY & GENERAL SPECIFICATIONS (1 - 10) -->
-                        <th style="width: 120px;">Item Code</th>
-                        <th style="width: 100px;">Brand / Family</th>
-                        <th style="width: 100px;">Market Zone</th>
-                        <th style="width: 180px;">Project Name</th>
-                        <th style="width: 110px;">PD ASCIS</th>
-                        <th style="width: 130px;">Customer Name</th>
-                        <th style="width: 110px;">CS Brand</th>
-                        <th style="width: 100px;">CS HW</th>
-                        <th style="width: 100px;">CPI HW</th>
+                        <!-- SECTION 1: IDENTITY & GENERAL SPECIFICATIONS (1 - 10) [HIJAU TUA] -->
+                        <th style="width: 130px;">Item Code</th>
+                        <th style="width: 120px;">Brand / Family</th>
+                        <th style="width: 110px;">Market Zone</th>
+                        <th style="width: 200px;">Project Name</th>
+                        <th style="width: 120px;">PD ASCIS</th>
+                        <th style="width: 140px;">Customer Name</th>
+                        <th style="width: 120px;">CS Brand</th>
+                        <th style="width: 110px;">CS HW</th>
+                        <th style="width: 110px;">CPI HW</th>
 
-                        <!-- SECTION 2: APPROVAL & TECHNICAL MILESTONES (11 - 18) -->
-                        <th style="width: 140px;">S5 Internal Approval</th>
-                        <th style="width: 110px;">GHW Set</th>
-                        <th style="width: 130px;">Information Received</th>
-                        <th style="width: 130px;">PLM Released</th>
-                        <th style="width: 110px;">COI Number</th>
-                        <th style="width: 110px;">Green Light</th>
-                        <th style="width: 90px;">TD</th>
-                        <th style="width: 110px;">Machine</th>
+                        <!-- SECTION 2: APPROVAL & TECHNICAL MILESTONES (11 - 18) [HIJAU TUA] -->
+                        <th style="width: 150px;">S5 Internal Approval</th>
+                        <th style="width: 120px;">GHW Set</th>
+                        <th style="width: 140px;">Information Received</th>
+                        <th style="width: 140px;">PLM Released</th>
+                        <th style="width: 120px;">COI Number</th>
+                        <th style="width: 120px;">Green Light</th>
+                        <th style="width: 100px;">TD</th>
+                        <th style="width: 120px;">Machine</th>
 
-                        <!-- SECTION 3: BOARD, CODES, DIE CUT & CYLINDER SPECS (19 - 28) -->
-                        <th style="width: 110px;">Board</th>
-                        <th style="width: 120px;">Board U Code</th>
-                        <th style="width: 120px;">Board A Code</th>
-                        <th style="width: 90px;">Type CM</th>
-                        <th style="width: 120px;">Die Cut Number</th>
-                        <th style="width: 110px;">S10 Number</th>
-                        <th style="width: 110px;">S11 Number</th>
-                        <th style="width: 110px;">S12 Number</th>
-                        <th style="width: 130px;">Cylinder Supplier</th>
-                        <th style="width: 110px;">Repro By</th>
+                        <!-- SECTION 3: BOARD, CODES, DIE CUT & CYLINDER SPECS (19 - 28) [HIJAU TUA] -->
+                        <th style="width: 120px;">Board</th>
+                        <th style="width: 130px;">Board U Code</th>
+                        <th style="width: 130px;">Board A Code</th>
+                        <th style="width: 100px;">Type CM</th>
+                        <th style="width: 130px;">Die Cut Number</th>
+                        <th style="width: 120px;">S10 Number</th>
+                        <th style="width: 120px;">S11 Number</th>
+                        <th style="width: 120px;">S12 Number</th>
+                        <th style="width: 140px;">Cylinder Supplier</th>
+                        <th style="width: 120px;">Repro By</th>
 
-                        <!-- SECTION 4: PRINTING COLOUR & INK SPECS (29 - 42) -->
-                        <th style="width: 110px;">Sequence</th>
-                        <th style="width: 120px;">Colour Name</th>
-                        <th style="width: 120px;">BAAN Cylinder</th>
-                        <th style="width: 110px;">Film Number</th>
-                        <th style="width: 110px;">Ink System</th>
-                        <th style="width: 110px;">Ink Code</th>
-                        <th style="width: 110px;">Supplier Ink</th>
-                        <th style="width: 120px;">BAAN Ink Code</th>
-                        <th style="width: 100px;">Coverage (%)</th>
-                        <th style="width: 110px;">Usage (Kg/TH)</th>
-                        <th style="width: 120px;">Angle / Anilox</th>
-                        <th style="width: 140px;">Attachment File</th>
-                        <th style="width: 160px;">Remarks</th>
-                        <th style="width: 110px;">Seq Status</th>
+                        <!-- SECTION 4: PRINTING COLOUR & INK SPECS (29 - 42) [HIJAU TERANG] -->
+                        <th class="th-spec-green" style="width: 120px;">Sequence</th>
+                        <th class="th-spec-green" style="width: 140px;">Colour Name</th>
+                        <th class="th-spec-green" style="width: 130px;">BAAN Cylinder</th>
+                        <th class="th-spec-green" style="width: 120px;">Film Number</th>
+                        <th class="th-spec-green" style="width: 120px;">Ink System</th>
+                        <th class="th-spec-green" style="width: 120px;">Ink Code</th>
+                        <th class="th-spec-green" style="width: 120px;">Supplier Ink</th>
+                        <th class="th-spec-green" style="width: 130px;">BAAN Ink Code</th>
+                        <th class="th-spec-green" style="width: 110px;">Coverage (%)</th>
+                        <th class="th-spec-green" style="width: 120px;">Usage (Kg/TH)</th>
+                        <th class="th-spec-green" style="width: 130px;">Angle / Anilox</th>
+                        <th class="th-spec-green" style="width: 150px;">Attachment File</th>
+                        <th class="th-spec-green" style="width: 170px;">Remarks</th>
+                        <th class="th-spec-green" style="width: 120px;">Seq Status</th>
 
-                        <!-- PROJECT MASTER STATUS -->
-                        <th style="width: 120px;">Project Status</th>
-                        
-                        <!-- Actions -->
-                        <th style="width: 90px;">Actions</th>
+                        <!-- PROJECT MASTER STATUS & ACTIONS [ABU-ABU] -->
+                        <th class="th-gray" style="width: 130px;">Project Status</th>
+                        <th class="th-gray" style="width: 100px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="projectTableBody">
@@ -233,6 +245,13 @@
                         @php
                             $specs = $task->itemSpecs ? $task->itemSpecs->sortBy('sequence') : collect();
                             $specCount = $specs->count();
+                            
+                            // NOMOR BERFORMAT 2 DIGIT (01, 02, 03, DST.)
+                            $rawNo = preg_replace('/[^0-9]/', '', $task->no ?? '');
+                            $displayNo = !empty($rawNo) ? sprintf('%02d', (int)$rawNo) : sprintf('%02d', $index + 1);
+
+                            // SINKRONISASI STRING STATUS LOKAL
+                            $normalizedStatus = strtolower(trim($task->status ?? ''));
                         @endphp
 
                         @if($specCount > 0)
@@ -252,8 +271,8 @@
                             @endphp
                             <tr>
                                 @if($sIndex === 0)
-                                    <!-- NO & SECTION 1-3 (DATA TASK 1-28) DENGAN ROWSPAN -->
-                                    <td rowspan="{{ $specCount }}" class="fw-bold">{{ sprintf('%02d', $task->no ?? ($index + 1)) }}</td>
+                                    <!-- NO (START DARI 01) & SECTION 1-3 (DATA TASK 1-28) DENGAN ROWSPAN -->
+                                    <td rowspan="{{ $specCount }}" class="fw-bold">{{ $displayNo }}</td>
                                     
                                     <!-- SECTION 1 (1 - 10) -->
                                     <td rowspan="{{ $specCount }}" class="fw-bold text-primary">{{ $task->item_code }}</td>
@@ -320,12 +339,12 @@
                                 </td>
 
                                 @if($sIndex === 0)
-                                    <!-- PROJECT MASTER STATUS -->
+                                    <!-- REALTIME PROJECT MASTER STATUS -->
                                     <td rowspan="{{ $specCount }}">
-                                        @if(strtolower($task->status ?? '') == 'completed')
+                                        @if($normalizedStatus === 'completed' || $normalizedStatus === 'done')
                                             <span class="badge bg-success badge-status-sm">Completed</span>
-                                        @elseif(strtolower($task->status ?? '') == 'in progress' || strtolower($task->status ?? '') == 'progress')
-                                            <span class="badge bg-warning text-dark badge-status-sm">Progress</span>
+                                        @elseif($normalizedStatus === 'in-progress' || $normalizedStatus === 'in progress' || $normalizedStatus === 'progress')
+                                            <span class="badge bg-warning text-dark badge-status-sm">In Progress</span>
                                         @else
                                             <span class="badge bg-secondary badge-status-sm">To Do</span>
                                         @endif
@@ -334,7 +353,7 @@
                                     <!-- ACTIONS -->
                                     <td rowspan="{{ $specCount }}">
                                         <div class="table-action-btns">
-                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editTaskModalTable{{ $task->item_code }}" class="btn-action-sm btn-edit-warning" title="Edit Record">
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $task->id }}" class="btn-action-sm btn-edit-warning" title="Edit Record">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
                                             <form id="delete-table-task-{{ $task->id ?? $task->item_code }}" action="{{ route('admin.task.destroy', $task->id ?? $task->item_code) }}" method="POST" style="display:inline;">
@@ -351,7 +370,7 @@
                         @else
                             <!-- BARIS JIKA BELUM ADA ITEM SPEC (29-42) TERHUBUNG -->
                             <tr>
-                                <td class="fw-bold">{{ sprintf('%02d', $task->no ?? ($index + 1)) }}</td>
+                                <td class="fw-bold">{{ $displayNo }}</td>
                                 <td class="fw-bold text-primary">{{ $task->item_code }}</td>
                                 <td>{{ $task->brand_family ?? '-' }}</td>
                                 <td>{{ $task->market ?? '-' }}</td>
@@ -387,12 +406,12 @@
                                     Item specifications (29-42) not created yet.
                                 </td>
 
-                                <!-- PROJECT MASTER STATUS -->
+                                <!-- REALTIME PROJECT MASTER STATUS -->
                                 <td>
-                                    @if(strtolower($task->status ?? '') == 'completed')
+                                    @if($normalizedStatus === 'completed' || $normalizedStatus === 'done')
                                         <span class="badge bg-success badge-status-sm">Completed</span>
-                                    @elseif(strtolower($task->status ?? '') == 'in progress' || strtolower($task->status ?? '') == 'progress')
-                                        <span class="badge bg-warning text-dark badge-status-sm">Progress</span>
+                                    @elseif($normalizedStatus === 'in-progress' || $normalizedStatus === 'in progress' || $normalizedStatus === 'progress')
+                                        <span class="badge bg-warning text-dark badge-status-sm">In Progress</span>
                                     @else
                                         <span class="badge bg-secondary badge-status-sm">To Do</span>
                                     @endif
@@ -401,7 +420,7 @@
                                 <!-- ACTIONS -->
                                 <td>
                                     <div class="table-action-btns">
-                                        <button type="button" data-bs-toggle="modal" data-bs-target="#editTaskModalTable{{ $task->item_code }}" class="btn-action-sm btn-edit-warning" title="Edit Record">
+                                        <button type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $task->id }}" class="btn-action-sm btn-edit-warning" title="Edit Record">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
                                         <form id="delete-table-task-{{ $task->id ?? $task->item_code }}" action="{{ route('admin.task.destroy', $task->id ?? $task->item_code) }}" method="POST" style="display:inline;">
@@ -462,9 +481,9 @@
 
 </main>
 
-<!-- Loop Modal Edit Specs (Mengarah ke Partial File yang Tersedia) -->
+<!-- Loop Modal Edit Specs -->
 @foreach($tasks as $task)
-    @include('admin.task.partials.modal-edit-table-specs', ['task' => $task])
+    @include('admin.task.partials.modal-edit-specs', ['task' => $task])
 @endforeach
 
 @endsection

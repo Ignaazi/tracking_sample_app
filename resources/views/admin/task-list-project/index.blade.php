@@ -146,24 +146,15 @@
             position: relative;
         }
 
-        /* BADGE ITEM CODE DENGAN TEMA WARNA EMAS */
-        .badge-itemcode-gold {
+        /* BADGE SAP EMAS */
+        .badge-sap-gold {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #b45309 !important;
             border: 1px solid #fcd34d !important;
-            font-size: 11px !important;
+            font-size: 10.5px !important;
             font-weight: 800 !important;
-            padding: 4px 9px !important;
+            padding: 3px 8px !important;
             border-radius: 6px !important;
-            letter-spacing: 0.5px;
-        }
-
-        /* LOGO DI SEBELAH KANAN */
-        .card-header-logo {
-            height: 24px;
-            width: auto;
-            max-width: 80px;
-            object-fit: contain;
         }
 
         /* SUB-PROCESS GRID */
@@ -241,7 +232,7 @@
 @section('content')
 <div class="container-fluid p-4 kanban-container" style="background-color: #f8fafc; min-height: 100vh;">
 
-    <!-- TOP HEADER BAR -->
+    <!-- TOP HEADER BAR (TANPA TOMBOL CREATE PROJECT) -->
     <div class="mb-4">
         <h3 class="fw-bold text-dark mb-1 fs-4" style="color: #0f172a !important;">Project Development Kanban</h3>
         <p class="text-secondary small mb-0" style="font-size: 13px;">Real-time monitoring for Layout, BaaN, Prompt, & Job Bag workflows.</p>
@@ -289,12 +280,14 @@
                 @forelse($col['tasks'] as $task)
                 <div class="kanban-card">
                     
-                    <!-- ITEM CODE (EMAS) & LOGO LOGO1.PNG (DI KANAN) -->
+                    <!-- ITEM CODE & SAP NUMBER (SAP CODE DI KANAN DENGAN WARNA EMAS) -->
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="badge badge-itemcode-gold font-monospace text-uppercase">
+                        <span class="badge bg-dark font-monospace text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">
                             {{ $task->item_code }}
                         </span>
-                        <img src="{{ asset('logo1.png') }}" alt="Logo" class="card-header-logo">
+                        <span class="badge badge-sap-gold">
+                            SAP: {{ $task->sap_number ?? '-' }}
+                        </span>
                     </div>
 
                     <!-- PROJECT NAME & CUSTOMER -->
@@ -342,7 +335,7 @@
                             {{ $task->itemSpecs ? $task->itemSpecs->count() : 0 }} Specs
                         </span>
                         
-                        <!-- TOMBOL DETAIL BIRU GRADIENT -->
+                        <!-- TOMBOL DETAIL BIRU GRADIENT (SAMAR HOVER & CLICK) -->
                         <a href="{{ route('admin.task.subProcess', $task->id ?? 1) }}" class="btn-detail-gradient">
                             Detail <i class="bi bi-arrow-right"></i>
                         </a>

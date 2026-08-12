@@ -44,7 +44,7 @@
             text-align: center !important;
         }
 
-        /* FILTER GRID ATAS DENGAN PATTERN BATIK GEOMETRIS HIJAU TUA YANG JELAS & ELEGANT */
+        /* FILTER GRID ATAS */
         .filter-card-wrapper {
             background-color: #ffffff;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0 C15 15, 15 45, 30 60 C45 45, 45 15, 30 0 Z M0 30 C15 15, 45 15, 60 30 C45 45, 15 45, 0 30 Z' fill='none' stroke='%2315803d' stroke-width='1.2' stroke-opacity='0.18'/%3E%3Ccircle cx='30' cy='30' r='3' fill='%2315803d' fill-opacity='0.25'/%3E%3C/svg%3E");
@@ -253,10 +253,51 @@
     @endif
 
     @php
-        // PENANGANAN AMAN: Cek apakah variabel dikirim dari Controller, jika tidak buat otomatis dari $tasks
-        $todoData = $todoTasks ?? $todo ?? (isset($tasks) ? $tasks->filter(fn($t) => in_array(strtolower($t->status ?? ''), ['todo', 'to do', ''])) : collect());
-        $inProgressData = $inProgressTasks ?? $inProgress ?? (isset($tasks) ? $tasks->filter(fn($t) => in_array(strtolower($t->status ?? ''), ['in-progress', 'in progress', 'progress'])) : collect());
-        $completedData = $completedTasks ?? $completed ?? (isset($tasks) ? $tasks->filter(fn($t) => in_array(strtolower($t->status ?? ''), ['completed', 'done'])) : collect());
+        // Ambil koleksi dasar task dari controller
+        $allTasksCollection = $tasks ?? collect();
+
+        // Daftar 28 field utama yang harus terisi lengkap untuk berpindah dari To Do -> In Progress
+        $required28Fields = [
+            'no', 'item_code', 'brand_family', 'market', 'project_name',
+            'ascis_pd', 'customer', 'cs_brand', 'cs_hw', 'cpi_hw',
+            's5_internal_approval', 'ghw_set', 'information_received',
+            'plm_released', 'coi_number', 'green_light', 'td', 'machine',
+            'board', 'board_u_code', 'board_a_code', 'type_cm',
+            'die_cut_number', 's10_number', 's11_number', 's12_number',
+            'cylinder_supplier', 'repro_by'
+        ];
+
+        // 1. COMPLETED: Task dengan status completed/done
+        $completedData = $allTasksCollection->filter(function($t) {
+            $status = strtolower(trim($t->status ?? ''));
+            return in_array($status, ['completed', 'done']);
+        });
+
+        // Task tersisa yang belum completed
+        $activeTasks = $allTasksCollection->reject(function($t) {
+            $status = strtolower(trim($t->status ?? ''));
+            return in_array($status, ['completed', 'done']);
+        });
+
+        // 2. IN PROGRESS: Task aktif yang ke-28 data spesifikasinya terisi LENGKAP
+        $inProgressData = $activeTasks->filter(function($t) use ($required28Fields) {
+            foreach ($required28Fields as $field) {
+                if (is_null($t->$field) || trim((string)$t->$field) === '') {
+                    return false; // Ada yang kosong, bukan In Progress
+                }
+            }
+            return true;
+        });
+
+        // 3. TO DO: Task aktif yang masih ada field KOSONG / BELUM LENGKAP
+        $todoData = $activeTasks->reject(function($t) use ($required28Fields) {
+            foreach ($required28Fields as $field) {
+                if (is_null($t->$field) || trim((string)$t->$field) === '') {
+                    return false;
+                }
+            }
+            return true;
+        });
 
         $countTodo = $todoData->count();
         $countProgress = $inProgressData->count();
@@ -325,12 +366,12 @@
         </div>
     </div>
 
-    <!-- TABEL DATA PROJECT (28 KOLOM MURNI TABLE CREATE_TASK) -->
+    <!-- TABEL DATA PROJECT (28 KOLOM MURNI TABLE TASK) -->
     <div id="projectSectionsContainer">
         @foreach($columns as $col)
         <div class="card border-0 shadow-sm rounded-3 p-4 bg-white mb-4 status-card-wrapper" data-status="{{ $col['status'] }}">
             
-            <!-- HEADER STATUS SIMPEL -->
+            <!-- HEADER STATUS -->
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="status-header-pill {{ $col['pill_class'] }}">
                     <span>{{ $col['title'] }}</span>
@@ -344,7 +385,7 @@
                     <table class="table table-grid-bordered align-middle mb-0" style="font-size: 13px; table-layout: fixed; width: 100%; min-width: 3200px; --bs-table-hover-bg: #f8fafc;">
                         <thead class="{{ $col['header_class'] }}">
                             <tr>
-                                <th class="py-2.5 text-center" style="width: 60px;"> No</th>
+                                <th class="py-2.5 text-center" style="width: 140px;"> No</th>
                                 <th class="py-2.5 text-center" style="width: 140px;"> Item Code</th>
                                 <th class="py-2.5 text-center" style="width: 150px;"> Brand / Family</th>
                                 <th class="py-2.5 text-center" style="width: 110px;"> Market</th>
@@ -381,7 +422,8 @@
                                 $realId = $task->id ?? null;
                             @endphp
                             <tr>
-                                <td class="text-center table-text-unified">{{ str_pad($task->no ?? ($index + 1), 2, '0', STR_PAD_LEFT) }}</td>
+                                <!-- DITAMPILKAN CREATTASK0001 ATO AUTOMATIC NO -->
+                                <td class="text-center table-text-unified fw-bold text-dark">{{ $task->no ?? ('CREATTASK' . str_pad($index + 1, 4, '0', STR_PAD_LEFT)) }}</td>
                                 <td class="table-text-unified fw-bold text-primary">{{ $task->item_code }}</td>
                                 <td class="table-text-unified">{{ $task->brand_family ?? '-' }}</td>
                                 <td class="table-text-unified">{{ $task->market ?? '-' }}</td>

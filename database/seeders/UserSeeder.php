@@ -15,33 +15,42 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Administrator Amcor',
-                'nik' => '123456',
+                'name'     => 'Administrator Amcor',
+                'nik'      => '123456',
                 'password' => Hash::make('admin123'),
-                'role' => 'Administrator',
+                'role'     => 'Administrator',
             ],
             [
-                'name' => 'Project Development User',
-                'nik' => '223456',
+                'name'     => 'Project Development User',
+                'nik'      => '223456',
                 'password' => Hash::make('pd123'),
-                'role' => 'PD',
+                'role'     => 'PD',
             ],
             [
-                'name' => 'Quality Assurance User',
-                'nik' => '323456',
+                'name'     => 'Quality Assurance User',
+                'nik'      => '323456',
                 'password' => Hash::make('qa123'),
-                'role' => 'QA',
+                'role'     => 'QA',
             ],
             [
-                'name' => 'Planner User',
-                'nik' => '423456',
+                'name'     => 'Planner User',
+                'nik'      => '423456',
                 'password' => Hash::make('planner123'),
-                'role' => 'PLANNER',
+                'role'     => 'PLANNER',
+            ],
+            [
+                'name'     => 'aji',
+                'nik'      => '24096065',
+                'password' => Hash::make('admin123'), // sesuaikan password jika beda
+                'role'     => 'Administrator',
             ],
         ];
 
         foreach ($users as $user) {
-            User::create($user);
+            User::updateOrCreate(
+                ['nik' => $user['nik']], // Kunci pencarian agar tidak duplicate NIK
+                $user
+            );
         }
     }
 }

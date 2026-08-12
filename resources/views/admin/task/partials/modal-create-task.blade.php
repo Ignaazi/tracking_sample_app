@@ -14,6 +14,11 @@
         overflow-x: hidden !important;
         -webkit-overflow-scrolling: touch;
     }
+    .form-section-title {
+        color: #15803d !important;
+        font-size: 14px;
+        letter-spacing: 0.3px;
+    }
 </style>
 
 <!-- Modal Utama Create New Project Specification -->
@@ -24,7 +29,7 @@
             <!-- Modal Header -->
             <div class="modal-header text-white py-3" style="background-color: #15803d; flex-shrink: 0;">
                 <h5 class="modal-title fw-bold" id="addTaskModalLabel">
-                    <i class="bi bi-plus-circle-fill me-2"></i>Create Master Task Specification (28 Data)
+                    <i class="bi bi-plus-circle-fill me-2"></i>Create Master Task Specification
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -36,7 +41,7 @@
                 <!-- Modal Body (Bisa Di-scroll Bebas) -->
                 <div class="modal-body p-4 bg-light">
 
-                    <!-- ALERT ERROR / DUPLIKAT DI DALAM MODAL -->
+                    <!-- ALERT ERROR DI DALAM MODAL -->
                     @if ($errors->any())
                         <div class="alert alert-danger alert-dismissible fade show mb-4 border-0 shadow-sm" role="alert">
                             <div class="d-flex align-items-center mb-1">
@@ -56,148 +61,153 @@
                     <div class="alert alert-info border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center">
                         <i class="bi bi-info-circle-fill fs-4 me-3 text-info"></i>
                         <div class="small">
-                            <strong>Sistem Penentuan Status Otomatis:</strong> Jika seluruh 28 data terisi lengkap, status project akan otomatis berstatus <strong>In Progress</strong>. Jika ada 1 atau lebih data yang masih kosong, status akan berstatus <strong>To Do</strong>.
+                            <strong>Sistem Penentuan Status Otomatis:</strong> Nomor task di-generate otomatis. Jika seluruh data terisi lengkap, status project otomatis <strong>In Progress</strong>. Jika ada yang kosong, status akan menjadi <strong>To Do</strong>.
                         </div>
                     </div>
 
-                    <!-- SECTION 1: IDENTITY & GENERAL SPECIFICATIONS (KOLOM 1 - 10) -->
+                    <!-- SECTION 1: IDENTITY & GENERAL SPECIFICATIONS -->
                     <div class="bg-white p-4 rounded-3 border shadow-sm mb-4">
-                        <h6 class="fw-bold border-bottom pb-2 mb-3" style="color: #15803d !important;">
+                        <h6 class="fw-bold border-bottom pb-2 mb-3 form-section-title">
                             <i class="bi bi-info-circle me-2"></i>1. Identity & General Specifications
                         </h6>
                         <div class="row g-3">
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold text-dark">1. No</label>
-                                <input type="number" name="no" class="form-control" value="{{ old('no') }}" placeholder="e.g. 1">
-                            </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold text-dark">2. Item Code <span class="text-danger">*</span></label>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Item Code <span class="text-danger">*</span></label>
                                 <input type="text" name="item_code" class="form-control @error('item_code') is-invalid @enderror" value="{{ old('item_code') }}" placeholder="e.g. 123-123" required>
                                 @error('item_code')
                                     <div class="invalid-feedback fw-bold">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold text-dark">3. Brand / Family</label>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Brand / Family</label>
                                 <input type="text" name="brand_family" class="form-control" value="{{ old('brand_family') }}" placeholder="e.g. Cleo / Garuda">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">4. Market Zone</label>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Market Zone</label>
                                 <input type="text" name="market" class="form-control" value="{{ old('market') }}" placeholder="e.g. INDO / EXPORT">
                             </div>
-                            <div class="col-md-8">
-                                <label class="form-label fw-bold text-dark">5. Project Name</label>
-                                <input type="text" name="project_name" class="form-control" value="{{ old('project_name') }}" placeholder="Input project name">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">6. PD ASCIS</label>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">PD ASCIS</label>
                                 <input type="text" name="ascis_pd" class="form-control" value="{{ old('ascis_pd') }}" placeholder="Input PD ASCIS">
                             </div>
-                            <div class="col-md-8">
-                                <label class="form-label fw-bold text-dark">7. Customer Name</label>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Project Name</label>
+                                <input type="text" name="project_name" class="form-control" value="{{ old('project_name') }}" placeholder="Input project name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Customer Name</label>
                                 <input type="text" name="customer" class="form-control" value="{{ old('customer') }}" placeholder="Input customer name">
                             </div>
+
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">8. CS Brand</label>
+                                <label class="form-label fw-bold text-dark">CS Brand</label>
                                 <input type="text" name="cs_brand" class="form-control" value="{{ old('cs_brand') }}" placeholder="Input CS Brand">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">9. CS HW</label>
+                                <label class="form-label fw-bold text-dark">CS HW</label>
                                 <input type="text" name="cs_hw" class="form-control" value="{{ old('cs_hw') }}" placeholder="Input CS HW">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">10. CPI HW</label>
+                                <label class="form-label fw-bold text-dark">CPI HW</label>
                                 <input type="text" name="cpi_hw" class="form-control" value="{{ old('cpi_hw') }}" placeholder="Input CPI HW">
                             </div>
                         </div>
                     </div>
 
-                    <!-- SECTION 2: APPROVAL & TECHNICAL MILESTONES (KOLOM 11 - 18) -->
+                    <!-- SECTION 2: APPROVAL & TECHNICAL MILESTONES -->
                     <div class="bg-white p-4 rounded-3 border shadow-sm mb-4">
-                        <h6 class="fw-bold border-bottom pb-2 mb-3" style="color: #15803d !important;">
+                        <h6 class="fw-bold border-bottom pb-2 mb-3 form-section-title">
                             <i class="bi bi-sliders me-2"></i>2. Approval & Technical Milestones
                         </h6>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark">11. S5 Internal Approval</label>
+                                <label class="form-label fw-bold text-dark">S5 Internal Approval</label>
                                 <input type="text" name="s5_internal_approval" class="form-control" value="{{ old('s5_internal_approval') }}" placeholder="Input S5 Internal Approval">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark">12. GHW Set</label>
+                                <label class="form-label fw-bold text-dark">GHW Set</label>
                                 <input type="text" name="ghw_set" class="form-control" value="{{ old('ghw_set') }}" placeholder="Input GHW Set">
                             </div>
+
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark">13. Information Received Date</label>
+                                <label class="form-label fw-bold text-dark">Information Received Date</label>
                                 <input type="date" name="information_received" class="form-control" value="{{ old('information_received') }}">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark">14. PLM Released Date</label>
+                                <label class="form-label fw-bold text-dark">PLM Released Date</label>
                                 <input type="date" name="plm_released" class="form-control" value="{{ old('plm_released') }}">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">15. COI Number</label>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">COI Number</label>
                                 <input type="text" name="coi_number" class="form-control" value="{{ old('coi_number') }}" placeholder="Input COI Number">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">16. Green Light Date</label>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Green Light Date</label>
                                 <input type="date" name="green_light" class="form-control" value="{{ old('green_light') }}">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">17. TD (Technical Doc)</label>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">TD (Technical Doc)</label>
                                 <input type="text" name="td" class="form-control" value="{{ old('td') }}" placeholder="Input TD">
                             </div>
-                            <div class="col-md-12">
-                                <label class="form-label fw-bold text-dark">18. Machine</label>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Machine</label>
                                 <input type="text" name="machine" class="form-control" value="{{ old('machine') }}" placeholder="e.g. Offset / Gravure">
                             </div>
                         </div>
                     </div>
 
-                    <!-- SECTION 3: BOARD, CODES, DIE CUT & CYLINDER SPECS (KOLOM 19 - 28) -->
+                    <!-- SECTION 3: BOARD, CODES, DIE CUT & CYLINDER SPECS -->
                     <div class="bg-white p-4 rounded-3 border shadow-sm">
-                        <h6 class="fw-bold border-bottom pb-2 mb-3" style="color: #15803d !important;">
+                        <h6 class="fw-bold border-bottom pb-2 mb-3 form-section-title">
                             <i class="bi bi-box-seam me-2"></i>3. Board, Codes, Die Cut & Cylinder Specs
                         </h6>
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">19. Board</label>
+                                <label class="form-label fw-bold text-dark">Board Type</label>
                                 <input type="text" name="board" class="form-control" value="{{ old('board') }}" placeholder="Input Board Type">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">20. Board U Code</label>
+                                <label class="form-label fw-bold text-dark">Board U Code</label>
                                 <input type="text" name="board_u_code" class="form-control" value="{{ old('board_u_code') }}" placeholder="Input Board U Code">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">21. Board A Code</label>
+                                <label class="form-label fw-bold text-dark">Board A Code</label>
                                 <input type="text" name="board_a_code" class="form-control" value="{{ old('board_a_code') }}" placeholder="Input Board A Code">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">22. Type CM</label>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Type CM</label>
                                 <input type="text" name="type_cm" class="form-control" value="{{ old('type_cm') }}" placeholder="Input Type CM">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">23. Die Cut Number</label>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Die Cut Number</label>
                                 <input type="text" name="die_cut_number" class="form-control" value="{{ old('die_cut_number') }}" placeholder="Input Die Cut Number">
                             </div>
+
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">24. S10 Number</label>
+                                <label class="form-label fw-bold text-dark">S10 Number</label>
                                 <input type="text" name="s10_number" class="form-control" value="{{ old('s10_number') }}" placeholder="Input S10 Number">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">25. S11 Number</label>
+                                <label class="form-label fw-bold text-dark">S11 Number</label>
                                 <input type="text" name="s11_number" class="form-control" value="{{ old('s11_number') }}" placeholder="Input S11 Number">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">26. S12 Number</label>
+                                <label class="form-label fw-bold text-dark">S12 Number</label>
                                 <input type="text" name="s12_number" class="form-control" value="{{ old('s12_number') }}" placeholder="Input S12 Number">
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold text-dark">27. Cylinder Supplier</label>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Cylinder Supplier</label>
                                 <input type="text" name="cylinder_supplier" class="form-control" value="{{ old('cylinder_supplier') }}" placeholder="e.g. SEIN / JNSK">
                             </div>
-                            <div class="col-md-12">
-                                <label class="form-label fw-bold text-dark">28. Repro By</label>
-                                <input type="text" name="repro_by" class="form-control" value="{{ old('repro_by') }}" placeholder="Input Repro By (e.g. Internal / External)">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Repro By</label>
+                                <input type="text" name="repro_by" class="form-control" value="{{ old('repro_by') }}" placeholder="e.g. Internal / External">
                             </div>
                         </div>
                     </div>
@@ -222,8 +232,11 @@
 @if ($errors->any())
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var addTaskModal = new bootstrap.Modal(document.getElementById('addTaskModal'));
-        addTaskModal.show();
+        var addTaskModalElement = document.getElementById('addTaskModal');
+        if (addTaskModalElement) {
+            var addTaskModal = new bootstrap.Modal(addTaskModalElement);
+            addTaskModal.show();
+        }
     });
 </script>
 @endif

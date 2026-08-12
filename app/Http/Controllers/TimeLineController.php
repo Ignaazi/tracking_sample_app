@@ -2,93 +2,126 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Task;
+use App\Models\Timeline;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TimelineController extends Controller
 {
     /**
-     * Display project development analytics & task timeline (Master Gantt).
+     * Menampilkan Halaman Dashboard Interactive Gantt Roadmap
      */
     public function index()
     {
-        // Ambil data task dan urutkan berdasarkan tanggal dibuat/informasi diterima
-        $tasks = Task::orderBy('created_at', 'desc')->get();
+        // 1. AMBIL SEMUA DATA TASK TERBARU
+        $tasks = Task::with('timelines')->orderBy('created_at', 'desc')->get()->map(function ($task) {
+            
+            // 2. AUTO-GENERATE CHECKLIST TIMELINE JIKA BELUM ADA DATA TIMELINE
+            if ($task->timelines->count() === 0) {
+                self::generateDefaultChecklists($task);
+                $task->load('timelines');
+            }
+
+            // 3. KALKULASI REAL-TIME STATUS PROJECT BERDASARKAN TIMELINE CHECKLIST
+            $totalItems = $task->timelines->count();
+            $completedItems = $task->timelines->where('is_completed', 1)->count();
+
+            if ($totalItems > 0) {
+                if ($completedItems === $totalItems) {
+                    $status = 'completed';
+                } elseif ($completedItems > 0) {
+                    $status = 'in-progress';
+                } else {
+                    $status = 'todo';
+                }
+
+                // Update status di DB jika berbeda
+                if (strtolower($task->status ?? '') !== $status) {
+                    $task->update(['status' => $status]);
+                    $task->status = $status;
+                }
+            }
+
+            return $task;
+        });
 
         return view('admin.timeline.index', compact('tasks'));
     }
 
     /**
-     * Display detail timeline per project (Sub-process Gantt & Stage Management).
+     * Menampilkan Halaman Detail Sub-Process Checklist & Timeline Per Project
      */
     public function detail($id)
     {
-        // Cari project berdasarkan item_code ATAU id database
-        $task = Task::where('item_code', $id)
-                    ->orWhere('id', $id)
-                    ->firstOrFail();
+        $task = Task::where('id', $id)->orWhere('item_code', $id)->firstOrFail();
+        $task->load(['timelines', 'itemSpecs']);
 
-        return view('admin.timeline.detailTimeline', compact('task'));
+        // Auto-generate checklist default jika project belum memiliki timeline
+        if ($task->timelines->count() === 0) {
+            self::generateDefaultChecklists($task);
+            $task->load('timelines');
+        }
+
+        $existingChecklists = $task->timelines->groupBy('section_key');
+
+        return view('admin.task.subProcess', compact('task', 'existingChecklists'));
     }
 
     /**
-     * Store new task item into database.
+     * Helper Static Method: Auto-Generate Default Timeline Checklist untuk Task Baru
      */
-    public function store(Request $request)
+    public static function generateDefaultChecklists(Task $task)
     {
-        $validated = $request->validate([
-            'item_code'            => 'required|string|max:255',
-            'project_name'         => 'nullable|string|max:255',
-            'brand_family'         => 'nullable|string|max:255',
-            'market'               => 'nullable|string|max:255',
-            'customer'             => 'nullable|string|max:255',
-            'information_received' => 'nullable|date',
-            'plm_released'         => 'nullable|date|after_or_equal:information_received',
-            'sap_number'           => 'nullable|string|max:255',
-            'status'               => 'required|in:To Do,In Progress,Completed',
-            'development_status'   => 'required|in:Active,Testing',
-        ]);
+        $startDate = !empty($task->information_received) 
+            ? date('Y-m-d', strtotime($task->information_received)) 
+            : date('Y-m-d', strtotime($task->created_at ?? now()));
 
-        Task::create($validated);
+        $endDate = !empty($task->plm_released) 
+            ? date('Y-m-d', strtotime($task->plm_released)) 
+            : date('Y-m-d', strtotime($startDate . ' + 14 days'));
 
-        return redirect()->route('admin.timelines.index')->with('success', 'Project task berhasil ditambahkan!');
-    }
+        // Struktur Checklist Standar Development Timeline
+        $defaultSections = [
+            'layout_process' => [
+                'Review Initial Specification & Artwork Brief',
+                'Create Technical Layout & Die-Cut Alignment',
+                'Internal Pre-Press Design Approval'
+            ],
+            'baan_process' => [
+                'BaaN Cylinder Code Creation',
+                'BaaN Ink & Substrate Master Registration',
+                'BaaN Bill of Materials (BOM) Setup'
+            ],
+            'promp_process' => [
+                'PROMP Proof Approval Request',
+                'Customer Color Standard Verification',
+                'PROMP Final Approval Status'
+            ],
+            'job_bag_process' => [
+                'Cylinder Repro & Engraving Order',
+                'Job Bag Production Package Assembly',
+                'Final Production Release & Green Light'
+            ]
+        ];
 
-    /**
-     * Update existing task item.
-     */
-    public function update(Request $request, $id)
-    {
-        $task = Task::where('item_code', $id)->orWhere('id', $id)->firstOrFail();
-
-        $validated = $request->validate([
-            'item_code'            => 'required|string|max:255',
-            'project_name'         => 'nullable|string|max:255',
-            'brand_family'         => 'nullable|string|max:255',
-            'market'               => 'nullable|string|max:255',
-            'customer'             => 'nullable|string|max:255',
-            'information_received' => 'nullable|date',
-            'plm_released'         => 'nullable|date|after_or_equal:information_received',
-            'sap_number'           => 'nullable|string|max:255',
-            'status'               => 'required|in:To Do,In Progress,Completed',
-            'development_status'   => 'required|in:Active,Testing',
-        ]);
-
-        $task->update($validated);
-
-        return redirect()->route('admin.timelines.index')->with('success', 'Project task berhasil diperbarui!');
-    }
-
-    /**
-     * Delete task item from database.
-     */
-    public function destroy($id)
-    {
-        $task = Task::where('item_code', $id)->orWhere('id', $id)->firstOrFail();
-        $itemCode = $task->item_code;
-        
-        $task->delete();
-
-        return redirect()->route('admin.timelines.index')->with('success', "Project task [{$itemCode}] berhasil dihapus!");
+        DB::transaction(function () use ($task, $defaultSections, $startDate, $endDate) {
+            foreach ($defaultSections as $sectionKey => $titles) {
+                foreach ($titles as $title) {
+                    Timeline::create([
+                        'task_id'          => $task->id,
+                        'project_name'     => $task->project_name ?? 'Project Task',
+                        'section_key'      => $sectionKey,
+                        'task_title'       => $title,
+                        'phase'            => 'Develop',
+                        'start_date'       => $startDate,
+                        'end_date'         => $endDate,
+                        'is_completed'     => false,
+                        'progress_percent' => 0,
+                    ]);
+                }
+            }
+        });
     }
 }

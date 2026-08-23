@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Amcor System Scanner</title>
+    <title>Forgot Password - Amcor System Scanner</title>
     <!-- Bootstrap 5 & FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -71,7 +71,7 @@
 
         .login-left-side {
             flex: 1.1;
-            padding: 50px 70px;
+            padding: 40px 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -97,13 +97,12 @@
         }
 
         .welcome-text {
-            font-size: 32px;
+            font-size: 28px;
             color: #2d3748;
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             line-height: 1.25;
             font-weight: 400;
         }
-        .welcome-text span { font-weight: 500; }
         .welcome-text .highlight { color: var(--amcor-green); font-weight: 700; }
 
         .form-label-custom {
@@ -112,11 +111,11 @@
             color: #4a5568;
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             display: block;
         }
 
-        .input-wrapper { position: relative; margin-bottom: 6px; }
+        .input-wrapper { position: relative; }
         .input-icon {
             position: absolute;
             left: 16px;
@@ -127,8 +126,8 @@
         }
         .input-field {
             width: 100%;
-            padding: 12px 16px 12px 45px;
-            font-size: 13.5px;
+            padding: 10px 16px 10px 45px;
+            font-size: 13px;
             background-color: #f8fafc;
             border: 1.5px solid #e2e8f0;
             border-radius: 12px;
@@ -148,28 +147,6 @@
             background-color: #fff8f8;
         }
 
-        .password-toggle {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #a0aec0;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .forgot-link {
-            font-size: 12px;
-            color: var(--amcor-sky-blue);
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.2s ease;
-        }
-        .forgot-link:hover {
-            color: var(--amcor-dark-blue);
-            text-decoration: underline;
-        }
-
         .btn-login-gradient {
             background: linear-gradient(90deg, var(--amcor-light-green) 0%, var(--amcor-green) 100%);
             border: none;
@@ -177,13 +154,13 @@
             font-size: 13px;
             font-weight: 700;
             letter-spacing: 0.5px;
-            padding: 13px;
+            padding: 12px;
             border-radius: 25px;
             width: 100%;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0px 8px 20px rgba(38, 177, 112, 0.15);
-            margin-top: 10px;
+            margin-top: 12px;
         }
         .btn-login-gradient:hover {
             transform: translateY(-1.5px);
@@ -198,6 +175,19 @@
             transform: none;
         }
 
+        .back-link {
+            font-size: 12px;
+            color: #718096;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease;
+            display: inline-block;
+            margin-top: 12px;
+        }
+        .back-link:hover {
+            color: var(--amcor-dark-blue);
+        }
+
         .visual-logo {
             max-width: 65%;
             max-height: 65%;
@@ -207,7 +197,7 @@
         }
 
         .login-footer {
-            margin-top: 30px;
+            margin-top: 20px;
             font-size: 11px;
             color: #a0aec0;
             text-align: center;
@@ -221,17 +211,12 @@
             
             <div class="login-left-side">
                 <h2 class="welcome-text">
-                    Hello there,<br>
-                    <span>welcome</span> <span class="highlight">back!</span>
+                    Forgot your<br>
+                    <span class="highlight">Password?</span>
                 </h2>
-
-                <!-- Alert Success setelah Reset Password -->
-                @if(session('success'))
-                    <div class="alert alert-success border-0 p-2 small mb-3 d-flex align-items-center gap-2" style="background-color: #d1e7dd; color: #0f5132; border-radius: 8px;">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                @endif
+                <p class="text-muted mb-3" style="font-size: 12.5px; line-height: 1.4;">
+                    Masukkan NIK dan Nama Anda untuk verifikasi akun, lalu isi Email tujuan pengiriman kode OTP.
+                </p>
 
                 <!-- Alert Error Laravel -->
                 @if($errors->any())
@@ -241,38 +226,49 @@
                     </div>
                 @endif
 
-                <form action="{{ route('login') }}" method="POST">
+                <form action="{{ route('password.send_otp') }}" method="POST">
                     @csrf
                     
                     <!-- Input NIK -->
-                    <div class="mb-3">
-                        <label class="form-label-custom">Nomor Induk Karyawan</label>
+                    <div class="mb-2">
+                        <label class="form-label-custom">Nomor Induk Karyawan (NIK)</label>
                         <div class="input-wrapper">
                             <i class="fa-regular fa-id-card input-icon"></i>
-                            <input type="text" name="nik" id="nikInput" class="input-field" required placeholder="Enter your NIK" value="{{ old('nik') }}" autofocus autocomplete="off">
+                            <input type="text" name="nik" id="nikInput" class="input-field" required placeholder="Masukkan NIK Anda" value="{{ old('nik') }}" autofocus autocomplete="off">
                         </div>
-                        <small id="nikWarning" class="text-danger font-weight-bold d-none" style="font-size: 11.5px;">
-                            <i class="fa-solid fa-circle-exclamation me-1"></i>NIK must be numbers only
+                        <small id="nikWarning" class="text-danger font-weight-bold d-none mt-1" style="font-size: 11px;">
+                            <i class="fa-solid fa-circle-exclamation me-1"></i>NIK harus berupa angka!
                         </small>
                     </div>
-                    
-                    <!-- Input Password -->
+
+                    <!-- Input Nama Lengkap -->
                     <div class="mb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <label class="form-label-custom">Password</label>
-                            <a href="{{ route('password.request') }}" class="forgot-link">Forgot Password?</a>
-                        </div>
+                        <label class="form-label-custom">Nama Lengkap</label>
                         <div class="input-wrapper">
-                            <i class="fa-solid fa-lock input-icon"></i>
-                            <input type="password" name="password" id="passwordInput" class="input-field" required placeholder="Enter your password">
-                            <i class="fa-regular fa-eye-slash password-toggle" id="togglePassword"></i>
+                            <i class="fa-regular fa-user input-icon"></i>
+                            <input type="text" name="name" class="input-field" required placeholder="Masukkan Nama Lengkap Anda" value="{{ old('name') }}" autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <!-- Input Email Penerima OTP -->
+                    <div class="mb-2">
+                        <label class="form-label-custom">Email Penerima OTP</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-envelope input-icon"></i>
+                            <input type="email" name="email" class="input-field" required placeholder="contoh@amcor.com" value="{{ old('email') }}" autocomplete="off">
                         </div>
                     </div>
                     
                     <button type="submit" id="btnSubmit" class="btn-login-gradient text-uppercase">
-                        LOGIN
+                        KIRIM KODE OTP
                     </button>
                 </form>
+
+                <div class="text-center">
+                    <a href="{{ route('login') }}" class="back-link">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Kembali ke Halaman Login
+                    </a>
+                </div>
 
                 <div class="login-footer">
                     Tracking Sample System &bull; &copy; {{ date('Y') }} Amcor Flexibles
@@ -291,17 +287,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Toggle Show/Hide Password
-        const togglePassword = document.querySelector('#togglePassword');
-        const passwordInput = document.querySelector('#passwordInput');
-
-        togglePassword.addEventListener('click', function () {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
         // Realtime Input Validation NIK
         const nikInput = document.getElementById('nikInput');
         const nikWarning = document.getElementById('nikWarning');
@@ -319,16 +304,6 @@
                 nikInput.classList.remove('is-invalid');
                 btnSubmit.disabled = false;
             }
-        });
-
-        // Prevent Space on Password
-        passwordInput.addEventListener('keydown', function (e) {
-            if (e.key === ' ' || e.keyCode === 32) {
-                e.preventDefault();
-            }
-        });
-        passwordInput.addEventListener('input', function () {
-            this.value = this.value.replace(/\s/g, '');
         });
     </script>
 

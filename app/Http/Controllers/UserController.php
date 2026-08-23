@@ -15,7 +15,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        // Ambil data dengan pagination real (misal: 5 data per halaman)
         $users = User::orderBy('created_at', 'desc')->paginate(5);
         
         if (view()->exists('admin.user.index')) {
@@ -31,10 +30,16 @@ class UserController extends Controller
     {
         $request->validate([
             'name'      => ['required', 'string', 'max:255'],
-            'nik'       => ['required', 'string', 'max:50', 'unique:users,nik'],
+            // 📌 KUNCI: 'digits:6' membuat NIK wajib angka dan tepat 6 digit
+            'nik'       => ['required', 'numeric', 'digits:6', 'unique:users,nik'],
             'role'      => ['required', Rule::in(['Administrator', 'PD', 'QA', 'PLANNER'])],
             'password'  => ['required', 'string', 'min:8'],
             'signature' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
+        ], [
+            'nik.required' => 'NIK wajib diisi.',
+            'nik.numeric'  => 'NIK harus berupa angka.',
+            'nik.digits'   => 'NIK harus persis 6 digit angka!',
+            'nik.unique'   => 'NIK sudah terdaftar di sistem.',
         ]);
 
         $signaturePath = null;
@@ -73,10 +78,16 @@ class UserController extends Controller
 
         $request->validate([
             'name'      => ['required', 'string', 'max:255'],
-            'nik'       => ['required', 'string', 'max:50', Rule::unique('users', 'nik')->ignore($user->id)],
+            // 📌 KUNCI: Tetap divalidasi 6 digit angka saat update
+            'nik'       => ['required', 'numeric', 'digits:6', Rule::unique('users', 'nik')->ignore($user->id)],
             'role'      => ['required', Rule::in(['Administrator', 'PD', 'QA', 'PLANNER'])],
             'password'  => ['nullable', 'string', 'min:8'],
             'signature' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
+        ], [
+            'nik.required' => 'NIK wajib diisi.',
+            'nik.numeric'  => 'NIK harus berupa angka.',
+            'nik.digits'   => 'NIK harus persis 6 digit angka!',
+            'nik.unique'   => 'NIK sudah digunakan oleh user lain.',
         ]);
 
         $user->name = $request->name;
@@ -87,9 +98,7 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        // Jika mengunggah gambar tanda tangan baru
         if ($request->hasFile('signature')) {
-            // Hapus file tanda tangan lama jika ada
             if ($user->signature && file_exists(public_path($user->signature))) {
                 @unlink(public_path($user->signature));
             }
@@ -130,7 +139,6 @@ class UserController extends Controller
             return redirect()->route('admin.users.index')->with('error', 'Kamu tidak bisa menghapus akunmu sendiri yang sedang aktif, bor!');
         }
 
-        // Hapus file gambar tanda tangan jika ada
         if ($user->signature && file_exists(public_path($user->signature))) {
             @unlink(public_path($user->signature));
         }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TimelineController;
@@ -14,18 +15,30 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Guest Routes
+| Guest Routes (Belum Login)
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
     Route::get('/', [AuthController::class, 'showLoginForm']);
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+
+    // MODULE: FORGOT & RESET PASSWORD (WITH OTP)
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotForm'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.send_otp');
+    
+    // VERIFY OTP ROUTES
+    Route::get('/verify-otp', [ForgotPasswordController::class, 'showOtpForm'])->name('password.otp_form');
+    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verify_otp');
+    
+    // RESET PASSWORD ROUTES
+    Route::get('/reset-password', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
+    Route::post('/reset-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.update');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated Routes
+| Authenticated Routes (Sudah Login)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
@@ -44,7 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/timelines', [TimelineController::class, 'index'])->name('timelines.index');
         Route::get('/task/roadmap', [TaskController::class, 'roadmapIndex'])->name('task.roadmap');
         
-        // DETAIL TIMELINE / GANTT CHART (Diberikan alias 'timelines.show' & 'task.timeline.detail')
+        // DETAIL TIMELINE / GANTT CHART
         Route::get('/timeline/{id}', [TimelineController::class, 'detail'])->name('task.timeline.detail');
         Route::get('/timelines/{id}', [TimelineController::class, 'detail'])->name('timelines.show'); 
         
@@ -87,11 +100,11 @@ Route::middleware('auth')->group(function () {
         Route::put('/item-specs/{id}', [ItemSpecController::class, 'update'])->name('item-specs.update');
         Route::delete('/item-specs/{id}', [ItemSpecController::class, 'destroy'])->name('item-specs.destroy');
 
-       // MODULE: WORKFLOW ENGINE & ASSIGNMENT (PRINT PDF, APPROVAL, & REJECT)
-       Route::get('/workflow', [WorkflowController::class, 'index'])->name('workflow.index');
-       Route::post('/workflow/{id}/approve', [WorkflowController::class, 'approve'])->name('workflow.approve');
-       Route::post('/workflow/{id}/reject', [WorkflowController::class, 'reject'])->name('workflow.reject');
-       Route::get('/workflow/{id}/print-pdf', [WorkflowController::class, 'printPdf'])->name('workflow.printPdf');
+        // MODULE: WORKFLOW ENGINE & ASSIGNMENT (PRINT PDF, APPROVAL, & REJECT)
+        Route::get('/workflow', [WorkflowController::class, 'index'])->name('workflow.index');
+        Route::post('/workflow/{id}/approve', [WorkflowController::class, 'approve'])->name('workflow.approve');
+        Route::post('/workflow/{id}/reject', [WorkflowController::class, 'reject'])->name('workflow.reject');
+        Route::get('/workflow/{id}/print-pdf', [WorkflowController::class, 'printPdf'])->name('workflow.printPdf');
 
         // MODULE: TASK LIST PROJECT & UPDATE SUB STATUS
         Route::get('/task-list-project', [TaskListProjectController::class, 'index'])->name('task-list-project.index');

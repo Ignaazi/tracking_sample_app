@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Amcor System Scanner</title>
+    <title>Reset Password - Amcor System Scanner</title>
     <!-- Bootstrap 5 & FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -97,13 +97,12 @@
         }
 
         .welcome-text {
-            font-size: 32px;
+            font-size: 30px;
             color: #2d3748;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             line-height: 1.25;
             font-weight: 400;
         }
-        .welcome-text span { font-weight: 500; }
         .welcome-text .highlight { color: var(--amcor-green); font-weight: 700; }
 
         .form-label-custom {
@@ -143,11 +142,6 @@
             box-shadow: 0 0 0 3px rgba(1, 55, 125, 0.1);
         }
 
-        .input-field.is-invalid {
-            border-color: #dc3545 !important;
-            background-color: #fff8f8;
-        }
-
         .password-toggle {
             position: absolute;
             right: 16px;
@@ -156,18 +150,6 @@
             color: #a0aec0;
             cursor: pointer;
             font-size: 14px;
-        }
-
-        .forgot-link {
-            font-size: 12px;
-            color: var(--amcor-sky-blue);
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.2s ease;
-        }
-        .forgot-link:hover {
-            color: var(--amcor-dark-blue);
-            text-decoration: underline;
         }
 
         .btn-login-gradient {
@@ -183,7 +165,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0px 8px 20px rgba(38, 177, 112, 0.15);
-            margin-top: 10px;
+            margin-top: 15px;
         }
         .btn-login-gradient:hover {
             transform: translateY(-1.5px);
@@ -191,11 +173,17 @@
             opacity: 0.95;
         }
 
-        .btn-login-gradient:disabled {
-            background: #cbd5e0;
-            box-shadow: none;
-            cursor: not-allowed;
-            transform: none;
+        .back-link {
+            font-size: 12px;
+            color: #718096;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        .back-link:hover {
+            color: var(--amcor-dark-blue);
         }
 
         .visual-logo {
@@ -207,7 +195,7 @@
         }
 
         .login-footer {
-            margin-top: 30px;
+            margin-top: 25px;
             font-size: 11px;
             color: #a0aec0;
             text-align: center;
@@ -221,17 +209,12 @@
             
             <div class="login-left-side">
                 <h2 class="welcome-text">
-                    Hello there,<br>
-                    <span>welcome</span> <span class="highlight">back!</span>
+                    Create New<br>
+                    <span class="highlight">Password</span>
                 </h2>
-
-                <!-- Alert Success setelah Reset Password -->
-                @if(session('success'))
-                    <div class="alert alert-success border-0 p-2 small mb-3 d-flex align-items-center gap-2" style="background-color: #d1e7dd; color: #0f5132; border-radius: 8px;">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                @endif
+                <p class="text-muted mb-4" style="font-size: 13px; line-height: 1.5;">
+                    Silakan buat password baru Anda (minimal 8 karakter).
+                </p>
 
                 <!-- Alert Error Laravel -->
                 @if($errors->any())
@@ -241,38 +224,39 @@
                     </div>
                 @endif
 
-                <form action="{{ route('login') }}" method="POST">
+                <form action="{{ route('password.update') }}" method="POST">
                     @csrf
                     
-                    <!-- Input NIK -->
+                    <!-- Input Password Baru -->
                     <div class="mb-3">
-                        <label class="form-label-custom">Nomor Induk Karyawan</label>
-                        <div class="input-wrapper">
-                            <i class="fa-regular fa-id-card input-icon"></i>
-                            <input type="text" name="nik" id="nikInput" class="input-field" required placeholder="Enter your NIK" value="{{ old('nik') }}" autofocus autocomplete="off">
-                        </div>
-                        <small id="nikWarning" class="text-danger font-weight-bold d-none" style="font-size: 11.5px;">
-                            <i class="fa-solid fa-circle-exclamation me-1"></i>NIK must be numbers only
-                        </small>
-                    </div>
-                    
-                    <!-- Input Password -->
-                    <div class="mb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <label class="form-label-custom">Password</label>
-                            <a href="{{ route('password.request') }}" class="forgot-link">Forgot Password?</a>
-                        </div>
+                        <label class="form-label-custom">New Password</label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-lock input-icon"></i>
-                            <input type="password" name="password" id="passwordInput" class="input-field" required placeholder="Enter your password">
+                            <input type="password" name="password" id="passwordInput" class="input-field" required placeholder="Masukkan password baru">
                             <i class="fa-regular fa-eye-slash password-toggle" id="togglePassword"></i>
                         </div>
                     </div>
                     
+                    <!-- Input Konfirmasi Password -->
+                    <div class="mb-2">
+                        <label class="form-label-custom">Confirm New Password</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" name="password_confirmation" id="passwordConfirmInput" class="input-field" required placeholder="Ulangi password baru">
+                            <i class="fa-regular fa-eye-slash password-toggle" id="togglePasswordConfirm"></i>
+                        </div>
+                    </div>
+                    
                     <button type="submit" id="btnSubmit" class="btn-login-gradient text-uppercase">
-                        LOGIN
+                        SIMPAN PASSWORD BARU
                     </button>
                 </form>
+
+                <div class="text-center">
+                    <a href="{{ route('login') }}" class="back-link">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Batal & Kembali ke Login
+                    </a>
+                </div>
 
                 <div class="login-footer">
                     Tracking Sample System &bull; &copy; {{ date('Y') }} Amcor Flexibles
@@ -291,7 +275,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Toggle Show/Hide Password
+        // Toggle Password Baru
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#passwordInput');
 
@@ -302,33 +286,27 @@
             this.classList.toggle('fa-eye-slash');
         });
 
-        // Realtime Input Validation NIK
-        const nikInput = document.getElementById('nikInput');
-        const nikWarning = document.getElementById('nikWarning');
-        const btnSubmit = document.getElementById('btnSubmit');
+        // Toggle Konfirmasi Password
+        const togglePasswordConfirm = document.querySelector('#togglePasswordConfirm');
+        const passwordConfirmInput = document.querySelector('#passwordConfirmInput');
 
-        nikInput.addEventListener('input', function () {
-            const containsNonNumeric = /[^0-9]/.test(this.value);
-
-            if (containsNonNumeric) {
-                nikWarning.classList.remove('d-none');
-                nikInput.classList.add('is-invalid');
-                btnSubmit.disabled = true;
-            } else {
-                nikWarning.classList.add('d-none');
-                nikInput.classList.remove('is-invalid');
-                btnSubmit.disabled = false;
-            }
+        togglePasswordConfirm.addEventListener('click', function () {
+            const type = passwordConfirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordConfirmInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
         });
 
-        // Prevent Space on Password
-        passwordInput.addEventListener('keydown', function (e) {
-            if (e.key === ' ' || e.keyCode === 32) {
-                e.preventDefault();
-            }
-        });
-        passwordInput.addEventListener('input', function () {
-            this.value = this.value.replace(/\s/g, '');
+        // Prevent Space pada kedua input password
+        [passwordInput, passwordConfirmInput].forEach(input => {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === ' ' || e.keyCode === 32) {
+                    e.preventDefault();
+                }
+            });
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/\s/g, '');
+            });
         });
     </script>
 

@@ -25,13 +25,13 @@ class AuthController extends Controller
     {
         // Validasi: NIK harus berupa angka, Password tidak boleh ada spasi
         $rules = [
-            'identity' => ['required', 'string', 'regex:/^[0-9]+$/'],
+            'nik'      => ['required', 'string', 'regex:/^[0-9]+$/'],
             'password' => ['required', 'string', 'regex:/^\S*$/'],
         ];
 
         $messages = [
-            'identity.required' => 'NIK wajib diisi.',
-            'identity.regex'    => 'NIK harus berupa karakter angka.',
+            'nik.required'      => 'NIK wajib diisi.',
+            'nik.regex'         => 'NIK harus berupa karakter angka.',
             'password.required' => 'Password wajib diisi.',
             'password.regex'    => 'Password tidak boleh mengandung spasi.',
         ];
@@ -39,20 +39,20 @@ class AuthController extends Controller
         $request->validate($rules, $messages);
 
         // Throttle Key berdasarkan IP dan NIK
-        $throttleKey = Str::lower($request->input('identity')) . '|' . $request->ip();
+        $throttleKey = Str::lower($request->input('nik')) . '|' . $request->ip();
 
         // Cek apakah kesalahan login sudah mencapai 3x
         if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
             $seconds = RateLimiter::availableIn($throttleKey);
 
             return back()->withErrors([
-                'identity' => 'Terlalu banyak percobaan login salah. Silakan coba lagi dalam ' . $seconds . ' detik.',
-            ])->withInput($request->only('identity'));
+                'nik' => 'Terlalu banyak percobaan login salah. Silakan coba lagi dalam ' . $seconds . ' detik.',
+            ])->withInput($request->only('nik'));
         }
 
         // Kredensial pencocokan database
         $credentials = [
-            'nik'      => $request->identity,
+            'nik'      => $request->nik,
             'password' => $request->password,
         ];
 
@@ -61,7 +61,7 @@ class AuthController extends Controller
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
-            return redirect()->intended(route('admin.users.index'))
+            return redirect()->intended(route('admin.dashboard'))
                 ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
         }
 
@@ -69,8 +69,8 @@ class AuthController extends Controller
         RateLimiter::hit($throttleKey, 30);
 
         return back()->withErrors([
-            'identity' => 'Kombinasi NIK dan Password yang Anda masukkan tidak cocok.',
-        ])->withInput($request->only('identity'));
+            'nik' => 'Kombinasi NIK dan Password yang Anda masukkan tidak cocok.',
+        ])->withInput($request->only('nik'));
     }
 
     /**

@@ -27,7 +27,7 @@
         .table-grid-bordered th, 
         .table-grid-bordered td {
             border: 1px solid #cbd5e1 !important;
-            padding: 8px 10px !important;
+            padding: 10px 12px !important;
             text-align: center !important;
             vertical-align: middle !important;
         }
@@ -196,11 +196,12 @@
         .table-header-in-progress th { background-color: #f97316 !important; color: #ffffff !important; font-weight: 700 !important; font-size: 12px !important; text-transform: uppercase; }
         .table-header-completed th { background-color: #3b82f6 !important; color: #ffffff !important; font-weight: 700 !important; font-size: 12px !important; text-transform: uppercase; }
 
+        /* Action Buttons Gradient Style */
         .action-btn-grad {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 6px;
-            font-size: 13.5px;
+            font-size: 14px;
             border: none;
             display: inline-flex;
             align-items: center;
@@ -211,6 +212,7 @@
             text-decoration: none;
         }
         .action-btn-grad:hover { transform: translateY(-2px); color: #ffffff !important; }
+        .btn-preview-grad { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); }
         .btn-edit-grad { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); }
         .btn-delete-grad { background: linear-gradient(135deg, #f87171 0%, #dc2626 100%); }
     </style>
@@ -256,7 +258,7 @@
         // Ambil koleksi dasar task dari controller
         $allTasksCollection = $tasks ?? collect();
 
-        // Daftar 28 field utama yang harus terisi lengkap untuk berpindah dari To Do -> In Progress
+        // 28 field utama
         $required28Fields = [
             'no', 'item_code', 'brand_family', 'market', 'project_name',
             'ascis_pd', 'customer', 'cs_brand', 'cs_hw', 'cpi_hw',
@@ -283,7 +285,7 @@
         $inProgressData = $activeTasks->filter(function($t) use ($required28Fields) {
             foreach ($required28Fields as $field) {
                 if (is_null($t->$field) || trim((string)$t->$field) === '') {
-                    return false; // Ada yang kosong, bukan In Progress
+                    return false;
                 }
             }
             return true;
@@ -366,7 +368,7 @@
         </div>
     </div>
 
-    <!-- TABEL DATA PROJECT (28 KOLOM MURNI TABLE TASK) -->
+    <!-- TABEL DATA PROJECT RINGKAS -->
     <div id="projectSectionsContainer">
         @foreach($columns as $col)
         <div class="card border-0 shadow-sm rounded-3 p-4 bg-white mb-4 status-card-wrapper" data-status="{{ $col['status'] }}">
@@ -379,41 +381,18 @@
                 </div>
             </div>
 
-            <!-- TABLE WRAPPER -->
+            <!-- TABLE WRAPPER RINGKAS -->
             <div class="custom-table-wrapper shadow-sm">
                 <div class="table-responsive">
-                    <table class="table table-grid-bordered align-middle mb-0" style="font-size: 13px; table-layout: fixed; width: 100%; min-width: 3200px; --bs-table-hover-bg: #f8fafc;">
+                    <table class="table table-grid-bordered align-middle mb-0" style="font-size: 13px; width: 100%; --bs-table-hover-bg: #f8fafc;">
                         <thead class="{{ $col['header_class'] }}">
                             <tr>
-                                <th class="py-2.5 text-center" style="width: 140px;"> No</th>
-                                <th class="py-2.5 text-center" style="width: 140px;"> Item Code</th>
-                                <th class="py-2.5 text-center" style="width: 150px;"> Brand / Family</th>
-                                <th class="py-2.5 text-center" style="width: 110px;"> Market</th>
-                                <th class="py-2.5 text-center" style="width: 220px;"> Project Name</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> PD ASCIS</th>
-                                <th class="py-2.5 text-center" style="width: 150px;"> Customer</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> CS Brand</th>
-                                <th class="py-2.5 text-center" style="width: 120px;"> CS HW</th>
-                                <th class="py-2.5 text-center" style="width: 120px;"> CPI HW</th>
-                                <th class="py-2.5 text-center" style="width: 160px;"> S5 Internal Approval</th>
-                                <th class="py-2.5 text-center" style="width: 120px;"> GHW Set</th>
-                                <th class="py-2.5 text-center" style="width: 150px;"> Information Received</th>
-                                <th class="py-2.5 text-center" style="width: 140px;"> PLM Released</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> COI Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> Green Light</th>
-                                <th class="py-2.5 text-center" style="width: 100px;"> TD</th>
-                                <th class="py-2.5 text-center" style="width: 120px;"> Machine</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> Board</th>
-                                <th class="py-2.5 text-center" style="width: 140px;"> Board U Code</th>
-                                <th class="py-2.5 text-center" style="width: 140px;"> Board A Code</th>
-                                <th class="py-2.5 text-center" style="width: 110px;"> Type CM</th>
-                                <th class="py-2.5 text-center" style="width: 140px;"> Die Cut Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> S10 Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> S11 Number</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> S12 Number</th>
-                                <th class="py-2.5 text-center" style="width: 160px;"> Cylinder Supplier</th>
-                                <th class="py-2.5 text-center" style="width: 130px;"> Repro By</th>
-                                <th class="py-2.5 text-center" style="width: 150px;">Actions</th>
+                                <th class="py-2.5 text-center" style="width: 70px;">No</th>
+                                <th class="py-2.5 text-center" style="width: 18%;">Item Code</th>
+                                <th class="py-2.5 text-center" style="width: 30%;">Project Name</th>
+                                <th class="py-2.5 text-center" style="width: 25%;">Customer Name</th>
+                                <th class="py-2.5 text-center" style="width: 15%;">Market Zone</th>
+                                <th class="py-2.5 text-center" style="width: 120px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -422,57 +401,118 @@
                                 $realId = $task->id ?? null;
                             @endphp
                             <tr>
-                                <!-- DITAMPILKAN CREATTASK0001 ATO AUTOMATIC NO -->
-                                <td class="text-center table-text-unified fw-bold text-dark">{{ $task->no ?? ('CREATTASK' . str_pad($index + 1, 4, '0', STR_PAD_LEFT)) }}</td>
-                                <td class="table-text-unified fw-bold text-primary">{{ $task->item_code }}</td>
-                                <td class="table-text-unified">{{ $task->brand_family ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->market ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->project_name ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->ascis_pd ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->customer ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->cs_brand ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->cs_hw ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->cpi_hw ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->s5_internal_approval ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->ghw_set ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('d-m-Y') : '-' }}</td>
-                                <td class="table-text-unified">{{ $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('d-m-Y') : '-' }}</td>
-                                <td class="table-text-unified">{{ $task->coi_number ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->green_light ? \Carbon\Carbon::parse($task->green_light)->format('d-m-Y') : '-' }}</td>
-                                <td class="table-text-unified">{{ $task->td ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->machine ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->board ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->board_u_code ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->board_a_code ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->type_cm ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->die_cut_number ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->s10_number ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->s11_number ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->s12_number ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->cylinder_supplier ?? '-' }}</td>
-                                <td class="table-text-unified">{{ $task->repro_by ?? '-' }}</td>
+                                <!-- 1. NO -->
+                                <td class="text-center table-text-unified fw-bold text-secondary">
+                                    {{ sprintf('%02d', $loop->iteration) }}
+                                </td>
 
-                                <!-- ACTIONS -->
+                                <!-- 2. ITEM CODE -->
+                                <td class="table-text-unified fw-bold text-primary">{{ $task->item_code ?? '-' }}</td>
+
+                                <!-- 3. PROJECT NAME -->
+                                <td class="table-text-unified fw-bold text-dark">{{ $task->project_name ?? '-' }}</td>
+
+                                <!-- 4. CUSTOMER NAME -->
+                                <td class="table-text-unified">{{ $task->customer ?? '-' }}</td>
+
+                                <!-- 5. MARKET ZONE -->
+                                <td class="table-text-unified">{{ $task->market ?? '-' }}</td>
+
+                                <!-- 6. ACTION -->
                                 <td class="text-center py-2">
-                                    <div class="d-flex align-items-center justify-content-center gap-3">
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
                                         @if($realId)
+                                            <!-- Preview Button (Mata Biru Gradient) -->
+                                            <button class="action-btn-grad btn-preview-grad" type="button" data-bs-toggle="modal" data-bs-target="#previewTaskModal{{ $realId }}" title="Preview Details">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+
+                                            <!-- Edit Button -->
                                             <button class="action-btn-grad btn-edit-grad" type="button" data-bs-toggle="modal" data-bs-target="#editTaskModal{{ $realId }}" title="Edit Specification">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
+
+                                            <!-- Delete Button -->
                                             <button class="action-btn-grad btn-delete-grad" type="button" onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data ini?')) document.getElementById('delete-task-{{ $realId }}').submit();" title="Delete Project">
                                                 <i class="bi bi-trash-fill"></i>
                                             </button>
+
                                             <form id="delete-task-{{ $realId }}" action="{{ route('admin.task.destroy', ['id' => $realId]) }}" method="POST" class="d-none">
                                                 @csrf 
                                                 @method('DELETE')
                                             </form>
                                         @else
+                                            <button class="action-btn-grad btn-preview-grad opacity-50" type="button" disabled><i class="bi bi-eye-fill"></i></button>
                                             <button class="action-btn-grad btn-edit-grad opacity-50" type="button" disabled><i class="bi bi-pencil-square"></i></button>
                                             <button class="action-btn-grad btn-delete-grad opacity-50" type="button" disabled><i class="bi bi-trash-fill"></i></button>
                                         @endif
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- MODAL PREVIEW DETAIL SPESIFIKASI (MATA BIRU) -->
+                            @if($realId)
+                            <div class="modal fade" id="previewTaskModal{{ $realId }}" tabindex="-1" aria-labelledby="previewTaskModalLabel{{ $realId }}" aria-hidden="true">
+                                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content border-0 shadow-lg rounded-3">
+                                        <div class="modal-header text-white" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+                                            <h5 class="modal-title fw-bold" id="previewTaskModalLabel{{ $realId }}">
+                                                <i class="bi bi-eye-fill me-2"></i>Specification Details - {{ $task->project_name ?? $task->item_code }}
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body p-4 bg-light">
+                                            <div class="row g-3">
+                                                @php
+                                                    $detailFields = [
+                                                        'No / ID' => $task->no ?? ('CREATTASK' . str_pad($index + 1, 4, '0', STR_PAD_LEFT)),
+                                                        'Item Code' => $task->item_code,
+                                                        'Brand / Family' => $task->brand_family,
+                                                        'Market' => $task->market,
+                                                        'Project Name' => $task->project_name,
+                                                        'PD ASCIS' => $task->ascis_pd,
+                                                        'Customer' => $task->customer,
+                                                        'CS Brand' => $task->cs_brand,
+                                                        'CS HW' => $task->cs_hw,
+                                                        'CPI HW' => $task->cpi_hw,
+                                                        'S5 Internal Approval' => $task->s5_internal_approval,
+                                                        'GHW Set' => $task->ghw_set,
+                                                        'Information Received' => $task->information_received ? \Carbon\Carbon::parse($task->information_received)->format('d-m-Y') : '-',
+                                                        'PLM Released' => $task->plm_released ? \Carbon\Carbon::parse($task->plm_released)->format('d-m-Y') : '-',
+                                                        'COI Number' => $task->coi_number,
+                                                        'Green Light' => $task->green_light ? \Carbon\Carbon::parse($task->green_light)->format('d-m-Y') : '-',
+                                                        'TD' => $task->td,
+                                                        'Machine' => $task->machine,
+                                                        'Board' => $task->board,
+                                                        'Board U Code' => $task->board_u_code,
+                                                        'Board A Code' => $task->board_a_code,
+                                                        'Type CM' => $task->type_cm,
+                                                        'Die Cut Number' => $task->die_cut_number,
+                                                        'S10 Number' => $task->s10_number,
+                                                        'S11 Number' => $task->s11_number,
+                                                        'S12 Number' => $task->s12_number,
+                                                        'Cylinder Supplier' => $task->cylinder_supplier,
+                                                        'Repro By' => $task->repro_by,
+                                                    ];
+                                                @endphp
+
+                                                @foreach($detailFields as $label => $val)
+                                                <div class="col-md-4 col-sm-6">
+                                                    <div class="p-3 bg-white rounded border shadow-sm h-100">
+                                                        <small class="text-muted d-block fw-bold text-uppercase mb-1" style="font-size: 11px; letter-spacing: 0.5px;">{{ $label }}</small>
+                                                        <div class="fw-bold text-dark" style="font-size: 13.5px;">{{ $val ?: '-' }}</div>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer bg-white border-top-0">
+                                            <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
 
                             <!-- INCLUDE MODAL EDIT PER BARIS DATA -->
                             @if($realId)
@@ -481,7 +521,7 @@
 
                             @empty
                             <tr>
-                                <td colspan="29" class="text-center py-4 text-muted border border-dashed bg-white fw-semibold" style="font-style: italic; font-size: 13px;">
+                                <td colspan="6" class="text-center py-4 text-muted border border-dashed bg-white fw-semibold" style="font-style: italic; font-size: 13px;">
                                     <i class="bi bi-info-circle me-1.5"></i>No active projects under this status.
                                 </td>
                             </tr>

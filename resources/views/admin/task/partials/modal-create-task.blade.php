@@ -87,18 +87,43 @@
                                 <label class="form-label fw-bold text-dark">Market Zone</label>
                                 <input type="text" name="market" class="form-control" value="{{ old('market') }}" placeholder="e.g. INDO / EXPORT">
                             </div>
+
+                            <!-- 1. PD ASCIS (Dropdown Otomatis dari User ber-role PD & Administrator) -->
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-dark">PD ASCIS</label>
-                                <input type="text" name="ascis_pd" class="form-control" value="{{ old('ascis_pd') }}" placeholder="Input PD ASCIS">
+                                <select name="ascis_pd" class="form-select border rounded-3 shadow-none">
+                                    <option value="" disabled selected>-- Select PD ASCIS --</option>
+                                    @php
+                                        // Ambil dari variabel $pdUsers jika dikirim Controller, atau query langsung dari DB jika belum
+                                        $usersList = isset($pdUsers) 
+                                            ? $pdUsers 
+                                            : \App\Models\User::whereIn('role', ['Administrator', 'PD'])->get();
+                                    @endphp
+                                    
+                                    @foreach($usersList as $user)
+                                        <option value="{{ $user->name }}" {{ old('ascis_pd') == $user->name ? 'selected' : '' }}>
+                                            {{ $user->name }} ({{ $user->role }})
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-dark">Project Name</label>
                                 <input type="text" name="project_name" class="form-control" value="{{ old('project_name') }}" placeholder="Input project name">
                             </div>
+
+                            <!-- 2. Customer Name (Dropdown Pilihan Khusus) -->
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-dark">Customer Name</label>
-                                <input type="text" name="customer" class="form-control" value="{{ old('customer') }}" placeholder="Input customer name">
+                                <select name="customer" class="form-select border rounded-3 shadow-none">
+                                    <option value="" disabled selected>-- Select Customer --</option>
+                                    <option value="PMI" {{ old('customer') == 'PMI' ? 'selected' : '' }}>PMI</option>
+                                    <option value="JTI" {{ old('customer') == 'JTI' ? 'selected' : '' }}>JTI</option>
+                                    <option value="ITG" {{ old('customer') == 'ITG' ? 'selected' : '' }}>ITG</option>
+                                    <option value="BAT" {{ old('customer') == 'BAT' ? 'selected' : '' }}>BAT</option>
+                                    <option value="REGIONAL" {{ old('customer') == 'REGIONAL' ? 'selected' : '' }}>REGIONAL</option>
+                                </select>
                             </div>
 
                             <div class="col-md-4">
@@ -153,9 +178,20 @@
                                 <label class="form-label fw-bold text-dark">TD (Technical Doc)</label>
                                 <input type="text" name="td" class="form-control" value="{{ old('td') }}" placeholder="Input TD">
                             </div>
+
+                            <!-- 4. Machine (Radio Button: Offset / Gravure) -->
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark">Machine</label>
-                                <input type="text" name="machine" class="form-control" value="{{ old('machine') }}" placeholder="e.g. Offset / Gravure">
+                                <label class="form-label fw-bold text-dark d-block">Machine</label>
+                                <div class="pt-1">
+                                    <div class="form-check form-check-inline me-4">
+                                        <input class="form-check-input" type="radio" name="machine" id="machine_offset" value="Offset" {{ old('machine') == 'Offset' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold text-dark" for="machine_offset">Offset</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="machine" id="machine_gravure" value="Gravure" {{ old('machine') == 'Gravure' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold text-dark" for="machine_gravure">Gravure</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -179,10 +215,25 @@
                                 <input type="text" name="board_a_code" class="form-control" value="{{ old('board_a_code') }}" placeholder="Input Board A Code">
                             </div>
 
+                            <!-- 3. Type CM (Radio Button: a, b, c) -->
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark">Type CM</label>
-                                <input type="text" name="type_cm" class="form-control" value="{{ old('type_cm') }}" placeholder="Input Type CM">
+                                <label class="form-label fw-bold text-dark d-block">Type CM</label>
+                                <div class="pt-1">
+                                    <div class="form-check form-check-inline me-3">
+                                        <input class="form-check-input" type="radio" name="type_cm" id="type_cm_a" value="a" {{ old('type_cm') == 'a' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold text-dark" for="type_cm_a">a</label>
+                                    </div>
+                                    <div class="form-check form-check-inline me-3">
+                                        <input class="form-check-input" type="radio" name="type_cm" id="type_cm_b" value="b" {{ old('type_cm') == 'b' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold text-dark" for="type_cm_b">b</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="type_cm" id="type_cm_c" value="c" {{ old('type_cm') == 'c' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold text-dark" for="type_cm_c">c</label>
+                                    </div>
+                                </div>
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label fw-bold text-dark">Die Cut Number</label>
                                 <input type="text" name="die_cut_number" class="form-control" value="{{ old('die_cut_number') }}" placeholder="Input Die Cut Number">
@@ -205,9 +256,20 @@
                                 <label class="form-label fw-bold text-dark">Cylinder Supplier</label>
                                 <input type="text" name="cylinder_supplier" class="form-control" value="{{ old('cylinder_supplier') }}" placeholder="e.g. SEIN / JNSK">
                             </div>
+
+                            <!-- 5. Repro By (Radio Button: Internal / External) -->
                             <div class="col-md-6">
-                                <label class="form-label fw-bold text-dark">Repro By</label>
-                                <input type="text" name="repro_by" class="form-control" value="{{ old('repro_by') }}" placeholder="e.g. Internal / External">
+                                <label class="form-label fw-bold text-dark d-block">Repro By</label>
+                                <div class="pt-1">
+                                    <div class="form-check form-check-inline me-4">
+                                        <input class="form-check-input" type="radio" name="repro_by" id="repro_internal" value="Internal" {{ old('repro_by') == 'Internal' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold text-dark" for="repro_internal">Internal</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="repro_by" id="repro_external" value="External" {{ old('repro_by') == 'External' ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-semibold text-dark" for="repro_external">External</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

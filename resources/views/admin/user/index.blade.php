@@ -125,17 +125,6 @@
         font-size: 20px;
         flex-shrink: 0;
     }
-
-    /* Style Tanda Tangan Thumb */
-    .signature-thumb {
-        max-width: 85px;
-        max-height: 34px;
-        object-fit: contain;
-        border: 1px solid #e2e8f0;
-        border-radius: 4px;
-        padding: 2px;
-        background: #ffffff;
-    }
 </style>
 
 <div class="directory-container container-fluid px-0">
@@ -208,23 +197,20 @@
 
                 <!-- Tabel User -->
                 <div class="table-responsive" style="width: 100%; overflow-x: auto;">
-                    <table class="table dir-table align-middle mb-0" id="userDirectoryTable" style="min-width: 1150px;">
+                    <table class="table dir-table align-middle mb-0" id="userDirectoryTable">
                         <thead class="table-dark-green-header text-center">
                             <tr>
                                 <th style="width: 60px;" class="text-center ps-3">No</th>
-                                <th style="min-width: 200px;" class="text-start">Name</th>
-                                <th style="width: 120px;" class="text-center">NIK</th>
-                                <th style="width: 150px;" class="text-center">Role</th>
-                                <th style="width: 120px;" class="text-center">Sign</th>
-                                <th style="width: 130px;" class="text-center">Created At</th>
-                                <th style="width: 130px;" class="text-center">Updated At</th>
+                                <th class="text-start">Name</th>
+                                <th style="width: 140px;" class="text-center">NIK</th>
+                                <th style="width: 180px;" class="text-center">Role</th>
                                 <th class="text-center pe-3" style="width: 150px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if($users->isEmpty())
                                 <tr id="noDataRow">
-                                    <td colspan="8" class="text-center py-5 text-muted">
+                                    <td colspan="5" class="text-center py-5 text-muted">
                                         <i class="bi bi-person-x fs-4 d-block mb-2 text-secondary"></i>
                                         No users registered in system.
                                     </td>
@@ -281,27 +267,6 @@
                                     <span class="badge-role {{ $roleKey }}">
                                         <i class="bi {{ $iconClass }}"></i> {{ $displayRoleName }}
                                     </span>
-                                </td>
-                                
-                                <!-- Sign Center -->
-                                <td class="text-center">
-                                    @if($user->signature)
-                                        <a href="{{ asset($user->signature) }}" target="_blank">
-                                            <img src="{{ asset($user->signature) }}" alt="Sign" class="signature-thumb shadow-sm">
-                                        </a>
-                                    @else
-                                        <span class="text-muted" style="font-size: 11px;">-</span>
-                                    @endif
-                                </td>
-                                
-                                <!-- Created At Center -->
-                                <td class="text-center">
-                                    <span class="text-muted" style="font-size: 12.5px; white-space: nowrap;">{{ $user->created_at ? $user->created_at->format('M d, Y') : '-' }}</span>
-                                </td>
-                                
-                                <!-- Updated At Center -->
-                                <td class="text-center">
-                                    <span class="text-muted" style="font-size: 12.5px; white-space: nowrap;">{{ $user->updated_at ? $user->updated_at->format('M d, Y') : '-' }}</span>
                                 </td>
                                 
                                 <!-- Actions Center -->

@@ -174,7 +174,7 @@
 
     <!-- PAGETITLE -->
     <div class="pagetitle mb-4">
-        <h1 class="fw-bold text-dark mb-1" style="font-size: 24px; color: #0f172a !important;">Workflow Engine</h1>
+        <h1 class="fw-bold text-dark mb-1" style="font-size: 24px; color: #0f172a !important;">Job Bag Verifications</h1>
         <p class="text-secondary mb-0" style="font-size: 13px;">Finalized architecture specs asset mapping and enterprise assignment distribution sheets.</p>
     </div>
 
